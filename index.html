@@ -20,9 +20,7 @@
 
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 
-button,input{font:inherit}
-
-button{cursor:pointer}
+button,input{font:inherit}button{cursor:pointer}
 
 main{max-width:1040px;margin:auto;padding:18px 16px 30px}
 
@@ -32,27 +30,25 @@ main{max-width:1040px;margin:auto;padding:18px 16px 30px}
 
 .topright{text-align:right;color:var(--muted);font-size:11px}
 
-.tiny-result{font-size:12px;margin-top:3px}
+.tiny-result{font-size:11px;margin-top:3px;color:#68758a;font-weight:500}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:15px;margin-bottom:12px}
 
 .section{font-size:10px;font-weight:800;letter-spacing:1.15px;color:#8792a5;margin:19px 2px 9px}
 
-.muted{color:var(--muted)}
-
-.small{font-size:11px}
+.muted{color:var(--muted)}.small{font-size:11px}
 
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 .stat{min-width:0;padding:13px;border:1px solid var(--line);border-radius:13px}
 
 .stat span{display:block;color:var(--muted);font-size:10px;letter-spacing:.5px}
 
-.stat strong{display:block;font-size:19px;margin-top:4px;overflow-wrap:anywhere}
+.stat strong{display:block;font-size:19px;margin-top:4px;letter-spacing:-.4px;overflow-wrap:anywhere}
 
-.positive{color:var(--green)!important}
-
-.negative{color:var(--red)!important}
+.positive{color:var(--green)!important}.negative{color:var(--red)!important}
 
 .deposit{padding:11px 13px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;margin-top:10px}
 
@@ -68,19 +64,13 @@ main{max-width:1040px;margin:auto;padding:18px 16px 30px}
 
 .needed{grid-column:1/-1;border-radius:12px;background:#f2f5ff;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 
-.needed span{font-size:11px;color:#65718a}
-
-.needed strong{font-size:20px;color:var(--blue);white-space:nowrap}
+.needed span{font-size:11px;color:#65718a}.needed strong{font-size:20px;color:var(--blue);white-space:nowrap}
 
 .btn{border:0;border-radius:11px;padding:11px 14px;background:#202b40;color:white;font-weight:700}
 
-.btn.secondary{background:#edf1f8;color:#3b4a63}
+.btn.secondary{background:#edf1f8;color:#3b4a63}.btn:disabled{opacity:.5;cursor:wait}
 
-.btn:disabled{opacity:.5;cursor:wait}
-
-.tokenrow{display:flex;gap:8px;margin-top:10px}
-
-.tokenrow .token-input{min-width:0;flex:1}
+.tokenrow{display:flex;gap:8px;margin-top:10px}.tokenrow .token-input{min-width:0;flex:1}
 
 .status{font-size:11px;color:var(--muted);margin-top:9px;overflow-wrap:anywhere}
 
@@ -92,9 +82,7 @@ main{max-width:1040px;margin:auto;padding:18px 16px 30px}
 
 .asset-head::-webkit-details-marker{display:none}
 
-.asset-name{font-weight:750;font-size:14px}
-
-.asset-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.asset-name{font-weight:750;font-size:14px}.asset-sub{font-size:11px;color:var(--muted);margin-top:2px}
 
 .asset-price{text-align:right;font-weight:750;font-size:15px;white-space:nowrap}
 
@@ -132,45 +120,57 @@ main{max-width:1040px;margin:auto;padding:18px 16px 30px}
 
 .footer{text-align:center;color:#8993a5;font-size:10px;font-weight:400;margin-top:20px;line-height:1.8}
 
+.hidden{display:none!important}
+
 .spin{display:inline-block;width:10px;height:10px;border:2px solid #d5dbea;border-top-color:#4664d9;border-radius:50%;animation:spin .7s linear infinite}
 
 @keyframes spin{to{transform:rotate(360deg)}}
+
+.forecast-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+
+.forecast-title{font-size:13px;font-weight:750}.forecast-sub{font-size:10px;color:var(--muted);margin-top:3px}
+
+.forecast-legend{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 0;color:var(--muted);font-size:10px}
+
+.legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
+
+.forecast-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+
+.forecast-stat{padding:11px;border:1px solid var(--line);border-radius:12px;min-width:0}
+
+.forecast-stat span{display:block;font-size:10px;color:var(--muted)}
+
+.forecast-stat b{display:block;font-size:16px;margin-top:4px;overflow-wrap:anywhere}
+
+.forecast-stat small{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+
+.analysis-block{padding:11px 0;border-bottom:1px solid var(--line)}
+
+.analysis-block:last-child{border-bottom:0;padding-bottom:0}
+
+.analysis-block h3{font-size:11px;margin:0 0 4px;color:#354258}
+
+.analysis-block p{font-size:12px;color:#58657b;line-height:1.55;margin:0}
 
 @media(min-width:700px){
 
 .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-.summary-grid .stat{height:100%}
-
-.summary-grid .deposit{grid-column:1/-1;margin-top:0}
+.summary-grid .stat{height:100%}.summary-grid .deposit{grid-column:1/-1;margin-top:0}
 
 .asset-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
 
-.asset-list .asset{margin:0}
-
-.chart{height:300px}
+.asset-list .asset{margin:0}.chart{height:300px}
 
 }
 
 @media(max-width:430px){
 
-main{padding:13px 11px 24px}
+main{padding:13px 11px 24px}.brand{font-size:20px}.card{padding:12px;border-radius:15px}
 
-.brand{font-size:20px}
+.stat{padding:11px}.stat strong{font-size:17px}.needed strong{font-size:18px}
 
-.card{padding:12px;border-radius:15px}
-
-.stat{padding:11px}
-
-.stat strong{font-size:17px}
-
-.needed strong{font-size:18px}
-
-.chart{height:220px}
-
-.tokenrow{flex-direction:column}
-
-.tokenrow .btn{width:100%}
+.chart{height:220px}.tokenrow{flex-direction:column}.tokenrow .btn{width:100%}
 
 }
 
@@ -190,7 +190,7 @@ main{padding:13px 11px 24px}
 
     <div id="lastUpdated">Нет обновлений</div>
 
-    <div class="tiny-result" id="topResult">Результат инвестиций: —</div>
+    <div class="tiny-result" id="allTimeIncome">Доход за всё время: —</div>
 
   </div>
 
@@ -262,40 +262,6 @@ main{padding:13px 11px 24px}
 
 </section>
 
-<div class="section">ПЛАН ЕЖЕДНЕВНОГО ДОХОДА</div>
-
-<section class="card">
-
-  <div class="income-grid">
-
-    <div class="field">
-
-      <label for="target">Желаемый доход в день, ₽</label>
-
-      <input id="target" type="number" min="1" step="50" value="1000" inputmode="decimal">
-
-    </div>
-
-    <div class="field">
-
-      <label for="passive">Прочий пассивный доход в день, ₽</label>
-
-      <input id="passive" type="number" min="0" step="1" value="0" inputmode="decimal">
-
-    </div>
-
-    <div class="needed">
-
-      <span>Нужно получать от инвестиций в день</span>
-
-      <strong id="needed">1 000 ₽</strong>
-
-    </div>
-
-  </div>
-
-</section>
-
 <div class="row">
 
   <div class="section" style="margin-top:15px">АКЦИИ ПОРТФЕЛЯ</div>
@@ -326,21 +292,13 @@ main{padding:13px 11px 24px}
 
 const API='https://invest-public-api.tbank.ru/rest/';
 
-const S={token:'',accounts:[],rows:[],timer:null,busy:false,lastRefresh:0,activeRequest:0};
+const S={token:'',accounts:[],rows:[],timer:null,busy:false,lastRefresh:0,activeRequest:0,lifetimeAt:0,lifetimeValue:null};
 
 const $=id=>document.getElementById(id);
 
-const fmt=(n,d=2)=>Number.isFinite(Number(n))
+const fmt=(n,d=2)=>Number.isFinite(Number(n))?Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})+' ₽':'—';
 
-  ?Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})+' ₽'
-
-  :'—';
-
-const pct=n=>(Number(n)*100).toLocaleString('ru-RU',{
-
-  minimumFractionDigits:2,maximumFractionDigits:2
-
-})+'%';
+const pct=n=>(Number(n)*100).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
 
 const val=x=>{
 
@@ -362,43 +320,11 @@ const val=x=>{
 
 };
 
-const get=(o,...ks)=>{
+const get=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null)return o[k];return null};
 
-  for(const k of ks)if(o&&o[k]!=null)return o[k];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  return null;
-
-};
-
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({
-
-  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-
-}[c]));
-
-function setStatus(s,error=false){
-
-  $('status').textContent=s;
-
-  $('status').classList.toggle('error',error);
-
-}
-
-function updateIncome(){
-
-  const t=Math.max(0,Number($('target').value)||0);
-
-  const p=Math.max(0,Number($('passive').value)||0);
-
-  $('needed').textContent=fmt(Math.max(0,t-p),0);
-
-}
-
-$('target').addEventListener('input',updateIncome);
-
-$('passive').addEventListener('input',updateIncome);
-
-updateIncome();
+function setStatus(s,error=false){$('status').textContent=s;$('status').classList.toggle('error',error)}
 
 async function api(service,method,body={},timeout=18000){
 
@@ -412,29 +338,15 @@ async function api(service,method,body={},timeout=18000){
 
       method:'POST',
 
-      headers:{
+      headers:{'Authorization':'Bearer '+S.token,'Content-Type':'application/json','Accept':'application/json'},
 
-        'Authorization':'Bearer '+S.token,
-
-        'Content-Type':'application/json',
-
-        'Accept':'application/json'
-
-      },
-
-      body:JSON.stringify(body),
-
-      signal:controller.signal,
-
-      cache:'no-store'
+      body:JSON.stringify(body),signal:controller.signal,cache:'no-store'
 
     });
 
     const text=await r.text();
 
-    let data={};
-
-    try{data=text?JSON.parse(text):{}}catch{}
+    let data={};try{data=text?JSON.parse(text):{}}catch{}
 
     if(!r.ok)throw new Error(`HTTP ${r.status}: ${data.message||data.description||text.slice(0,180)||r.statusText}`);
 
@@ -442,11 +354,7 @@ async function api(service,method,body={},timeout=18000){
 
     return data;
 
-  }finally{
-
-    clearTimeout(tm);
-
-  }
+  }finally{clearTimeout(tm)}
 
 }
 
@@ -480,23 +388,11 @@ async function lastPrices(uids){
 
 }
 
-async function candles(uid){
+async function candles(uid,interval='CANDLE_INTERVAL_DAY',days=400){
 
-  const to=new Date();
+  const to=new Date(),from=new Date(to.getTime()-days*86400000);
 
-  const from=new Date(to.getTime()-36*3600*1000);
-
-  const d=await api(MD,'GetCandles',{
-
-    instrumentId:uid,
-
-    from:from.toISOString(),
-
-    to:to.toISOString(),
-
-    interval:'CANDLE_INTERVAL_5_MIN'
-
-  },16000);
+  const d=await api(MD,'GetCandles',{instrumentId:uid,from:from.toISOString(),to:to.toISOString(),interval},18000);
 
   return(d.candles||[]).map(c=>({
 
@@ -510,9 +406,7 @@ async function candles(uid){
 
 function getLevel(cs,which){
 
-  const arr=cs.slice(-72);
-
-  if(arr.length<8)return null;
+  const arr=cs.slice(-90);if(arr.length<8)return null;
 
   const vals=arr.map(c=>c[which]);
 
@@ -520,261 +414,229 @@ function getLevel(cs,which){
 
 }
 
-function signalFor(cs){
+function ema(a,n){
 
-  if(cs.length<20)return{
+  if(!a.length)return 0;
 
-    name:'ДЕРЖАТЬ',key:'hold',
+  const k=2/(n+1);let e=a[0];
 
-    text:'Недостаточно рыночной истории для уверенного сигнала. Наблюдай за ценой и уровнями.'
+  for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);
 
-  };
-
-  const closes=cs.map(x=>x.c);
-
-  const ema=(a,n)=>{
-
-    const k=2/(n+1);
-
-    let e=a[0];
-
-    for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);
-
-    return e;
-
-  };
-
-  const e9=ema(closes.slice(-45),9);
-
-  const e21=ema(closes.slice(-80),21);
-
-  let gains=0,losses=0;
-
-  for(let i=Math.max(1,closes.length-15);i<closes.length;i++){
-
-    const dif=closes[i]-closes[i-1];
-
-    if(dif>0)gains+=dif;
-
-    else losses-=dif;
-
-  }
-
-  const rs=gains/(losses||1e-9);
-
-  const rsi=100-100/(1+rs);
-
-  if(e9>e21&&rsi<70)return{
-
-    name:'ПОКУПАТЬ',key:'buy',
-
-    text:`Краткосрочное движение вверх подтверждается средними. RSI около ${rsi.toFixed(0)}; перед входом оцени расстояние до сопротивления и возможный убыток.`
-
-  };
-
-  if(e9<e21&&rsi>35)return{
-
-    name:'ПРОДАВАТЬ',key:'sell',
-
-    text:`Краткосрочная динамика ослаблена. RSI около ${rsi.toFixed(0)}; проверь поддержку и размер позиции, не принимай решение только по одному сигналу.`
-
-  };
-
-  return{
-
-    name:'ДЕРЖАТЬ',key:'hold',
-
-    text:`Сигналы смешанные, RSI около ${rsi.toFixed(0)}. Дождись подтверждения направления; ключевые ориентиры — ближайшие поддержка и сопротивление.`
-
-  };
+  return e;
 
 }
 
-function drawChart(canvas,cs,support,resistance,currentPrice){
+function signalFromModel(m){
 
-  const ctx=canvas.getContext('2d');
+  if(!m||!m.ok)return {name:'ДЕРЖАТЬ',key:'hold'};
 
-  const dpr=window.devicePixelRatio||1;
+  const room=m.resistance>m.price?(m.resistance-m.price)/m.price:1;
 
-  const W=Math.max(300,canvas.clientWidth||600);
+  if(m.trend==='восходящее движение'&&m.rsi<68&&room>.025)return {name:'ПОКУПАТЬ',key:'buy'};
 
-  const H=Math.max(190,canvas.clientHeight||250);
+  if(m.trend==='нисходящее движение'&&m.rsi>36)return {name:'ПРОДАВАТЬ',key:'sell'};
 
-  canvas.width=W*dpr;
+  return {name:'ДЕРЖАТЬ',key:'hold'};
 
-  canvas.height=H*dpr;
+}
 
-  ctx.scale(dpr,dpr);
+function forecastModel(daily,hourly,current){
 
-  ctx.clearRect(0,0,W,H);
+  const cs=daily.length>=25?daily:daily.concat(hourly).sort((a,b)=>a.time-b.time);
 
-  if(!cs.length){
+  const closes=cs.map(c=>c.c).filter(x=>x>0);
 
-    ctx.fillStyle='#7d899d';
+  if(closes.length<12)return {ok:false,reason:'Недостаточно истории для содержательного прогноза. Нужны хотя бы 12 корректных ценовых свечей.'};
 
-    ctx.font='12px sans-serif';
+  const recent=closes.slice(-Math.min(90,closes.length)),log=recent.map(Math.log),m=log.length;
 
-    ctx.fillText('Нет доступной истории свечей',12,24);
+  const xbar=(m-1)/2,ybar=log.reduce((a,b)=>a+b,0)/m;
 
-    return;
+  let num=0,den=0;
+
+  for(let i=0;i<m;i++){num+=(i-xbar)*(log[i]-ybar);den+=(i-xbar)**2}
+
+  const slope=den?num/den:0;
+
+  const eFast=ema(closes.slice(-Math.min(40,closes.length)),9);
+
+  const eSlow=ema(closes.slice(-Math.min(80,closes.length)),21);
+
+  const returns=[];
+
+  for(let i=Math.max(1,closes.length-60);i<closes.length;i++)returns.push(Math.log(closes[i]/closes[i-1]));
+
+  const mean=returns.reduce((a,b)=>a+b,0)/(returns.length||1);
+
+  const variance=returns.reduce((a,b)=>a+(b-mean)**2,0)/Math.max(1,returns.length-1);
+
+  const vol=Math.sqrt(Math.max(variance,.000001));
+
+  const short=closes.slice(-Math.min(10,closes.length));
+
+  const shortSlope=short.length>1?(Math.log(short.at(-1))-Math.log(short[0]))/(short.length-1):0;
+
+  const hc=(hourly||[]).map(c=>c.c).filter(x=>x>0).slice(-120);
+
+  const hourlySlope=hc.length>1?(Math.log(hc.at(-1))-Math.log(hc[0]))/hc.length*24:shortSlope;
+
+  let drift=.60*slope+.25*shortSlope+.15*hourlySlope;
+
+  drift=Math.max(-.025,Math.min(.025,drift));
+
+  const price=current>0?current:closes.at(-1),tail=closes.slice(-15);
+
+  let gains=0,losses=0;
+
+  for(let i=1;i<tail.length;i++){const d=tail[i]-tail[i-1];if(d>0)gains+=d;else losses-=d}
+
+  const rsi=100-100/(1+gains/(losses||1e-9));
+
+  const support=getLevel(cs,'l'),resistance=getLevel(cs,'h'),points=[];
+
+  for(let day=0;day<=30;day++){
+
+    const mid=price*Math.exp(drift*day),sigma=vol*Math.sqrt(day);
+
+    points.push({day,mid,low:mid*Math.exp(-1.28*sigma),high:mid*Math.exp(1.28*sigma)});
 
   }
 
-  const data=cs.slice(-70);
+  const p7=points[7],p30=points[30];
 
-  const pad={l:8,r:64,t:12,b:22};
+  let trend='боковое движение';
 
-  const cw=W-pad.l-pad.r;
+  if(eFast>eSlow*1.003&&drift>.0003)trend='восходящее движение';
 
-  const ch=H-pad.t-pad.b;
+  else if(eFast<eSlow*.997&&drift<-.0003)trend='нисходящее движение';
 
-  let min=Math.min(...data.map(c=>c.l),support||Infinity,currentPrice>0?currentPrice:Infinity);
+  const risk=vol>.035?'высокая':vol<.012?'относительно низкая':'умеренная';
 
-  let max=Math.max(...data.map(c=>c.h),resistance||-Infinity,currentPrice>0?currentPrice:-Infinity);
+  const gs=support>0?(price-support)/price:null,gr=resistance>0?(resistance-price)/price:null;
 
-  if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min){
+  const summary=`Текущий фон: ${trend}. Модель объединяет динамику последних ${m} дневных свечей и недавний импульс. Исторический дневной разброс цены — около ${(vol*100).toFixed(2)}%.`;
 
-    min=Math.min(...data.map(c=>c.l));
+  const momentum=`RSI около ${rsi.toFixed(0)}: ${rsi>=70?'импульс перегрет, возможен откат':rsi<=30?'цена под сильным давлением, возможен технический отскок':'индикатор находится вне крайних зон'}.`;
 
-    max=Math.max(...data.map(c=>c.h));
+  let levelsText=`Поддержка — ${support?fmt(support):'не определена'}, сопротивление — ${resistance?fmt(resistance):'не определено'}.`;
 
-  }
+  if(gs!==null&&gs>=0)levelsText+=` До поддержки около ${(gs*100).toFixed(1)}%.`;
 
-  const gap=(max-min)*.09;
+  if(gr!==null&&gr>=0)levelsText+=` До сопротивления около ${(gr*100).toFixed(1)}%.`;
 
-  min-=gap;
+  const scenario=`Базовая модельная оценка: через 7 дней ${fmt(p7.mid)} (${p7.mid>=price?'+':''}${pct(p7.mid/price-1)}); через 30 дней ${fmt(p30.mid)} (${p30.mid>=price?'+':''}${pct(p30.mid/price-1)}). Это экстраполяция, не гарантированная целевая цена.`;
 
-  max+=gap;
+  const riskText=`Риск ${risk}. Диапазон расширяется с горизонтом. Модель не может заранее учесть новости, гэпы, изменение ставок, корпоративные события и смену рыночного режима.`;
+
+  return {ok:true,price,cs,support,resistance,vol,rsi,trend,risk,points,p7,p30,summary,riskText,levelsText,momentum,scenario,drift};
+
+}
+
+function drawChart(canvas,cs,model,currentPrice){
+
+  const ctx=canvas.getContext('2d'),dpr=window.devicePixelRatio||1;
+
+  const W=Math.max(300,canvas.clientWidth||600),H=Math.max(190,canvas.clientHeight||250);
+
+  canvas.width=W*dpr;canvas.height=H*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
+
+  if(!cs.length){ctx.fillStyle='#7d899d';ctx.font='12px sans-serif';ctx.fillText('Нет доступной истории свечей',12,24);return}
+
+  const data=cs.slice(-90),future=model&&model.ok?model.points:[],pad={l:8,r:68,t:13,b:23},cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+
+  let vals=data.flatMap(c=>[c.l,c.h]);
+
+  if(model&&model.ok)future.forEach(p=>vals.push(p.low,p.high,p.mid));
+
+  if(currentPrice>0)vals.push(currentPrice);
+
+  let min=Math.min(...vals),max=Math.max(...vals);
+
+  if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min){min=1;max=2}
+
+  const gap=(max-min)*.08;min-=gap;max+=gap;
 
   const y=p=>pad.t+(max-p)/(max-min)*ch;
 
-  ctx.strokeStyle='#edf0f6';
-
-  ctx.lineWidth=1;
+  ctx.strokeStyle='#edf0f6';ctx.lineWidth=1;
 
   for(let i=0;i<=4;i++){
 
-    const yy=pad.t+ch*i/4;
+    const yy=pad.t+ch*i/4;ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(W-pad.r+2,yy);ctx.stroke();
 
-    ctx.beginPath();
+    const v=max-(max-min)*i/4;ctx.fillStyle='#8792a5';ctx.font='10px sans-serif';
 
-    ctx.moveTo(pad.l,yy);
-
-    ctx.lineTo(W-pad.r+3,yy);
-
-    ctx.stroke();
-
-    const v=max-(max-min)*i/4;
-
-    ctx.fillStyle='#8792a5';
-
-    ctx.font='10px sans-serif';
-
-    ctx.fillText(v.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+7,yy+3);
+    ctx.fillText(v.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+6,yy+3);
 
   }
 
-  if(support&&support>min&&support<max){
-
-    ctx.setLineDash([4,4]);
-
-    ctx.strokeStyle='#28a184';
-
-    ctx.beginPath();
-
-    ctx.moveTo(pad.l,y(support));
-
-    ctx.lineTo(W-pad.r,y(support));
-
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-  }
-
-  if(resistance&&resistance>min&&resistance<max){
-
-    ctx.setLineDash([4,4]);
-
-    ctx.strokeStyle='#d69a55';
-
-    ctx.beginPath();
-
-    ctx.moveTo(pad.l,y(resistance));
-
-    ctx.lineTo(W-pad.r,y(resistance));
-
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-  }
-
-  const slot=cw/data.length;
-
-  const body=Math.max(2,slot*.56);
+  const slot=cw/(data.length+Math.max(10,future.length)),body=Math.max(2,slot*.58);
 
   data.forEach((c,i)=>{
 
-    const x=pad.l+i*slot+slot/2;
+    const x=pad.l+i*slot+slot/2,up=c.c>=c.o;
 
-    const up=c.c>=c.o;
+    ctx.strokeStyle=up?'#168568':'#c74b55';ctx.fillStyle=ctx.strokeStyle;
 
-    ctx.strokeStyle=up?'#168568':'#c74b55';
+    ctx.beginPath();ctx.moveTo(x,y(c.h));ctx.lineTo(x,y(c.l));ctx.stroke();
 
-    ctx.fillStyle=ctx.strokeStyle;
-
-    ctx.lineWidth=1;
-
-    ctx.beginPath();
-
-    ctx.moveTo(x,y(c.h));
-
-    ctx.lineTo(x,y(c.l));
-
-    ctx.stroke();
-
-    const top=y(Math.max(c.o,c.c));
-
-    const bottom=y(Math.min(c.o,c.c));
+    const top=y(Math.max(c.o,c.c)),bottom=y(Math.min(c.o,c.c));
 
     ctx.fillRect(x-body/2,top,body,Math.max(1,bottom-top));
 
   });
 
-  const live=currentPrice>0?currentPrice:data[data.length-1].c;
+  if(model&&model.ok){
 
-  ctx.strokeStyle='#4664d9';
+    [[model.support,'#28a184'],[model.resistance,'#d69a55']].forEach(([level,color])=>{
 
-  ctx.setLineDash([3,3]);
+      if(level&&level>min&&level<max){
 
-  ctx.beginPath();
+        ctx.strokeStyle=color;ctx.setLineDash([4,4]);ctx.lineWidth=1;
 
-  ctx.moveTo(pad.l,y(live));
+        ctx.beginPath();ctx.moveTo(pad.l,y(level));ctx.lineTo(W-pad.r,y(level));ctx.stroke();ctx.setLineDash([]);
 
-  ctx.lineTo(W-pad.r,y(live));
+      }
 
-  ctx.stroke();
+    });
 
-  ctx.setLineDash([]);
+  }
 
-  ctx.fillStyle='#4664d9';
+  const current=currentPrice>0?currentPrice:data[data.length-1].c,xNow=pad.l+data.length*slot;
 
-  ctx.font='bold 10px sans-serif';
+  if(future.length){
 
-  ctx.fillText('Текущая цена '+live.toLocaleString('ru-RU',{maximumFractionDigits:2}),pad.l+2,H-5);
+    ctx.fillStyle='rgba(154,123,231,.16)';ctx.beginPath();
+
+    future.forEach((p,i)=>ctx.lineTo(xNow+i*slot,y(p.high)));
+
+    for(let i=future.length-1;i>=0;i--)ctx.lineTo(xNow+i*slot,y(future[i].low));
+
+    ctx.closePath();ctx.fill();
+
+    ctx.strokeStyle='#9a7be7';ctx.lineWidth=2;ctx.beginPath();
+
+    future.forEach((p,i)=>{const x=xNow+i*slot;if(i===0)ctx.moveTo(x,y(current));ctx.lineTo(x,y(p.mid))});
+
+    ctx.stroke();
+
+  }
+
+  ctx.strokeStyle='#4664d9';ctx.setLineDash([4,3]);ctx.lineWidth=1.3;
+
+  ctx.beginPath();ctx.moveTo(pad.l,y(current));ctx.lineTo(W-pad.r,y(current));ctx.stroke();ctx.setLineDash([]);
+
+  ctx.fillStyle='#4664d9';ctx.font='bold 10px sans-serif';
+
+  ctx.fillText('Сейчас',pad.l+3,Math.max(11,y(current)-5));
+
+  ctx.fillStyle='#9a7be7';ctx.fillText('Прогноз',Math.min(W-pad.r-45,xNow+10),H-5);
 
 }
 
 function calcSummary(rows){
 
-  const market=rows.reduce((s,r)=>s+r.value,0);
-
-  const pnl=rows.reduce((s,r)=>s+r.pnl,0);
-
-  const cost=market-pnl;
-
-  const dep=Math.max(0,cost)*.12/12;
+  const market=rows.reduce((s,r)=>s+r.value,0),pnl=rows.reduce((s,r)=>s+r.pnl,0),cost=market-pnl,dep=Math.max(0,cost)*.12/12;
 
   $('invested').textContent=fmt(Math.max(0,cost));
 
@@ -784,11 +646,61 @@ function calcSummary(rows){
 
   $('pnl').className=pnl>=0?'positive':'negative';
 
-  $('returnPct').textContent='Изменение по позициям: '+(cost>0?pct(pnl/cost):'—');
+  $('returnPct').textContent='Результат по открытым позициям: '+(cost>0?pct(pnl/cost):'—');
 
   $('depositMonth').textContent='За месяц получилось бы около '+fmt(dep);
 
-  $('topResult').textContent='Результат инвестиций: '+(pnl>0?'+':'')+fmt(pnl);
+}
+
+async function lifetimeIncome(accounts){
+
+  let total=0,seen=0,unavailable=0;
+
+  const from='2015-01-01T00:00:00Z',to=new Date().toISOString();
+
+  for(const ac of accounts){
+
+    const accountId=ac.id||ac.accountId;if(!accountId)continue;
+
+    try{
+
+      let cursor='',pages=0,hasNext=true;
+
+      while(hasNext&&pages<20){
+
+        const body={accountId,from,to,limit:1000,state:'OPERATION_STATE_EXECUTED'};
+
+        if(cursor)body.cursor=cursor;
+
+        const d=await api(OPS,'GetOperationsByCursor',body,22000);
+
+        for(const op of d.operations||[]){
+
+          const type=String(get(op,'type','operationType')||'').toUpperCase();
+
+          const payment=val(get(op,'payment')),y=val(get(op,'yield','yieldValue'));
+
+          if(type.includes('SELL')){total+=y;seen++}
+
+          else if(type.includes('DIVIDEND')||type.includes('COUPON')){total+=payment;seen++}
+
+          else if(type.includes('TAX')||type.includes('BROKER_FEE')||type.includes('SERVICE_FEE')||type.includes('COMMISSION')){total+=payment;seen++}
+
+        }
+
+        hasNext=Boolean(d.hasNext);cursor=d.nextCursor||'';pages++;
+
+        if(!cursor&&hasNext)break;
+
+      }
+
+    }catch(e){unavailable++}
+
+  }
+
+  if(seen===0&&unavailable>0)throw new Error('История операций недоступна');
+
+  return {total,seen,unavailable};
 
 }
 
@@ -796,155 +708,169 @@ function renderRows(rows){
 
   const root=$('assets');
 
-  if(!rows.length){
+  if(!rows.length){root.innerHTML='<section class="card empty">В портфеле не найдены открытые позиции.</section>';return}
 
-    root.innerHTML='<section class="card empty">В портфеле не найдены открытые позиции.</section>';
+  root.innerHTML=rows.map((r,i)=>`<details class="card asset" data-index="${i}">
 
-    return;
+  <summary class="asset-head">
 
-  }
+    <div>
 
-  root.innerHTML=rows.map((r,i)=>`
+      <div class="asset-name">${esc(r.name||r.ticker)}</div>
 
-    <details class="card asset" data-index="${i}">
+      <div class="asset-sub">${esc(r.ticker)} · ${fmt(r.qty,4).replace(' ₽',' шт.')}</div>
 
-      <summary class="asset-head">
+      <div class="asset-meta"><span class="pill hold" id="signal-${i}">АНАЛИЗ…</span><span class="small ${r.pnl>=0?'positive':'negative'}">${r.pnl>=0?'+':''}${fmt(r.pnl)}</span></div>
 
-        <div>
+    </div>
 
-          <div class="asset-name">${esc(r.name||r.ticker)}</div>
+    <div class="asset-price">${fmt(r.price)}<div class="asset-sub">за единицу</div></div>
 
-          <div class="asset-sub">${esc(r.ticker)} · ${fmt(r.qty,4).replace(' ₽',' шт.')}</div>
+  </summary>
 
-          <div class="asset-meta">
+  <div class="asset-detail">
 
-            <span class="pill hold" id="signal-${i}">АНАЛИЗ…</span>
+    <div class="forecast-head">
 
-            <span class="small ${r.pnl>=0?'positive':'negative'}">${r.pnl>=0?'+':''}${fmt(r.pnl)}</span>
+      <div><div class="forecast-title">Прогноз цены</div><div class="forecast-sub">История · базовый сценарий · диапазон неопределённости</div></div>
 
-          </div>
+      <span class="small muted" id="time-${i}">Загрузка истории…</span>
 
-        </div>
+    </div>
 
-        <div class="asset-price">
+    <div class="chart-wrap"><canvas class="chart" id="chart-${i}"></canvas></div>
 
-          ${fmt(r.price)}
+    <div class="forecast-legend">
 
-          <div class="asset-sub">за единицу</div>
+      <span><i class="legend-dot" style="background:#168568"></i>Рост свечи</span>
 
-        </div>
+      <span><i class="legend-dot" style="background:#c74b55"></i>Снижение свечи</span>
 
-      </summary>
+      <span><i class="legend-dot" style="background:#4664d9"></i>Текущая цена</span>
 
-      <div class="asset-detail">
+      <span><i class="legend-dot" style="background:#9a7be7"></i>Прогноз</span>
 
-        <div class="row">
+      <span><i class="legend-dot" style="background:#b9a9ef"></i>Диапазон сценария</span>
 
-          <strong style="font-size:12px">График цены</strong>
+    </div>
 
-          <span class="small muted" id="time-${i}">Загрузка истории…</span>
+    <div class="levels">
 
-        </div>
+      <div class="level"><span>ПОДДЕРЖКА</span><b id="support-${i}">—</b></div>
 
-        <div class="chart-wrap" style="margin-top:8px">
+      <div class="level"><span>СОПРОТИВЛЕНИЕ</span><b id="resistance-${i}">—</b></div>
 
-          <canvas class="chart" id="chart-${i}"></canvas>
+    </div>
 
-        </div>
+    <div class="forecast-grid">
 
-        <div class="levels">
+      <div class="forecast-stat"><span>БАЗОВЫЙ СЦЕНАРИЙ · 7 ДНЕЙ</span><b id="forecast7-${i}">—</b><small id="forecast7pct-${i}">—</small></div>
 
-          <div class="level"><span>ПОДДЕРЖКА</span><b id="support-${i}">—</b></div>
+      <div class="forecast-stat"><span>БАЗОВЫЙ СЦЕНАРИЙ · 30 ДНЕЙ</span><b id="forecast30-${i}">—</b><small id="forecast30pct-${i}">—</small></div>
 
-          <div class="level"><span>СОПРОТИВЛЕНИЕ</span><b id="resistance-${i}">—</b></div>
+      <div class="forecast-stat"><span>ДИАПАЗОН · 7 ДНЕЙ</span><b id="range7-${i}">—</b></div>
 
-        </div>
+      <div class="forecast-stat"><span>ДИАПАЗОН · 30 ДНЕЙ</span><b id="range30-${i}">—</b></div>
 
-        <div class="analysis">
+    </div>
 
-          <h3>Интеллектуальный анализ</h3>
+    <div class="analysis">
 
-          <p id="analysis-${i}">Загрузка данных…</p>
+      <h3>Интеллектуальный анализ</h3>
 
-        </div>
+      <div id="analysis-${i}"><div class="analysis-block"><p>Загрузка истории, волатильности и сценариев…</p></div></div>
 
-        <div class="small muted" style="margin-top:9px">
+    </div>
 
-          Цена обновляется по последним доступным данным T‑Invest. Рыночные данные могут задерживаться, если биржа закрыта.
+    <div class="small muted" style="margin-top:9px">Цена обновляется по последним доступным данным T‑Invest. Рыночные данные могут задерживаться, если биржа закрыта.</div>
 
-        </div>
+  </div>
 
-      </div>
+  </details>`).join('');
 
-    </details>
+  root.querySelectorAll('details.asset').forEach(d=>d.addEventListener('toggle',()=>{
 
-  `).join('');
+    if(d.open){const i=Number(d.dataset.index);loadDetail(i)}
 
-  root.querySelectorAll('details.asset').forEach(d=>{
-
-    d.addEventListener('toggle',()=>{
-
-      if(d.open)loadDetail(Number(d.dataset.index));
-
-    });
-
-  });
+  }));
 
 }
 
 async function loadDetail(i){
 
-  const r=S.rows[i];
-
-  if(!r||r.detailLoading||r.detailLoaded)return;
-
-  r.detailLoading=true;
+  const r=S.rows[i];if(!r||r.detailLoading||r.detailLoaded)return;r.detailLoading=true;
 
   try{
 
-    const cs=await candles(r.uid);
+    const [daily,hourly]=await Promise.all([
 
-    r.candles=cs;
+      candles(r.uid,'CANDLE_INTERVAL_DAY',400),
 
-    r.detailLoaded=true;
+      candles(r.uid,'CANDLE_INTERVAL_HOUR',45).catch(()=>[])
 
-    $('time-'+i).textContent=cs.length
+    ]);
 
-      ?new Date(cs[cs.length-1].time).toLocaleString('ru-RU',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})
+    const cs=daily.length?daily:hourly;r.candles=cs;r.hourly=hourly;r.detailLoaded=true;
 
-      :'История недоступна';
+    $('time-'+i).textContent=cs.length?'История до '+new Date(cs[cs.length-1].time).toLocaleDateString('ru-RU'):'История недоступна';
 
-    const sup=getLevel(cs,'l');
+    const model=forecastModel(daily,hourly,r.price);
 
-    const res=getLevel(cs,'h');
+    if(!model.ok){
 
-    const sig=signalFor(cs);
+      $('analysis-'+i).innerHTML=`<div class="analysis-block"><h3>Данных пока недостаточно</h3><p>${esc(model.reason)}</p></div>`;
 
-    $('signal-'+i).textContent=sig.name;
+      drawChart($('chart-'+i),cs,null,r.price);return;
 
-    $('signal-'+i).className='pill '+sig.key;
+    }
 
-    $('support-'+i).textContent=sup?fmt(sup):'—';
+    r.model=model;const sig=signalFromModel(model);
 
-    $('resistance-'+i).textContent=res?fmt(res):'—';
+    $('signal-'+i).textContent=sig.name;$('signal-'+i).className='pill '+sig.key;
 
-    $('analysis-'+i).textContent=sig.text;
+    $('support-'+i).textContent=model.support?fmt(model.support):'—';
 
-    drawChart($('chart-'+i),cs,sup,res,r.price);
+    $('resistance-'+i).textContent=model.resistance?fmt(model.resistance):'—';
+
+    $('forecast7-'+i).textContent=fmt(model.p7.mid);
+
+    $('forecast7pct-'+i).textContent=(model.p7.mid>=r.price?'+':'')+pct(model.p7.mid/r.price-1)+' к текущей цене';
+
+    $('forecast30-'+i).textContent=fmt(model.p30.mid);
+
+    $('forecast30pct-'+i).textContent=(model.p30.mid>=r.price?'+':'')+pct(model.p30.mid/r.price-1)+' к текущей цене';
+
+    $('range7-'+i).textContent=fmt(model.p7.low,0)+' – '+fmt(model.p7.high,0);
+
+    $('range30-'+i).textContent=fmt(model.p30.low,0)+' – '+fmt(model.p30.high,0);
+
+    const blocks=[
+
+      ['Рыночная картина',model.summary],
+
+      ['Технический импульс',model.momentum],
+
+      ['Ключевые уровни',model.levelsText],
+
+      ['Сценарий цены',model.scenario],
+
+      ['Риски и ограничения',model.riskText]
+
+    ];
+
+    $('analysis-'+i).innerHTML=blocks.map(([h,t])=>`<div class="analysis-block"><h3>${esc(h)}</h3><p>${esc(t)}</p></div>`).join('');
+
+    drawChart($('chart-'+i),cs,model,r.price);
 
   }catch(e){
 
     $('time-'+i).textContent='Нет данных';
 
-    $('analysis-'+i).textContent=explainError(e);
+    $('analysis-'+i).innerHTML=`<div class="analysis-block"><h3>Не удалось построить прогноз</h3><p>${esc(explainError(e))}</p></div>`;
 
-    setStatus('Не удалось получить график: '+explainError(e),true);
+    setStatus('Не удалось получить данные для прогноза: '+explainError(e),true);
 
-  }finally{
-
-    r.detailLoading=false;
-
-  }
+  }finally{r.detailLoading=false}
 
 }
 
@@ -952,11 +878,9 @@ function explainError(e){
 
   const m=String(e&&e.message||e);
 
-  if(/Failed to fetch|NetworkError|CORS|Load failed/i.test(m)){
+  if(/Failed to fetch|NetworkError|CORS|Load failed/i.test(m))
 
     return 'Браузер не смог обратиться к API. GitHub Pages — статический хостинг; если запрос блокируется политикой CORS T‑Invest, понадобится небольшой защищённый серверный прокси. Не вставляй токен в опубликованный код.';
-
-  }
 
   return m;
 
@@ -966,17 +890,11 @@ async function refreshPortfolio(initial=false){
 
   if(S.busy)return;
 
-  S.busy=true;
-
-  $('refresh').disabled=true;
-
-  $('connect').disabled=true;
+  S.busy=true;$('refresh').disabled=true;$('connect').disabled=true;
 
   $('busyIcon').innerHTML='<span class="spin"></span>';
 
-  if(initial)setStatus('Подключаюсь к T‑Invest…');
-
-  else setStatus('Обновляю цены и портфель…');
+  if(initial)setStatus('Подключаюсь к T‑Invest…');else setStatus('Обновляю цены и портфель…');
 
   try{
 
@@ -990,9 +908,7 @@ async function refreshPortfolio(initial=false){
 
     for(const ac of S.accounts){
 
-      const aid=ac.id||ac.accountId;
-
-      if(!aid)continue;
+      const aid=ac.id||ac.accountId;if(!aid)continue;
 
       const p=await api(OPS,'GetPortfolio',{accountId:aid});
 
@@ -1018,23 +934,15 @@ async function refreshPortfolio(initial=false){
 
         all.push({
 
-          uid,
-
-          ticker:get(x,'ticker','figi')||uid.slice(0,8),
+          uid,ticker:get(x,'ticker','figi')||uid.slice(0,8),
 
           name:get(x,'name','instrumentName')||get(x,'ticker')||uid.slice(0,8),
 
-          qty:quantity,
-
-          price:val(get(x,'currentPrice','price')),
+          qty:quantity,price:val(get(x,'currentPrice','price')),
 
           avg:val(get(x,'averagePositionPrice','averagePrice','average_price')),
 
-          pnl:val(get(x,'expectedYield','pnl','profitLoss')),
-
-          raw:x,
-
-          accountId:aid
+          pnl:val(get(x,'expectedYield','pnl','profitLoss')),raw:x,accountId:aid
 
         });
 
@@ -1052,9 +960,7 @@ async function refreshPortfolio(initial=false){
 
     for(const r of unique){
 
-      const latest=prices[r.uid];
-
-      if(latest>0)r.price=latest;
+      const latest=prices[r.uid];if(latest>0)r.price=latest;
 
       r.value=r.price*r.qty;
 
@@ -1064,17 +970,43 @@ async function refreshPortfolio(initial=false){
 
     }
 
-    S.rows=unique;
+    S.rows=unique;calcSummary(unique);renderRows(unique);
 
-    calcSummary(unique);
+    if(!S.lifetimeAt||Date.now()-S.lifetimeAt>30*60*1000){
 
-    renderRows(unique);
+      $('allTimeIncome').textContent='Доход за всё время: считаю…';
+
+      try{
+
+        const hist=await lifetimeIncome(S.accounts);
+
+        S.lifetimeValue=hist;S.lifetimeAt=Date.now();
+
+        $('allTimeIncome').textContent='Доход за всё время: '+(hist.total>0?'+':'')+fmt(hist.total);
+
+        $('allTimeIncome').title='Результат закрытых продаж и выплаты по доступным операциям. Учтено операций: '+hist.seen;
+
+      }catch(histErr){
+
+        S.lifetimeAt=Date.now()-25*60*1000;
+
+        $('allTimeIncome').textContent='Доход за всё время: недоступен';
+
+        $('allTimeIncome').title='История операций недоступна: '+explainError(histErr);
+
+      }
+
+    }else if(S.lifetimeValue){
+
+      $('allTimeIncome').textContent='Доход за всё время: '+(S.lifetimeValue.total>0?'+':'')+fmt(S.lifetimeValue.total);
+
+    }
 
     $('lastUpdated').textContent='Обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
 
     S.lastRefresh=Date.now();
 
-    setStatus(`Обновлено ${unique.length} позиций. Автообновление — каждые 10 минут, пока вкладка открыта.`);
+    setStatus(`Обновлено ${unique.length} позиций. Прогноз рассчитан по доступной истории; обновление — каждые 10 минут при открытой вкладке.`);
 
     $('refresh').disabled=false;
 
@@ -1082,37 +1014,19 @@ async function refreshPortfolio(initial=false){
 
       const i=Number(d.dataset.index);
 
-      if(S.rows[i]){
-
-        S.rows[i].detailLoaded=false;
-
-        loadDetail(i);
-
-      }
+      if(S.rows[i]){S.rows[i].detailLoaded=false;loadDetail(i)}
 
     });
 
   }catch(e){
 
-    const msg=explainError(e);
+    const msg=explainError(e);setStatus(msg,true);
 
-    setStatus(msg,true);
-
-    if(!S.rows.length){
-
-      $('assets').innerHTML=`<section class="card empty">${esc(msg)}<br><br>Если сообщение содержит CORS или Failed to fetch, проблема в ограничениях браузера, а не в токене.</section>`;
-
-    }
+    if(!S.rows.length)$('assets').innerHTML=`<section class="card empty">${esc(msg)}<br><br>Если сообщение содержит CORS или Failed to fetch, проблема в ограничениях браузера, а не в токене.</section>`;
 
   }finally{
 
-    S.busy=false;
-
-    $('connect').disabled=false;
-
-    $('refresh').disabled=!S.token;
-
-    $('busyIcon').textContent='';
+    S.busy=false;$('connect').disabled=false;$('refresh').disabled=!S.token;$('busyIcon').textContent='';
 
   }
 
@@ -1134,17 +1048,9 @@ $('connect').addEventListener('click',async()=>{
 
   const t=$('token').value.trim();
 
-  if(!t){
+  if(!t){setStatus('Введи T‑Invest API-токен.',true);return}
 
-    setStatus('Введи T‑Invest API-токен.',true);
-
-    return;
-
-  }
-
-  S.token=t;
-
-  await refreshPortfolio(true);
+  S.token=t;await refreshPortfolio(true);
 
   if(S.rows.length)startAuto();
 
@@ -1154,29 +1060,15 @@ $('refresh').addEventListener('click',()=>refreshPortfolio(false));
 
 document.addEventListener('visibilitychange',()=>{
 
-  if(document.visibilityState==='visible'&&S.token&&Date.now()-S.lastRefresh>=600000&&!S.busy){
-
-    refreshPortfolio(false);
-
-  }
+  if(document.visibilityState==='visible'&&S.token&&Date.now()-S.lastRefresh>=600000&&!S.busy)refreshPortfolio(false);
 
 });
 
-window.addEventListener('resize',()=>{
+window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{
 
-  S.rows.forEach((r,i)=>{
+  const c=$('chart-'+i);if(c&&r.candles)drawChart(c,r.candles,r.model,r.price);
 
-    const c=$('chart-'+i);
-
-    if(c&&r.candles){
-
-      drawChart(c,r.candles,getLevel(r.candles,'l'),getLevel(r.candles,'h'),r.price);
-
-    }
-
-  });
-
-});
+}));
 
 })();
 
