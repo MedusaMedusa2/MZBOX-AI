@@ -1,0 +1,1187 @@
+<!doctype html>
+
+<html lang="ru">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<meta name="theme-color" content="#f6f8fc">
+
+<title>MZBOX AI</title>
+
+<style>
+
+:root{color-scheme:light;--bg:#f5f7fb;--card:#fff;--ink:#182235;--muted:#7d899d;--line:#e6ebf3;--green:#148568;--red:#c74b55;--blue:#4664d9;--shadow:0 7px 25px rgba(25,42,75,.045)}
+
+*{box-sizing:border-box}
+
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+
+button,input{font:inherit}
+
+button{cursor:pointer}
+
+main{max-width:1040px;margin:auto;padding:18px 16px 30px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 16px}
+
+.brand{font-size:22px;font-weight:800;letter-spacing:-.8px}
+
+.topright{text-align:right;color:var(--muted);font-size:11px}
+
+.tiny-result{font-size:12px;margin-top:3px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:15px;margin-bottom:12px}
+
+.section{font-size:10px;font-weight:800;letter-spacing:1.15px;color:#8792a5;margin:19px 2px 9px}
+
+.muted{color:var(--muted)}
+
+.small{font-size:11px}
+
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+.stat{min-width:0;padding:13px;border:1px solid var(--line);border-radius:13px}
+
+.stat span{display:block;color:var(--muted);font-size:10px;letter-spacing:.5px}
+
+.stat strong{display:block;font-size:19px;margin-top:4px;overflow-wrap:anywhere}
+
+.positive{color:var(--green)!important}
+
+.negative{color:var(--red)!important}
+
+.deposit{padding:11px 13px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;margin-top:10px}
+
+.deposit b{display:block;margin-top:3px;font-size:14px}
+
+.income-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+
+.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}
+
+.field input,.token-input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);outline:none}
+
+.field input:focus,.token-input:focus{border-color:#8b9df0}
+
+.needed{grid-column:1/-1;border-radius:12px;background:#f2f5ff;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+
+.needed span{font-size:11px;color:#65718a}
+
+.needed strong{font-size:20px;color:var(--blue);white-space:nowrap}
+
+.btn{border:0;border-radius:11px;padding:11px 14px;background:#202b40;color:white;font-weight:700}
+
+.btn.secondary{background:#edf1f8;color:#3b4a63}
+
+.btn:disabled{opacity:.5;cursor:wait}
+
+.tokenrow{display:flex;gap:8px;margin-top:10px}
+
+.tokenrow .token-input{min-width:0;flex:1}
+
+.status{font-size:11px;color:var(--muted);margin-top:9px;overflow-wrap:anywhere}
+
+.status.error{color:var(--red)}
+
+.asset{overflow:hidden}
+
+.asset-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;cursor:pointer;list-style:none}
+
+.asset-head::-webkit-details-marker{display:none}
+
+.asset-name{font-weight:750;font-size:14px}
+
+.asset-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+.asset-price{text-align:right;font-weight:750;font-size:15px;white-space:nowrap}
+
+.asset-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px}
+
+.pill{display:inline-flex;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:800;border:1px solid transparent;white-space:nowrap}
+
+.pill.buy{background:#e5f7ee;color:#087b4d;border-color:#b9e6ce}
+
+.pill.hold{background:#edf1ff;color:#3d54bf;border-color:#d6defe}
+
+.pill.sell{background:#fff0ee;color:#b63e35;border-color:#f4d0cc}
+
+.asset-detail{border-top:1px solid var(--line);margin-top:13px;padding-top:13px}
+
+.chart-wrap{border:1px solid var(--line);border-radius:13px;padding:7px;overflow:hidden;background:#fff}
+
+.chart{width:100%;height:250px;display:block}
+
+.levels{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:9px 0}
+
+.level{border:1px solid var(--line);border-radius:11px;padding:10px}
+
+.level span{display:block;font-size:10px;color:var(--muted)}
+
+.level b{font-size:16px;display:block;margin-top:3px}
+
+.analysis{background:#f8f9fc;border:1px solid #edf0f6;border-radius:12px;padding:12px;margin-top:10px}
+
+.analysis h3{font-size:12px;margin:0 0 5px}
+
+.analysis p{font-size:12px;color:#58657b;line-height:1.55;margin:0}
+
+.empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:12px}
+
+.footer{text-align:center;color:#8993a5;font-size:10px;font-weight:400;margin-top:20px;line-height:1.8}
+
+.spin{display:inline-block;width:10px;height:10px;border:2px solid #d5dbea;border-top-color:#4664d9;border-radius:50%;animation:spin .7s linear infinite}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(min-width:700px){
+
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.summary-grid .stat{height:100%}
+
+.summary-grid .deposit{grid-column:1/-1;margin-top:0}
+
+.asset-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+
+.asset-list .asset{margin:0}
+
+.chart{height:300px}
+
+}
+
+@media(max-width:430px){
+
+main{padding:13px 11px 24px}
+
+.brand{font-size:20px}
+
+.card{padding:12px;border-radius:15px}
+
+.stat{padding:11px}
+
+.stat strong{font-size:17px}
+
+.needed strong{font-size:18px}
+
+.chart{height:220px}
+
+.tokenrow{flex-direction:column}
+
+.tokenrow .btn{width:100%}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<main>
+
+<header class="top">
+
+  <div class="brand">MZBOX AI</div>
+
+  <div class="topright">
+
+    <div id="lastUpdated">Нет обновлений</div>
+
+    <div class="tiny-result" id="topResult">Результат инвестиций: —</div>
+
+  </div>
+
+</header>
+
+<section class="card">
+
+  <div class="row">
+
+    <div>
+
+      <div class="section" style="margin:0 0 8px">ПОДКЛЮЧЕНИЕ T‑INVEST</div>
+
+      <div class="small muted">Токен используется только в этой вкладке и не сохраняется.</div>
+
+    </div>
+
+    <span id="busyIcon"></span>
+
+  </div>
+
+  <div class="tokenrow">
+
+    <input id="token" class="token-input" type="password" autocomplete="off" spellcheck="false" placeholder="Вставь T‑Invest API-токен">
+
+    <button id="connect" class="btn">Подключить</button>
+
+  </div>
+
+  <div class="status" id="status">Для начала введи токен и нажми «Подключить».</div>
+
+</section>
+
+<div class="section">ПОРТФЕЛЬ</div>
+
+<section class="card">
+
+  <div class="summary-grid">
+
+    <div class="stat">
+
+      <span>ВЛОЖЕНО В ПОРТФЕЛЬ · ОЦЕНКА</span>
+
+      <strong id="invested">—</strong>
+
+      <div class="small muted" id="marketValue">Рыночная стоимость: —</div>
+
+    </div>
+
+    <div class="stat">
+
+      <span>РЕЗУЛЬТАТ ПОРТФЕЛЯ</span>
+
+      <strong id="pnl">—</strong>
+
+      <div class="small muted" id="returnPct">—</div>
+
+    </div>
+
+    <div class="deposit">
+
+      <span class="small muted">ЕСЛИ БЫ ВЛОЖЕННАЯ СУММА ЛЕЖАЛА НА ВКЛАДЕ ПОД 12% ГОДОВЫХ</span>
+
+      <b id="depositMonth">За месяц: —</b>
+
+    </div>
+
+  </div>
+
+</section>
+
+<div class="section">ПЛАН ЕЖЕДНЕВНОГО ДОХОДА</div>
+
+<section class="card">
+
+  <div class="income-grid">
+
+    <div class="field">
+
+      <label for="target">Желаемый доход в день, ₽</label>
+
+      <input id="target" type="number" min="1" step="50" value="1000" inputmode="decimal">
+
+    </div>
+
+    <div class="field">
+
+      <label for="passive">Прочий пассивный доход в день, ₽</label>
+
+      <input id="passive" type="number" min="0" step="1" value="0" inputmode="decimal">
+
+    </div>
+
+    <div class="needed">
+
+      <span>Нужно получать от инвестиций в день</span>
+
+      <strong id="needed">1 000 ₽</strong>
+
+    </div>
+
+  </div>
+
+</section>
+
+<div class="row">
+
+  <div class="section" style="margin-top:15px">АКЦИИ ПОРТФЕЛЯ</div>
+
+  <button id="refresh" class="btn secondary" style="padding:7px 10px;font-size:11px" disabled>Обновить</button>
+
+</div>
+
+<div id="assets" class="asset-list">
+
+  <section class="card empty">После подключения здесь появятся активы портфеля.</section>
+
+</div>
+
+<div class="footer">
+
+  Не является индивидуальной инвестиционной рекомендацией<br>
+
+  Разработчик: Кутузов Дмитрий Владимирович
+
+</div>
+
+</main>
+
+<script>
+
+(()=>{'use strict';
+
+const API='https://invest-public-api.tbank.ru/rest/';
+
+const S={token:'',accounts:[],rows:[],timer:null,busy:false,lastRefresh:0,activeRequest:0};
+
+const $=id=>document.getElementById(id);
+
+const fmt=(n,d=2)=>Number.isFinite(Number(n))
+
+  ?Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})+' ₽'
+
+  :'—';
+
+const pct=n=>(Number(n)*100).toLocaleString('ru-RU',{
+
+  minimumFractionDigits:2,maximumFractionDigits:2
+
+})+'%';
+
+const val=x=>{
+
+  if(x==null)return 0;
+
+  if(typeof x==='number')return x;
+
+  if(typeof x==='string')return Number(x.replace(',','.'))||0;
+
+  if(typeof x==='object'){
+
+    if('units'in x||'nano'in x)return (Number(x.units)||0)+(Number(x.nano)||0)/1e9;
+
+    if('value'in x)return val(x.value);
+
+  }
+
+  return 0;
+
+};
+
+const get=(o,...ks)=>{
+
+  for(const k of ks)if(o&&o[k]!=null)return o[k];
+
+  return null;
+
+};
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({
+
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+
+}[c]));
+
+function setStatus(s,error=false){
+
+  $('status').textContent=s;
+
+  $('status').classList.toggle('error',error);
+
+}
+
+function updateIncome(){
+
+  const t=Math.max(0,Number($('target').value)||0);
+
+  const p=Math.max(0,Number($('passive').value)||0);
+
+  $('needed').textContent=fmt(Math.max(0,t-p),0);
+
+}
+
+$('target').addEventListener('input',updateIncome);
+
+$('passive').addEventListener('input',updateIncome);
+
+updateIncome();
+
+async function api(service,method,body={},timeout=18000){
+
+  const controller=new AbortController();
+
+  const tm=setTimeout(()=>controller.abort(),timeout);
+
+  try{
+
+    const r=await fetch(API+service+'/'+method,{
+
+      method:'POST',
+
+      headers:{
+
+        'Authorization':'Bearer '+S.token,
+
+        'Content-Type':'application/json',
+
+        'Accept':'application/json'
+
+      },
+
+      body:JSON.stringify(body),
+
+      signal:controller.signal,
+
+      cache:'no-store'
+
+    });
+
+    const text=await r.text();
+
+    let data={};
+
+    try{data=text?JSON.parse(text):{}}catch{}
+
+    if(!r.ok)throw new Error(`HTTP ${r.status}: ${data.message||data.description||text.slice(0,180)||r.statusText}`);
+
+    if(data.code&&data.code!=='0')throw new Error(data.message||data.description||data.code);
+
+    return data;
+
+  }finally{
+
+    clearTimeout(tm);
+
+  }
+
+}
+
+const USERS='tinkoff.public.invest.api.contract.v1.UsersService';
+
+const OPS='tinkoff.public.invest.api.contract.v1.OperationsService';
+
+const MD='tinkoff.public.invest.api.contract.v1.MarketDataService';
+
+async function lastPrices(uids){
+
+  const out={};
+
+  for(let i=0;i<uids.length;i+=100){
+
+    const d=await api(MD,'GetLastPrices',{instrumentId:uids.slice(i,i+100)});
+
+    for(const p of d.lastPrices||[]){
+
+      const uid=get(p,'instrumentUid','instrumentUID','instrument_uid','figi');
+
+      const price=val(get(p,'price','lastPrice'));
+
+      if(uid&&price>0)out[uid]=price;
+
+    }
+
+  }
+
+  return out;
+
+}
+
+async function candles(uid){
+
+  const to=new Date();
+
+  const from=new Date(to.getTime()-36*3600*1000);
+
+  const d=await api(MD,'GetCandles',{
+
+    instrumentId:uid,
+
+    from:from.toISOString(),
+
+    to:to.toISOString(),
+
+    interval:'CANDLE_INTERVAL_5_MIN'
+
+  },16000);
+
+  return(d.candles||[]).map(c=>({
+
+    time:new Date(c.time||c.timestamp).getTime(),
+
+    o:val(c.open),h:val(c.high),l:val(c.low),c:val(c.close),v:val(c.volume)
+
+  })).filter(c=>c.time&&c.c>0&&c.h>0&&c.l>0).sort((a,b)=>a.time-b.time);
+
+}
+
+function getLevel(cs,which){
+
+  const arr=cs.slice(-72);
+
+  if(arr.length<8)return null;
+
+  const vals=arr.map(c=>c[which]);
+
+  return which==='l'?Math.min(...vals):Math.max(...vals);
+
+}
+
+function signalFor(cs){
+
+  if(cs.length<20)return{
+
+    name:'ДЕРЖАТЬ',key:'hold',
+
+    text:'Недостаточно рыночной истории для уверенного сигнала. Наблюдай за ценой и уровнями.'
+
+  };
+
+  const closes=cs.map(x=>x.c);
+
+  const ema=(a,n)=>{
+
+    const k=2/(n+1);
+
+    let e=a[0];
+
+    for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);
+
+    return e;
+
+  };
+
+  const e9=ema(closes.slice(-45),9);
+
+  const e21=ema(closes.slice(-80),21);
+
+  let gains=0,losses=0;
+
+  for(let i=Math.max(1,closes.length-15);i<closes.length;i++){
+
+    const dif=closes[i]-closes[i-1];
+
+    if(dif>0)gains+=dif;
+
+    else losses-=dif;
+
+  }
+
+  const rs=gains/(losses||1e-9);
+
+  const rsi=100-100/(1+rs);
+
+  if(e9>e21&&rsi<70)return{
+
+    name:'ПОКУПАТЬ',key:'buy',
+
+    text:`Краткосрочное движение вверх подтверждается средними. RSI около ${rsi.toFixed(0)}; перед входом оцени расстояние до сопротивления и возможный убыток.`
+
+  };
+
+  if(e9<e21&&rsi>35)return{
+
+    name:'ПРОДАВАТЬ',key:'sell',
+
+    text:`Краткосрочная динамика ослаблена. RSI около ${rsi.toFixed(0)}; проверь поддержку и размер позиции, не принимай решение только по одному сигналу.`
+
+  };
+
+  return{
+
+    name:'ДЕРЖАТЬ',key:'hold',
+
+    text:`Сигналы смешанные, RSI около ${rsi.toFixed(0)}. Дождись подтверждения направления; ключевые ориентиры — ближайшие поддержка и сопротивление.`
+
+  };
+
+}
+
+function drawChart(canvas,cs,support,resistance,currentPrice){
+
+  const ctx=canvas.getContext('2d');
+
+  const dpr=window.devicePixelRatio||1;
+
+  const W=Math.max(300,canvas.clientWidth||600);
+
+  const H=Math.max(190,canvas.clientHeight||250);
+
+  canvas.width=W*dpr;
+
+  canvas.height=H*dpr;
+
+  ctx.scale(dpr,dpr);
+
+  ctx.clearRect(0,0,W,H);
+
+  if(!cs.length){
+
+    ctx.fillStyle='#7d899d';
+
+    ctx.font='12px sans-serif';
+
+    ctx.fillText('Нет доступной истории свечей',12,24);
+
+    return;
+
+  }
+
+  const data=cs.slice(-70);
+
+  const pad={l:8,r:64,t:12,b:22};
+
+  const cw=W-pad.l-pad.r;
+
+  const ch=H-pad.t-pad.b;
+
+  let min=Math.min(...data.map(c=>c.l),support||Infinity,currentPrice>0?currentPrice:Infinity);
+
+  let max=Math.max(...data.map(c=>c.h),resistance||-Infinity,currentPrice>0?currentPrice:-Infinity);
+
+  if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min){
+
+    min=Math.min(...data.map(c=>c.l));
+
+    max=Math.max(...data.map(c=>c.h));
+
+  }
+
+  const gap=(max-min)*.09;
+
+  min-=gap;
+
+  max+=gap;
+
+  const y=p=>pad.t+(max-p)/(max-min)*ch;
+
+  ctx.strokeStyle='#edf0f6';
+
+  ctx.lineWidth=1;
+
+  for(let i=0;i<=4;i++){
+
+    const yy=pad.t+ch*i/4;
+
+    ctx.beginPath();
+
+    ctx.moveTo(pad.l,yy);
+
+    ctx.lineTo(W-pad.r+3,yy);
+
+    ctx.stroke();
+
+    const v=max-(max-min)*i/4;
+
+    ctx.fillStyle='#8792a5';
+
+    ctx.font='10px sans-serif';
+
+    ctx.fillText(v.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+7,yy+3);
+
+  }
+
+  if(support&&support>min&&support<max){
+
+    ctx.setLineDash([4,4]);
+
+    ctx.strokeStyle='#28a184';
+
+    ctx.beginPath();
+
+    ctx.moveTo(pad.l,y(support));
+
+    ctx.lineTo(W-pad.r,y(support));
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+  }
+
+  if(resistance&&resistance>min&&resistance<max){
+
+    ctx.setLineDash([4,4]);
+
+    ctx.strokeStyle='#d69a55';
+
+    ctx.beginPath();
+
+    ctx.moveTo(pad.l,y(resistance));
+
+    ctx.lineTo(W-pad.r,y(resistance));
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+  }
+
+  const slot=cw/data.length;
+
+  const body=Math.max(2,slot*.56);
+
+  data.forEach((c,i)=>{
+
+    const x=pad.l+i*slot+slot/2;
+
+    const up=c.c>=c.o;
+
+    ctx.strokeStyle=up?'#168568':'#c74b55';
+
+    ctx.fillStyle=ctx.strokeStyle;
+
+    ctx.lineWidth=1;
+
+    ctx.beginPath();
+
+    ctx.moveTo(x,y(c.h));
+
+    ctx.lineTo(x,y(c.l));
+
+    ctx.stroke();
+
+    const top=y(Math.max(c.o,c.c));
+
+    const bottom=y(Math.min(c.o,c.c));
+
+    ctx.fillRect(x-body/2,top,body,Math.max(1,bottom-top));
+
+  });
+
+  const live=currentPrice>0?currentPrice:data[data.length-1].c;
+
+  ctx.strokeStyle='#4664d9';
+
+  ctx.setLineDash([3,3]);
+
+  ctx.beginPath();
+
+  ctx.moveTo(pad.l,y(live));
+
+  ctx.lineTo(W-pad.r,y(live));
+
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+
+  ctx.fillStyle='#4664d9';
+
+  ctx.font='bold 10px sans-serif';
+
+  ctx.fillText('Текущая цена '+live.toLocaleString('ru-RU',{maximumFractionDigits:2}),pad.l+2,H-5);
+
+}
+
+function calcSummary(rows){
+
+  const market=rows.reduce((s,r)=>s+r.value,0);
+
+  const pnl=rows.reduce((s,r)=>s+r.pnl,0);
+
+  const cost=market-pnl;
+
+  const dep=Math.max(0,cost)*.12/12;
+
+  $('invested').textContent=fmt(Math.max(0,cost));
+
+  $('marketValue').textContent='Рыночная стоимость: '+fmt(market);
+
+  $('pnl').textContent=(pnl>0?'+':'')+fmt(pnl);
+
+  $('pnl').className=pnl>=0?'positive':'negative';
+
+  $('returnPct').textContent='Изменение по позициям: '+(cost>0?pct(pnl/cost):'—');
+
+  $('depositMonth').textContent='За месяц получилось бы около '+fmt(dep);
+
+  $('topResult').textContent='Результат инвестиций: '+(pnl>0?'+':'')+fmt(pnl);
+
+}
+
+function renderRows(rows){
+
+  const root=$('assets');
+
+  if(!rows.length){
+
+    root.innerHTML='<section class="card empty">В портфеле не найдены открытые позиции.</section>';
+
+    return;
+
+  }
+
+  root.innerHTML=rows.map((r,i)=>`
+
+    <details class="card asset" data-index="${i}">
+
+      <summary class="asset-head">
+
+        <div>
+
+          <div class="asset-name">${esc(r.name||r.ticker)}</div>
+
+          <div class="asset-sub">${esc(r.ticker)} · ${fmt(r.qty,4).replace(' ₽',' шт.')}</div>
+
+          <div class="asset-meta">
+
+            <span class="pill hold" id="signal-${i}">АНАЛИЗ…</span>
+
+            <span class="small ${r.pnl>=0?'positive':'negative'}">${r.pnl>=0?'+':''}${fmt(r.pnl)}</span>
+
+          </div>
+
+        </div>
+
+        <div class="asset-price">
+
+          ${fmt(r.price)}
+
+          <div class="asset-sub">за единицу</div>
+
+        </div>
+
+      </summary>
+
+      <div class="asset-detail">
+
+        <div class="row">
+
+          <strong style="font-size:12px">График цены</strong>
+
+          <span class="small muted" id="time-${i}">Загрузка истории…</span>
+
+        </div>
+
+        <div class="chart-wrap" style="margin-top:8px">
+
+          <canvas class="chart" id="chart-${i}"></canvas>
+
+        </div>
+
+        <div class="levels">
+
+          <div class="level"><span>ПОДДЕРЖКА</span><b id="support-${i}">—</b></div>
+
+          <div class="level"><span>СОПРОТИВЛЕНИЕ</span><b id="resistance-${i}">—</b></div>
+
+        </div>
+
+        <div class="analysis">
+
+          <h3>Интеллектуальный анализ</h3>
+
+          <p id="analysis-${i}">Загрузка данных…</p>
+
+        </div>
+
+        <div class="small muted" style="margin-top:9px">
+
+          Цена обновляется по последним доступным данным T‑Invest. Рыночные данные могут задерживаться, если биржа закрыта.
+
+        </div>
+
+      </div>
+
+    </details>
+
+  `).join('');
+
+  root.querySelectorAll('details.asset').forEach(d=>{
+
+    d.addEventListener('toggle',()=>{
+
+      if(d.open)loadDetail(Number(d.dataset.index));
+
+    });
+
+  });
+
+}
+
+async function loadDetail(i){
+
+  const r=S.rows[i];
+
+  if(!r||r.detailLoading||r.detailLoaded)return;
+
+  r.detailLoading=true;
+
+  try{
+
+    const cs=await candles(r.uid);
+
+    r.candles=cs;
+
+    r.detailLoaded=true;
+
+    $('time-'+i).textContent=cs.length
+
+      ?new Date(cs[cs.length-1].time).toLocaleString('ru-RU',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})
+
+      :'История недоступна';
+
+    const sup=getLevel(cs,'l');
+
+    const res=getLevel(cs,'h');
+
+    const sig=signalFor(cs);
+
+    $('signal-'+i).textContent=sig.name;
+
+    $('signal-'+i).className='pill '+sig.key;
+
+    $('support-'+i).textContent=sup?fmt(sup):'—';
+
+    $('resistance-'+i).textContent=res?fmt(res):'—';
+
+    $('analysis-'+i).textContent=sig.text;
+
+    drawChart($('chart-'+i),cs,sup,res,r.price);
+
+  }catch(e){
+
+    $('time-'+i).textContent='Нет данных';
+
+    $('analysis-'+i).textContent=explainError(e);
+
+    setStatus('Не удалось получить график: '+explainError(e),true);
+
+  }finally{
+
+    r.detailLoading=false;
+
+  }
+
+}
+
+function explainError(e){
+
+  const m=String(e&&e.message||e);
+
+  if(/Failed to fetch|NetworkError|CORS|Load failed/i.test(m)){
+
+    return 'Браузер не смог обратиться к API. GitHub Pages — статический хостинг; если запрос блокируется политикой CORS T‑Invest, понадобится небольшой защищённый серверный прокси. Не вставляй токен в опубликованный код.';
+
+  }
+
+  return m;
+
+}
+
+async function refreshPortfolio(initial=false){
+
+  if(S.busy)return;
+
+  S.busy=true;
+
+  $('refresh').disabled=true;
+
+  $('connect').disabled=true;
+
+  $('busyIcon').innerHTML='<span class="spin"></span>';
+
+  if(initial)setStatus('Подключаюсь к T‑Invest…');
+
+  else setStatus('Обновляю цены и портфель…');
+
+  try{
+
+    const a=await api(USERS,'GetAccounts',{status:'ACCOUNT_STATUS_OPEN'});
+
+    S.accounts=a.accounts||[];
+
+    if(!S.accounts.length)throw new Error('API не вернул открытые счета. Проверь доступ токена.');
+
+    let all=[];
+
+    for(const ac of S.accounts){
+
+      const aid=ac.id||ac.accountId;
+
+      if(!aid)continue;
+
+      const p=await api(OPS,'GetPortfolio',{accountId:aid});
+
+      let positions=p.positions||[];
+
+      if(!positions.length){
+
+        const alt=await api(OPS,'GetPositions',{accountId:aid});
+
+        positions=alt.securities||alt.positions||[];
+
+      }
+
+      for(const x of positions){
+
+        const uid=get(x,'instrumentUid','instrumentUID','instrument_uid');
+
+        const quantity=val(get(x,'quantity','balance','position'));
+
+        const type=String(get(x,'instrumentType','instrument_type')||'').toLowerCase();
+
+        if(!uid||quantity<=0||['currency','cash','rub','currency_position'].includes(type))continue;
+
+        all.push({
+
+          uid,
+
+          ticker:get(x,'ticker','figi')||uid.slice(0,8),
+
+          name:get(x,'name','instrumentName')||get(x,'ticker')||uid.slice(0,8),
+
+          qty:quantity,
+
+          price:val(get(x,'currentPrice','price')),
+
+          avg:val(get(x,'averagePositionPrice','averagePrice','average_price')),
+
+          pnl:val(get(x,'expectedYield','pnl','profitLoss')),
+
+          raw:x,
+
+          accountId:aid
+
+        });
+
+      }
+
+    }
+
+    const unique=[...new Map(all.map(r=>[r.uid,r])).values()];
+
+    if(!unique.length)throw new Error('Счёт подключён, но открытые позиции не найдены.');
+
+    setStatus('Получаю последние цены…');
+
+    const prices=await lastPrices(unique.map(r=>r.uid));
+
+    for(const r of unique){
+
+      const latest=prices[r.uid];
+
+      if(latest>0)r.price=latest;
+
+      r.value=r.price*r.qty;
+
+      if(!r.pnl&&r.avg>0)r.pnl=(r.price-r.avg)*r.qty;
+
+      r.pnl=Number.isFinite(r.pnl)?r.pnl:0;
+
+    }
+
+    S.rows=unique;
+
+    calcSummary(unique);
+
+    renderRows(unique);
+
+    $('lastUpdated').textContent='Обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+
+    S.lastRefresh=Date.now();
+
+    setStatus(`Обновлено ${unique.length} позиций. Автообновление — каждые 10 минут, пока вкладка открыта.`);
+
+    $('refresh').disabled=false;
+
+    document.querySelectorAll('details.asset[open]').forEach(d=>{
+
+      const i=Number(d.dataset.index);
+
+      if(S.rows[i]){
+
+        S.rows[i].detailLoaded=false;
+
+        loadDetail(i);
+
+      }
+
+    });
+
+  }catch(e){
+
+    const msg=explainError(e);
+
+    setStatus(msg,true);
+
+    if(!S.rows.length){
+
+      $('assets').innerHTML=`<section class="card empty">${esc(msg)}<br><br>Если сообщение содержит CORS или Failed to fetch, проблема в ограничениях браузера, а не в токене.</section>`;
+
+    }
+
+  }finally{
+
+    S.busy=false;
+
+    $('connect').disabled=false;
+
+    $('refresh').disabled=!S.token;
+
+    $('busyIcon').textContent='';
+
+  }
+
+}
+
+function startAuto(){
+
+  if(S.timer)clearInterval(S.timer);
+
+  S.timer=setInterval(()=>{
+
+    if(document.visibilityState==='visible'&&S.token&&!S.busy)refreshPortfolio(false);
+
+  },600000);
+
+}
+
+$('connect').addEventListener('click',async()=>{
+
+  const t=$('token').value.trim();
+
+  if(!t){
+
+    setStatus('Введи T‑Invest API-токен.',true);
+
+    return;
+
+  }
+
+  S.token=t;
+
+  await refreshPortfolio(true);
+
+  if(S.rows.length)startAuto();
+
+});
+
+$('refresh').addEventListener('click',()=>refreshPortfolio(false));
+
+document.addEventListener('visibilitychange',()=>{
+
+  if(document.visibilityState==='visible'&&S.token&&Date.now()-S.lastRefresh>=600000&&!S.busy){
+
+    refreshPortfolio(false);
+
+  }
+
+});
+
+window.addEventListener('resize',()=>{
+
+  S.rows.forEach((r,i)=>{
+
+    const c=$('chart-'+i);
+
+    if(c&&r.candles){
+
+      drawChart(c,r.candles,getLevel(r.candles,'l'),getLevel(r.candles,'h'),r.price);
+
+    }
+
+  });
+
+});
+
+})();
+
+</script>
+
+</body>
+
+</html>
