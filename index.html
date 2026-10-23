@@ -3,109 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5f7fb">
+<meta name="theme-color" content="#0d1220">
 <title>MZBOX AI</title>
 <style>
-:root{color-scheme:light;--bg:#f5f7fb;--card:#fff;--ink:#192438;--muted:#8290a5;--line:#e6ebf2;--green:#168568;--red:#c94f5a;--blue:#536de0;--shadow:0 5px 24px #20365b08}
+:root{
+ --bg:#f3f5f9;--card:#fff;--ink:#192338;--muted:#8490a4;--line:#e6eaf1;
+ --blue:#526fe3;--violet:#9273e8;--green:#168b68;--red:#d25562;
+ --soft:#f7f8fc;--shadow:0 8px 28px rgba(24,39,75,.045)
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body.dark{color-scheme:dark;--bg:#0e1219;--card:#161c26;--ink:#edf2fa;--muted:#99a7bb;--line:#2a3443;--shadow:0 5px 24px #0003}
-button,input{font:inherit}button{cursor:pointer}
-main{max-width:960px;margin:auto;padding:18px 15px 30px}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:3px 0 20px}
-.brand{font-size:23px;font-weight:850;letter-spacing:-.8px}
-.subtitle{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px}
-.actions{display:flex;gap:6px}
-.square{width:29px;height:29px;padding:0;border:1px solid #9ba7b9;border-radius:5px;background:var(--card);color:var(--ink)}
-.theme{background:linear-gradient(135deg,#26354e 0 49%,#fff 51%)}
-body.dark .theme{background:linear-gradient(135deg,#fff 0 49%,#26354e 51%)}
-.section{font-size:10px;font-weight:800;letter-spacing:1.15px;color:var(--muted);margin:19px 2px 9px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:11px;box-shadow:var(--shadow)}
-label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}
-input{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);outline:none}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.1px}
+body.dark{
+ color-scheme:dark;--bg:#0d1220;--card:#141b2b;--ink:#eaf0fc;--muted:#8d9bb3;
+ --line:#263147;--soft:#101727;--shadow:0 8px 28px #0002
+}
+button,input{font:inherit}
+button{cursor:pointer}
+main{width:min(100%,1000px);margin:auto;padding:20px 15px 32px}
+header{display:flex;align-items:center;justify-content:space-between;margin:4px 0 23px;gap:12px}
+.brand{font-size:25px;font-weight:850;letter-spacing:-1.2px}
+.brand span{color:var(--blue)}
+.subtitle{color:var(--muted);font-size:9px;letter-spacing:2px;margin-top:2px}
+.actions{display:flex;gap:7px}
+.square{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:16px}
+.theme{background:linear-gradient(135deg,#1d2b49 0 49%,#fff 51%);border-color:#bdc6d7}
+body.dark .theme{background:linear-gradient(135deg,#fff 0 49%,#1d2b49 51%)}
+.section{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--muted);margin:23px 2px 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px;margin-bottom:11px;box-shadow:var(--shadow)}
+label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}
+input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);outline:none}
 input:focus{border-color:var(--blue)}
 .tokenrow{display:flex;gap:8px;margin-top:9px}
-.tokenrow input{flex:1;min-width:0}
-.btn{border:0;border-radius:9px;padding:10px 13px;background:#24334c;color:#fff;font-weight:700}
-body.dark .btn{background:#e0e8f7;color:#172238}
-.btn:disabled{opacity:.5}
-.note{font-size:10px;color:var(--muted);margin-top:7px}
-.status{font-size:11px;color:var(--muted);margin-top:9px;overflow-wrap:anywhere}
+.tokenrow input{min-width:0;flex:1}
+.btn{border:0;border-radius:10px;padding:10px 14px;background:#263653;color:#fff;font-weight:750;font-size:12px}
+body.dark .btn{background:#e2e9f8;color:#17233b}
+.btn:disabled{opacity:.55}
+.note{font-size:10px;color:var(--muted);margin-top:8px}
+.status{font-size:11px;color:var(--muted);margin-top:10px;overflow-wrap:anywhere}
 .status.error{color:var(--red)}
 .locked{background:#f0f3f8!important;color:#77849a!important}
-body.dark .locked{background:#222b39!important;color:#a8b4c7!important}
-.refreshrow{display:flex;justify-content:center;margin:10px 0 14px}
-.refresh{width:min(250px,75%);padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font-size:12px;font-weight:650}
+body.dark .locked{background:#222b3c!important;color:#a8b4c7!important}
+.refreshrow{display:flex;justify-content:center;margin:12px 0 16px}
+.refresh{width:min(250px,75%);padding:9px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:12px;font-weight:700;transition:.2s}
+.refresh:active{transform:scale(.985)}
 .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.stat{border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
-.stat span{display:block;font-size:10px;color:var(--muted)}
-.stat strong{display:block;font-size:19px;margin-top:4px;overflow-wrap:anywhere}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;min-width:0;box-shadow:var(--shadow)}
+.stat span{display:block;font-size:9px;color:var(--muted);letter-spacing:.7px;font-weight:750}
+.stat strong{display:block;font-size:19px;letter-spacing:-.6px;margin-top:7px;overflow-wrap:anywhere}
 .pos{color:var(--green)!important}.neg{color:var(--red)!important}
-.asset{overflow:hidden}
+.assetgrid{display:grid;grid-template-columns:1fr;gap:10px}
+.asset{margin:0;padding:15px}
 .asset summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;cursor:pointer;list-style:none}
 .asset summary::-webkit-details-marker{display:none}
-.assetname{font-size:14px;font-weight:780}
-.sub{font-size:11px;color:var(--muted);margin-top:3px}
-.price{text-align:right;font-size:15px;font-weight:750;white-space:nowrap}
-.meta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px}
-.pill{font-size:9px;font-weight:800;border-radius:999px;padding:5px 8px}
+.assetname{font-size:14px;font-weight:800}
+.sub{font-size:10px;color:var(--muted);margin-top:4px}
+.price{text-align:right;font-size:15px;font-weight:800;white-space:nowrap}
+.meta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.pill{font-size:9px;font-weight:850;letter-spacing:.4px;border-radius:7px;padding:5px 7px}
 .buy{background:#e3f7ed;color:#137c50}.hold{background:#edf1ff;color:#4058c3}.sell{background:#fff0ee;color:#b63d35}
-body.dark .buy{background:#183b2c;color:#9ce4bd}body.dark .hold{background:#252f4d;color:#bbc8ff}body.dark .sell{background:#40262b;color:#ffb4b4}
-.detail{border-top:1px solid var(--line);margin-top:13px;padding-top:13px}
-.charthead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}
-.charttitle{font-size:12px;font-weight:750}.chartsub{font-size:10px;color:var(--muted);margin-top:3px}
-.chartwrap{border:1px solid var(--line);border-radius:12px;padding:7px;background:var(--card);overflow:hidden}
-canvas{width:100%;height:260px;display:block}
-.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--muted);margin:8px 2px}
-.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
-.levels,.fcgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.level,.fc{border:1px solid var(--line);border-radius:11px;padding:10px;min-width:0}
-.level span,.fc span{font-size:10px;color:var(--muted);display:block}
-.level b,.fc b{display:block;font-size:15px;margin-top:4px;overflow-wrap:anywhere}
-.fc small{font-size:10px;color:var(--muted);display:block;margin-top:3px}
-.scenario{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:10px}
-.scenariohead{padding:10px;background:#f7f9fc;border-bottom:1px solid var(--line);font-size:11px;font-weight:750}
-body.dark .scenariohead{background:#1c2430}
-.scenariolist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-.point{padding:9px 7px;border-bottom:1px solid var(--line);min-width:0}
-.point:not(:nth-child(3n+1)){border-left:1px solid var(--line)}
-.point .time{font-size:10px;color:var(--muted)}
-.point .value{font-size:12px;font-weight:750;margin-top:3px;overflow-wrap:anywhere}
-.point .move{font-size:9px;margin-top:2px}
-.analysis{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);box-shadow:inset 3px 0 #9a7be7}
-.analysis h3{font-size:12px;margin:0 0 6px}
-.analysis p{font-size:12px;line-height:1.55;color:var(--muted);margin:0}
-.gate{padding:16px;border:1px dashed var(--line);border-radius:12px;text-align:center;background:var(--bg)}
-.gate p{font-size:12px;color:var(--muted);margin:0 0 10px}
+body.dark .buy{background:#183b2c;color:#9ce4bd}
+body.dark .hold{background:#252f4d;color:#bbc8ff}
+body.dark .sell{background:#40262b;color:#ffb4b4}
+.detail{border-top:1px solid var(--line);margin-top:15px;padding-top:15px}
+.forecast-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
+.charttitle{font-size:14px;font-weight:850;letter-spacing:-.3px}
+.chartsub{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5}
+.live-indicator{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);white-space:nowrap}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 0 3px #168b6818}
+.chart-card{border:1px solid var(--line);border-radius:15px;padding:11px 9px 8px;background:var(--card);overflow:hidden}
+.chart-topline{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin:1px 2px 8px}
+.chart-price{font-size:20px;font-weight:850;letter-spacing:-.8px}
+.chart-change{font-size:10px;font-weight:750;margin-top:4px}
+.chart-label{font-size:9px;color:var(--muted);text-align:right;line-height:1.5}
+.chart-tabs{display:flex;gap:5px;padding:4px;background:var(--soft);border:1px solid var(--line);border-radius:11px;margin:12px 0}
+.chart-tab{flex:1;border:0;background:transparent;color:var(--muted);font-size:11px;font-weight:750;padding:9px 5px;border-radius:8px}
+.chart-tab.active{background:var(--card);color:var(--ink);box-shadow:0 2px 7px #17233b0c}
+.chart-wrap{width:100%;position:relative}
+canvas{width:100%;height:290px;display:block}
+.chart-caption{font-size:10px;line-height:1.5;color:var(--muted);margin:8px 4px 1px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:9px;color:var(--muted);margin:10px 3px 2px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:13px;height:3px;border-radius:3px}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.metric{padding:11px 10px;border:1px solid var(--line);border-radius:12px;min-width:0}
+.metric span{font-size:9px;color:var(--muted);display:block}
+.metric b{font-size:13px;display:block;margin-top:5px;overflow-wrap:anywhere}
+.metric small{font-size:9px;color:var(--muted);display:block;margin-top:3px}
+.path-wrap{border:1px solid var(--line);border-radius:13px;margin-top:11px;overflow:hidden}
+.path-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;border-bottom:1px solid var(--line)}
+.path-head strong{font-size:11px}
+.path-head span{font-size:9px;color:var(--muted)}
+.path-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.path-point{padding:10px;border-bottom:1px solid var(--line);min-width:0}
+.path-point:not(:nth-child(3n+1)){border-left:1px solid var(--line)}
+.path-time{font-size:9px;color:var(--muted)}
+.path-value{font-size:12px;font-weight:800;margin-top:5px;overflow-wrap:anywhere}
+.path-delta{font-size:9px;font-weight:750;margin-top:3px}
+.path-prob{font-size:9px;color:var(--muted);margin-top:4px}
+.analysis{margin-top:11px;padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--soft);box-shadow:inset 3px 0 var(--violet)}
+.analysis h3{font-size:12px;margin:0 0 7px}
+.analysis p{font-size:11px;line-height:1.65;color:var(--muted);margin:0}
+.gate{padding:17px;border:1px dashed var(--line);border-radius:13px;text-align:center;background:var(--soft)}
+.gate p{font-size:11px;color:var(--muted);margin:0 0 10px}
 .pinrow{display:flex;gap:7px;max-width:280px;margin:auto}
-.pin{min-width:0;text-align:center;letter-spacing:5px;font-weight:750}
-.openbtn{padding:9px 12px;border:0;border-radius:9px;background:#24334c;color:#fff;font-size:11px;font-weight:700}
+.pin{min-width:0;text-align:center;letter-spacing:5px;font-weight:800}
+.openbtn{padding:9px 12px;border:0;border-radius:9px;background:#263653;color:#fff;font-size:11px;font-weight:750}
 body.dark .openbtn{background:#e0e8f7;color:#172238}
 .errorpin{font-size:10px;color:var(--red);margin-top:7px}
 .unlocked{display:none}.unlocked.show{display:block}
-.trade{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:12px}
-.tradehead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.trade{margin-top:11px;border:1px solid var(--line);border-radius:13px;padding:13px}
+.tradehead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px}
 .tradehead h3{font-size:12px;margin:0}
-.auto{font-size:9px;letter-spacing:.5px;font-weight:800;background:#e3f7ed;color:#137c50;border-radius:7px;padding:5px 7px}
-.tradegrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.auto{font-size:9px;letter-spacing:.6px;font-weight:850;background:#e3f7ed;color:#137c50;border-radius:7px;padding:5px 7px}
+.tradegrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .tradebox{padding:11px;border:1px solid var(--line);border-radius:11px;min-width:0}
 .tradebox.accent{background:#f2f5ff;border-color:#e1e6ff}
 body.dark .tradebox.accent{background:#1b2337;border-color:#2c3856}
-.tradebox span{display:block;font-size:10px;color:var(--muted)}
-.tradebox strong{display:block;font-size:19px;margin-top:5px;overflow-wrap:anywhere}
-.tradebox small{display:block;font-size:10px;color:var(--muted);margin-top:4px}
-.tradehint{font-size:10px;color:var(--muted);line-height:1.5;margin-top:9px}
-.footer{text-align:center;color:var(--muted);font-size:10px;margin-top:20px;line-height:1.8}
-.empty{text-align:center;padding:22px;color:var(--muted);font-size:12px}
-@media(min-width:700px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.assetgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}.assetgrid .asset{margin:0}}
-@media(max-width:430px){main{padding:13px 11px 25px}.card{padding:12px}.brand{font-size:21px}.stat strong{font-size:17px}.scenariolist{grid-template-columns:repeat(2,minmax(0,1fr))}.point:not(:nth-child(3n+1)){border-left:0}.point:nth-child(even){border-left:1px solid var(--line)}.tokenrow{flex-direction:column}.tradegrid{grid-template-columns:1fr}.chartwrap canvas{height:225px}}
+.tradebox span{display:block;font-size:9px;color:var(--muted)}
+.tradebox strong{display:block;font-size:17px;margin-top:6px;overflow-wrap:anywhere}
+.tradebox small{display:block;font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5}
+.tradehint{font-size:10px;color:var(--muted);line-height:1.5;margin-top:10px}
+.empty{text-align:center;padding:24px;color:var(--muted);font-size:12px}
+.footer{text-align:center;color:var(--muted);font-size:10px;margin-top:22px;line-height:1.9}
+@media(min-width:720px){
+ main{padding-top:25px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .assetgrid{grid-template-columns:1fr 1fr;align-items:start}
+ canvas{height:330px}
+}
+@media(max-width:430px){
+ main{padding:13px 10px 25px}.brand{font-size:23px}.card{padding:12px}
+ .stat{padding:11px}.stat strong{font-size:17px}
+ .tokenrow{flex-direction:column}
+ canvas{height:250px}
+ .metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .metric{padding:9px 7px}.metric b{font-size:11px}
+ .path-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .path-point:not(:nth-child(3n+1)){border-left:0}
+ .path-point:nth-child(even){border-left:1px solid var(--line)}
+ .tradegrid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <main>
 <header>
- <div><div class="brand">MZBOX AI</div><div class="subtitle">INVESTMENT SYSTEM</div></div>
- <div class="actions"><button class="square" id="reset" title="Сбросить токен">↻</button><button class="square theme" id="theme" title="Сменить тему"></button></div>
+ <div><div class="brand">MZBOX <span>AI</span></div><div class="subtitle">MARKET INTELLIGENCE</div></div>
+ <div class="actions">
+  <button class="square" id="reset" title="Сбросить токен">↻</button>
+  <button class="square theme" id="theme" title="Сменить тему"></button>
+ </div>
 </header>
 
 <div class="section">ПОДКЛЮЧЕНИЕ</div>
@@ -113,7 +159,7 @@ body.dark .tradebox.accent{background:#1b2337;border-color:#2c3856}
  <label for="token">Токен T-Invest</label>
  <input id="token" type="password" autocomplete="off" placeholder="Вставь токен API">
  <div class="tokenrow"><button class="btn" id="run">Запустить</button></div>
- <div class="note">Токен сохраняется на этом устройстве. ↻ — сбросить токен.</div>
+ <div class="note">Токен сохраняется на устройстве. Нажми ↻, чтобы сбросить его.</div>
  <div class="status" id="status">Ожидание подключения.</div>
 </section>
 
@@ -128,7 +174,6 @@ body.dark .tradebox.accent{background:#1b2337;border-color:#2c3856}
 
 <div class="section">АКТИВЫ ПОРТФЕЛЯ</div>
 <div id="assets"><section class="card empty">Введи токен и нажми «Запустить».</section></div>
-
 <div class="footer">MZBOX AI<br>Не является индивидуальной инвестиционной рекомендацией</div>
 </main>
 
@@ -142,9 +187,10 @@ const EP={
  candles:BASE+'MarketDataService/GetCandles'
 };
 const $=id=>document.getElementById(id);
-const S={token:localStorage.getItem('mzbox_token')||'',rows:[],dark:localStorage.getItem('mzbox_theme')==='dark',busy:false};
+const S={token:localStorage.getItem('mzbox_token')||'',rows:[],dark:localStorage.getItem('mzbox_theme')==='dark',busy:false,mode:{}};
 const num=v=>{if(v==null)return 0;if(typeof v==='number')return v;return Number(v.units||0)+Number(v.nano||0)/1e9};
 const money=v=>Number(v||0).toLocaleString('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:2});
+const fmt=v=>Number(v||0).toLocaleString('ru-RU',{maximumFractionDigits:2});
 const percent=v=>(Number(v||0)*100).toLocaleString('ru-RU',{maximumFractionDigits:2})+'%';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setStatus(t,e=false){$('status').textContent=t;$('status').classList.toggle('error',e)}
@@ -155,21 +201,25 @@ async function api(url,body){
  try{
   const res=await fetch(url,{method:'POST',headers:{Authorization:'Bearer '+S.token,'Content-Type':'application/json'},body:JSON.stringify(body),signal:ctl.signal});
   const raw=await res.text();let data={};try{data=raw?JSON.parse(raw):{}}catch{}
-  if(!res.ok)throw Error(data.message||`HTTP ${res.status}`);return data;
+  if(!res.ok)throw Error(data.message||`HTTP ${res.status}`);
+  return data;
  }finally{clearTimeout(timer)}
 }
-async function getAccounts(){return (await api(EP.accounts,{})).accounts||[]}
-async function getPortfolio(id){return (await api(EP.portfolio,{accountId:id})).positions||[]}
+async function getAccounts(){return(await api(EP.accounts,{})).accounts||[]}
+async function getPortfolio(id){return(await api(EP.portfolio,{accountId:id})).positions||[]}
 async function getLast(ids){if(!ids.length)return[];return(await api(EP.last,{instrumentId:ids.map(instrumentId=>({instrumentId}))})).lastPrices||[]}
 async function getCandles(uid,interval,days){
  const to=new Date(),from=new Date(to.getTime()-days*86400000);
  const d=await api(EP.candles,{instrumentId:uid,from:from.toISOString(),to:to.toISOString(),interval});
- return(d.candles||[]).map(c=>({time:new Date(c.time).getTime(),o:num(c.open),h:num(c.high),l:num(c.low),c:num(c.close),v:num(c.volume)})).filter(c=>c.time&&c.c>0).sort((a,b)=>a.time-b.time)
+ return(d.candles||[]).map(c=>({
+  time:new Date(c.time).getTime(),o:num(c.open),h:num(c.high),l:num(c.low),c:num(c.close),v:num(c.volume)
+ })).filter(c=>c.time&&c.c>0).sort((a,b)=>a.time-b.time);
 }
 function normalize(positions,prices){
  const map=new Map(prices.map(p=>[p.instrumentUid||p.instrumentId,num(p.price)]));
  return positions.filter(p=>num(p.quantity)>0).map(p=>{
-  const uid=p.instrumentUid||p.instrumentId,qty=num(p.quantity),avg=num(p.averagePositionPrice),price=map.get(uid)||num(p.currentPrice)||avg,value=qty*price,pnl=value-qty*avg;
+  const uid=p.instrumentUid||p.instrumentId,qty=num(p.quantity),avg=num(p.averagePositionPrice);
+  const price=map.get(uid)||num(p.currentPrice)||avg,value=qty*price,pnl=value-qty*avg;
   return{uid,ticker:p.ticker||p.figi||uid,name:p.name||p.ticker||uid,qty,avg,price,value,pnl,ret:qty*avg?pnl/(qty*avg):0};
  }).sort((a,b)=>b.value-a.value)
 }
@@ -184,115 +234,301 @@ async function refresh(){
   const prices=await getLast(ids).catch(()=>[]);
   S.rows=normalize(positions,prices);render();
   setStatus('Обновлено: '+new Date().toLocaleString('ru-RU'));
- }catch(e){setStatus('Ошибка: '+e.message+(String(e.message).toLowerCase().includes('fetch')?' Возможно, браузер блокирует CORS.':' Проверь токен и права API.'),true)}
- finally{S.busy=false;$('refresh').disabled=$('run').disabled=false;$('refresh').textContent='Актуализировать'}
+ }catch(e){
+  setStatus('Ошибка: '+e.message+(String(e.message).toLowerCase().includes('fetch')?' Возможно, браузер блокирует CORS.':' Проверь токен и права API.'),true)
+ }finally{
+  S.busy=false;$('refresh').disabled=$('run').disabled=false;$('refresh').textContent='Актуализировать'
+ }
 }
 function render(){
  const rows=S.rows,total=rows.reduce((a,r)=>a+r.value,0),pnl=rows.reduce((a,r)=>a+r.pnl,0),cost=total-pnl;
- $('total').textContent=money(total);$('count').textContent=rows.length;$('pnl').textContent=(pnl>0?'+':'')+money(pnl);$('pnl').className=pnl>=0?'pos':'neg';$('ret').textContent=cost?percent(pnl/cost):'—';
+ $('total').textContent=money(total);$('count').textContent=rows.length;
+ $('pnl').textContent=(pnl>0?'+':'')+money(pnl);$('pnl').className=pnl>=0?'pos':'neg';
+ $('ret').textContent=cost?percent(pnl/cost):'—';
  if(!rows.length){$('assets').innerHTML='<section class="card empty">Открытые позиции не найдены.</section>';return}
  $('assets').innerHTML='<div class="assetgrid">'+rows.map((r,i)=>`
  <details class="card asset" data-i="${i}">
- <summary><div><div class="assetname">${esc(r.name)}</div><div class="sub">${esc(r.ticker)} · ${r.qty.toLocaleString('ru-RU')} шт.</div><div class="meta"><span class="pill hold" id="signal-${i}">АНАЛИЗ…</span><span class="small ${r.pnl>=0?'pos':'neg'}">${r.pnl>=0?'+':''}${money(r.pnl)}</span></div></div><div class="price">${money(r.price)}<div class="sub">за акцию</div></div></summary>
+ <summary>
+  <div>
+   <div class="assetname">${esc(r.name)}</div>
+   <div class="sub">${esc(r.ticker)} · ${fmt(r.qty)} шт.</div>
+   <div class="meta"><span class="pill hold" id="signal-${i}">АНАЛИЗ…</span><span class="${r.pnl>=0?'pos':'neg'}" style="font-size:10px;font-weight:750">${r.pnl>=0?'+':''}${money(r.pnl)}</span></div>
+  </div>
+  <div class="price">${money(r.price)}<div class="sub">за акцию</div></div>
+ </summary>
  <div class="detail">
- <div class="gate" id="gate-${i}"><p>Анализ и прогноз скрыты. Введи код на сегодня.</p><div class="pinrow"><input class="pin" id="pin-${i}" inputmode="numeric" type="password" maxlength="4" placeholder="••••"><button class="openbtn" data-unlock="${i}">Открыть</button></div><div class="errorpin" id="pinerr-${i}"></div></div>
- <div class="unlocked" id="locked-${i}">
- <div class="charthead"><div><div class="charttitle">Движение цены и прогноз</div><div class="chartsub" id="chartnote-${i}">Загрузка истории…</div></div></div>
- <div class="chartwrap"><canvas id="chart-${i}"></canvas></div>
- <div class="legend"><span><i class="dot" style="background:#168568"></i>История роста</span><span><i class="dot" style="background:#c94f5a"></i>История падения</span><span><i class="dot" style="background:#9474df"></i>Сценарий</span></div>
- <div class="levels"><div class="level"><span>ПОДДЕРЖКА</span><b id="support-${i}">—</b></div><div class="level"><span>СОПРОТИВЛЕНИЕ</span><b id="resistance-${i}">—</b></div></div>
- <div class="fcgrid"><div class="fc"><span>СЦЕНАРИЙ · 7 ДНЕЙ</span><b id="f7-${i}">—</b><small id="f7pct-${i}"></small></div><div class="fc"><span>СЦЕНАРИЙ · 30 ДНЕЙ</span><b id="f30-${i}">—</b><small id="f30pct-${i}"></small></div></div>
- <div class="scenario"><div class="scenariohead">Внутридневной сценарий · шаг 60 минут</div><div class="scenariolist" id="path-${i}"></div></div>
- <div class="analysis"><h3>Интеллектуальный вывод</h3><p id="analysis-${i}">Расчёт…</p></div>
- <div class="trade"><div class="tradehead"><h3>Расчёт потенциальной сделки</h3><span class="auto">АВТОРАСЧЁТ</span></div>
- <div class="tradegrid"><div class="tradebox"><span>Количество акций</span><strong id="tradeqty-${i}">—</strong><small>Текущая позиция</small></div><div class="tradebox"><span>Текущая цена</span><strong id="tradeprice-${i}">—</strong><small>Цена по API</small></div>
- <div class="tradebox accent"><span>Продажа по сценарию</span><strong id="tradesell-${i}">—</strong><small id="tradesellmeta-${i}">Оценка на ближайший период</small></div><div class="tradebox"><span>Результат при продаже</span><strong id="tradeprofit-${i}">—</strong><small id="tradeprofitmeta-${i}">Относительно средней цены покупки</small></div></div>
- <div class="tradehint" id="tradehint-${i}">Расчёт автоматически использует размер текущей позиции и среднюю цену покупки. Комиссии и налоги не учтены.</div></div>
- </div></div></details>`).join('')+'</div>';
+  <div class="gate" id="gate-${i}">
+   <p>Анализ и прогноз скрыты. Введи код на сегодня.</p>
+   <div class="pinrow"><input class="pin" id="pin-${i}" inputmode="numeric" type="password" maxlength="4" placeholder="••••"><button class="openbtn" data-unlock="${i}">Открыть</button></div>
+   <div class="errorpin" id="pinerr-${i}"></div>
+  </div>
+  <div class="unlocked" id="locked-${i}">
+   <div class="forecast-head">
+    <div><div class="charttitle">Движение цены</div><div class="chartsub" id="chartnote-${i}">Загрузка свежих свечей…</div></div>
+    <div class="live-indicator"><i class="live-dot"></i> API</div>
+   </div>
+   <div class="chart-card">
+    <div class="chart-topline">
+     <div><div class="chart-price" id="chartprice-${i}">${money(r.price)}</div><div class="chart-change" id="chartchange-${i}">—</div></div>
+     <div class="chart-label" id="chartstamp-${i}">Текущая цена<br>последние данные</div>
+    </div>
+    <div class="chart-tabs">
+     <button class="chart-tab active" data-mode="60" data-i="${i}">60 минут</button>
+     <button class="chart-tab" data-mode="360" data-i="${i}">6 часов</button>
+    </div>
+    <div class="chart-wrap"><canvas id="chart-${i}"></canvas></div>
+    <div class="chart-caption" id="chartcaption-${i}">Сплошная линия — фактические котировки. Пунктир — модельный сценарий. Заштрихованная зона — возможный диапазон, а не гарантия цены.</div>
+    <div class="legend">
+     <span><i style="background:#526fe3"></i>Фактическая цена</span>
+     <span><i style="background:#9273e8"></i>Прогноз</span>
+     <span><i style="background:#b6a7f2"></i>Диапазон</span>
+    </div>
+   </div>
+   <div class="metrics">
+    <div class="metric"><span>НАПРАВЛЕНИЕ</span><b id="trend-${i}">—</b><small id="trendmeta-${i}">Краткосрочно</small></div>
+    <div class="metric"><span>ВОЛАТИЛЬНОСТЬ</span><b id="vol-${i}">—</b><small>По истории цены</small></div>
+    <div class="metric"><span>УВЕРЕННОСТЬ</span><b id="confidence-${i}">—</b><small id="confmeta-${i}">Оценка модели</small></div>
+   </div>
+   <div class="path-wrap">
+    <div class="path-head"><strong id="path-title-${i}">Ближайшие 60 минут</strong><span id="path-note-${i}">Шаг 5 минут</span></div>
+    <div class="path-list" id="path-${i}"></div>
+   </div>
+   <div class="metrics">
+    <div class="metric"><span>ПОДДЕРЖКА</span><b id="support-${i}">—</b><small>Ближайший уровень</small></div>
+    <div class="metric"><span>СОПРОТИВЛЕНИЕ</span><b id="resistance-${i}">—</b><small>Ближайший уровень</small></div>
+    <div class="metric"><span>RSI</span><b id="rsi-${i}">—</b><small>Импульс цены</small></div>
+   </div>
+   <div class="analysis"><h3>Итог модели</h3><p id="analysis-${i}">Расчёт…</p></div>
+   <div class="trade">
+    <div class="tradehead"><h3>Расчёт потенциальной сделки</h3><span class="auto">АВТОРАСЧЁТ</span></div>
+    <div class="tradegrid">
+     <div class="tradebox"><span>Количество акций</span><strong id="tradeqty-${i}">—</strong><small>Текущая позиция</small></div>
+     <div class="tradebox"><span>Текущая цена</span><strong id="tradeprice-${i}">—</strong><small>Последняя доступная котировка</small></div>
+     <div class="tradebox accent"><span>Расчётная цена через 6 часов</span><strong id="tradesell-${i}">—</strong><small id="tradesellmeta-${i}">Модельный ориентир</small></div>
+     <div class="tradebox"><span>Результат при такой цене</span><strong id="tradeprofit-${i}">—</strong><small id="tradeprofitmeta-${i}">Относительно средней покупки</small></div>
+    </div>
+    <div class="tradehint" id="tradehint-${i}">Оценка до комиссий и налогов. Это не торговая заявка.</div>
+   </div>
+  </div>
+ </div>
+ </details>`).join('')+'</div>';
  $('assets').querySelectorAll('details.asset').forEach(el=>el.addEventListener('toggle',()=>{if(el.open)loadDetail(Number(el.dataset.i))}));
  $('assets').querySelectorAll('[data-unlock]').forEach(b=>b.addEventListener('click',()=>unlock(Number(b.dataset.unlock))));
  $('assets').querySelectorAll('.pin').forEach(inp=>inp.addEventListener('keydown',e=>{if(e.key==='Enter')unlock(Number(inp.id.split('-')[1]))}));
+ $('assets').querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(Number(b.dataset.i),Number(b.dataset.mode))));
 }
 function dailyCode(){const d=new Date();return String(d.getFullYear()+d.getMonth()+1+d.getDate())}
 function unlock(i){
  const inp=$('pin-'+i),err=$('pinerr-'+i);
- if(inp.value===dailyCode()){$('gate-'+i).classList.add('hidden');$('locked-'+i).classList.add('show');inp.value='';return}
+ if(inp.value===dailyCode()){
+  $('gate-'+i).style.display='none';$('locked-'+i).classList.add('show');inp.value='';loadDetail(i);return
+ }
  err.textContent='Неверный код. Проверь дату.';inp.value='';inp.focus()
 }
 function ema(a,p){if(!a.length)return 0;let v=a[0],k=2/(p+1);for(let i=1;i<a.length;i++)v=a[i]*k+v*(1-k);return v}
-function model(cs,hourly,price){
- const closes=cs.map(c=>c.c).filter(v=>v>0);if(closes.length<12)return{ok:false,reason:'Недостаточно исторических данных для прогноза.'};
- const tail=closes.slice(-Math.min(90,closes.length)),logs=tail.map(Math.log),n=logs.length,xb=(n-1)/2,yb=logs.reduce((a,b)=>a+b,0)/n;let cov=0,variance=0;
+function calcRsi(vals){
+ if(vals.length<3)return 50;
+ let gain=0,loss=0;const n=Math.min(14,vals.length-1);
+ for(let i=vals.length-n;i<vals.length;i++){const d=vals[i]-vals[i-1];if(d>0)gain+=d;else loss-=d}
+ return loss===0?100:100-100/(1+gain/loss)
+}
+function regression(vals){
+ if(vals.length<2)return 0;
+ const logs=vals.map(Math.log),n=logs.length,xb=(n-1)/2,yb=logs.reduce((a,b)=>a+b,0)/n;
+ let cov=0,variance=0;
  for(let i=0;i<n;i++){cov+=(i-xb)*(logs[i]-yb);variance+=(i-xb)**2}
- const slope=variance?cov/variance:0,fast=ema(closes.slice(-40),9),slow=ema(closes.slice(-80),21);
- const returns=[];for(let i=Math.max(1,closes.length-60);i<closes.length;i++)returns.push(Math.log(closes[i]/closes[i-1]));
- const avg=returns.reduce((a,b)=>a+b,0)/(returns.length||1),vol=Math.sqrt(returns.reduce((a,b)=>a+(b-avg)**2,0)/Math.max(1,returns.length-1));
- const hc=(hourly||[]).map(c=>c.c).filter(v=>v>0).slice(-36),hourTrend=hc.length>1?Math.log(hc.at(-1)/hc[0])/Math.max(1,hc.length-1):slope;
- const recent=closes.slice(-15);let gains=0,losses=0;for(let i=1;i<recent.length;i++){let d=recent[i]-recent[i-1];if(d>0)gains+=d;else losses-=d}
- const rsi=100-100/(1+gains/(losses||1e-9));
- const lows=cs.slice(-90).map(c=>c.l).filter(v=>v<price).sort((a,b)=>b-a),highs=cs.slice(-90).map(c=>c.h).filter(v=>v>price).sort((a,b)=>a-b);
- const support=lows[0]||price*(1-vol*2),resistance=highs[0]||price*(1+vol*2);
- const trend=fast>slow*1.003&&slope>0?'восходящий':fast<slow*.997&&slope<0?'нисходящий':'боковой';
- const drift=Math.max(-.02,Math.min(.02,.62*slope+.23*hourTrend+.15*avg));
- const intraday=[];let p=price;
- const hvol=hc.length>3?Math.sqrt(hc.slice(1).reduce((s,v,i)=>s+Math.pow(Math.log(v/hc[i]),2),0)/(hc.length-1)):Math.max(vol/Math.sqrt(18),.001);
- for(let k=1;k<=12;k++){const wave=Math.sin(k*1.1+rsi/43)*hvol*.55+Math.sin(k*.53)*hvol*.3;let delta=drift*.12+wave;if(rsi>70)delta-=hvol*.15;if(rsi<30)delta+=hvol*.15;p*=Math.exp(Math.max(-.025,Math.min(.025,delta)));intraday.push({time:Date.now()+k*3600000,price:p})}
- const p7=price*Math.exp(drift*7),p30=price*Math.exp(drift*30);
- let advice=trend==='восходящий'&&rsi<68?'Преимущество у покупателей. Рассматривать вход лучше на откате к поддержке либо после подтверждённого пробоя сопротивления.':trend==='нисходящий'?'Давление продавцов сохраняется. Покупку лучше не торопить до признаков разворота.':'Выраженного преимущества нет. Рациональнее дождаться выхода из диапазона и подтверждения направления.';
- return{ok:true,price,vol,rsi,support,resistance,trend,drift,intraday,p7,p30,advice,fast,slow}
+ return variance?cov/variance:0
 }
-function draw(canvas,cs,m,price){
- const ctx=canvas.getContext('2d'),dpr=window.devicePixelRatio||1,W=Math.max(280,canvas.clientWidth||500),H=canvas.clientHeight||260;
- canvas.width=W*dpr;canvas.height=H*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
- if(!cs.length){ctx.fillStyle='#8290a5';ctx.fillText('История цены недоступна',12,25);return}
- const hist=cs.slice(-65),future=m?.ok?m.intraday:[],pad={l:8,r:65,t:15,b:24},cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
- const vals=hist.flatMap(c=>[c.l,c.h,c.o,c.c]).concat(future.flatMap(p=>[p.price]),[price,m?.support,m?.resistance]).filter(Number.isFinite);
- let min=Math.min(...vals),max=Math.max(...vals);if(max<=min){min*=.98;max*=1.02}const extra=(max-min)*.09;min-=extra;max+=extra;
- const y=v=>pad.t+(max-v)/(max-min)*ch,total=hist.length+future.length,slot=cw/Math.max(1,total),body=Math.max(2,Math.min(7,slot*.62));
- const dark=document.body.classList.contains('dark');ctx.strokeStyle=dark?'#293342':'#e9edf4';ctx.fillStyle=dark?'#9ba7ba':'#8792a5';ctx.font='10px sans-serif';
- for(let i=0;i<=4;i++){const yy=pad.t+ch*i/4;ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(W-pad.r,yy);ctx.stroke();ctx.fillText((max-(max-min)*i/4).toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+4,yy+3)}
- hist.forEach((c,i)=>{const x=pad.l+i*slot+slot/2,up=c.c>=c.o;ctx.strokeStyle=up?'#168568':'#c94f5a';ctx.fillStyle=ctx.strokeStyle;ctx.beginPath();ctx.moveTo(x,y(c.h));ctx.lineTo(x,y(c.l));ctx.stroke();ctx.fillRect(x-body/2,Math.min(y(c.o),y(c.c)),body,Math.max(1,Math.abs(y(c.o)-y(c.c))))});
- if(future.length){const start=pad.l+hist.length*slot;ctx.strokeStyle='#9474df';ctx.lineWidth=2;ctx.beginPath();future.forEach((p,i)=>{const x=start+i*slot+slot/2;i?ctx.lineTo(x,y(p.price)):ctx.moveTo(x,y(p.price))});ctx.stroke();ctx.lineWidth=1;ctx.fillStyle='#9474df';future.forEach((p,i)=>{const x=start+i*slot+slot/2;ctx.beginPath();ctx.arc(x,y(p.price),2,0,Math.PI*2);ctx.fill()})}
- if(m?.support){ctx.strokeStyle='#168568';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.l,y(m.support));ctx.lineTo(W-pad.r,y(m.support));ctx.stroke();ctx.setLineDash([])}
- if(m?.resistance){ctx.strokeStyle='#c94f5a';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.l,y(m.resistance));ctx.lineTo(W-pad.r,y(m.resistance));ctx.stroke();ctx.setLineDash([])}
- ctx.fillStyle=dark?'#9ba7ba':'#8792a5';ctx.font='9px sans-serif';ctx.fillText('История',pad.l,H-7);ctx.textAlign='right';ctx.fillText('+12 ч',W-pad.r,H-7);ctx.textAlign='left'
+function calcVol(vals){
+ const r=[];for(let i=1;i<vals.length;i++)if(vals[i]>0&&vals[i-1]>0)r.push(Math.log(vals[i]/vals[i-1]));
+ if(r.length<2)return .001;
+ const avg=r.reduce((a,b)=>a+b,0)/r.length;
+ return Math.sqrt(r.reduce((s,v)=>s+(v-avg)**2,0)/(r.length-1))
 }
-function renderTrade(i,r,m){
- const qty=r.qty,buy=r.avg||r.price,now=r.price,target=m.p7,profit=(target-buy)*qty;
- $('tradeqty-'+i).textContent=qty.toLocaleString('ru-RU')+' шт.';
- $('tradeprice-'+i).textContent=money(now);
- $('tradesell-'+i).textContent=money(target);
- $('tradesellmeta-'+i).textContent='Расчётный ориентир на 7 дней';
+function buildForecast(cs,current,steps,stepMs){
+ const vals=cs.map(c=>c.c).filter(v=>v>0),n=vals.length;
+ if(n<5)return{ok:false,reason:'Недостаточно свежих свечей для надёжного расчёта.'};
+ const recent=vals.slice(-Math.min(n,24)),medium=vals.slice(-Math.min(n,72));
+ const shortSlope=regression(recent),mediumSlope=regression(medium);
+ const vol=calcVol(vals.slice(-Math.min(n,72)));
+ const rsi=calcRsi(vals.slice(-Math.min(n,30)));
+ const fast=ema(vals.slice(-Math.min(n,24)),5),slow=ema(vals.slice(-Math.min(n,60)),13);
+ const momentum=Math.log(vals.at(-1)/vals[Math.max(0,vals.length-4)])/(Math.min(3,vals.length-1)||1);
+ let drift=.55*shortSlope+.25*mediumSlope+.2*momentum;
+ drift=Math.max(-vol*.65,Math.min(vol*.65,drift));
+ if(rsi>75)drift-=vol*.12;
+ if(rsi<25)drift+=vol*.12;
+ const direction=fast>slow*1.0008&&drift>0?'Рост':fast<slow*.9992&&drift<0?'Снижение':'Боковое движение';
+ const points=[];let p=current;
+ const returns=vals.slice(-Math.min(n,40));
+ const seed=regression(returns);
+ for(let k=1;k<=steps;k++){
+  const delta=drift*.68+seed*.12;
+  p*=Math.exp(delta);
+  const sigma=vol*Math.sqrt(k)*.9;
+  points.push({k,time:Date.now()+k*stepMs,price:p,low:p*Math.exp(-sigma),high:p*Math.exp(sigma),sigma});
+ }
+ const lows=cs.slice(-Math.min(cs.length,100)).map(c=>c.l).filter(v=>v<current).sort((a,b)=>b-a);
+ const highs=cs.slice(-Math.min(cs.length,100)).map(c=>c.h).filter(v=>v>current).sort((a,b)=>a-b);
+ return{ok:true,points,vol,rsi,direction,drift,fast,slow,support:lows[0]||current*(1-vol*2),resistance:highs[0]||current*(1+vol*2)};
+}
+function makeCanvas(canvas,hist,model,current,mode){
+ const ctx=canvas.getContext('2d'),dpr=window.devicePixelRatio||1;
+ const W=Math.max(280,canvas.clientWidth||500),H=canvas.clientHeight||290;
+ canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+ const dark=document.body.classList.contains('dark');
+ const grid=dark?'#263147':'#edf0f5',text=dark?'#8d9bb3':'#8490a4';
+ const history=(hist||[]).filter(c=>c.c>0);
+ const actualLimit=mode===60?12:36;
+ const actual=history.slice(-actualLimit);
+ const forecast=model?.ok?model.points:[];
+ if(!actual.length){ctx.fillStyle=text;ctx.font='12px sans-serif';ctx.fillText('Нет доступных данных для графика',14,25);return}
+ const pad={l:8,r:70,t:17,b:27},cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+ const vals=actual.flatMap(c=>[c.l,c.h,c.o,c.c]).concat(forecast.flatMap(p=>[p.low,p.high,p.price]),[current]).filter(Number.isFinite);
+ let min=Math.min(...vals),max=Math.max(...vals);if(max<=min){min*=.99;max*=1.01}
+ const extra=(max-min)*.12;min-=extra;max+=extra;
+ const y=v=>pad.t+(max-v)/(max-min)*ch;
+ const total=actual.length+forecast.length;
+ const slot=cw/Math.max(1,total);
+ ctx.font='10px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle=text;ctx.strokeStyle=grid;ctx.lineWidth=1;
+ for(let j=0;j<=4;j++){
+  const yy=pad.t+ch*j/4,price=max-(max-min)*j/4;
+  ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(W-pad.r,yy);ctx.stroke();
+  ctx.fillText(price.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,yy+3);
+ }
+ actual.forEach((c,i)=>{
+  const x=pad.l+i*slot+slot/2,up=c.c>=c.o;
+  const col=up?'#168b68':'#d25562';
+  ctx.strokeStyle=col;ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x,y(c.h));ctx.lineTo(x,y(c.l));ctx.stroke();
+  ctx.fillStyle=col;const body=Math.max(2,Math.min(8,slot*.62));
+  ctx.fillRect(x-body/2,Math.min(y(c.o),y(c.c)),body,Math.max(1.5,Math.abs(y(c.o)-y(c.c))));
+ });
+ const currentX=pad.l+actual.length*slot;
+ if(forecast.length){
+  ctx.beginPath();
+  forecast.forEach((p,i)=>{const x=currentX+i*slot+slot/2;i?ctx.lineTo(x,y(p.high)):ctx.moveTo(x,y(p.high))});
+  for(let i=forecast.length-1;i>=0;i--){const p=forecast[i],x=currentX+i*slot+slot/2;ctx.lineTo(x,y(p.low))}
+  ctx.closePath();ctx.fillStyle=dark?'rgba(146,115,232,.15)':'rgba(146,115,232,.13)';ctx.fill();
+  ctx.strokeStyle='#9273e8';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();
+  forecast.forEach((p,i)=>{const x=currentX+i*slot+slot/2;i?ctx.lineTo(x,y(p.price)):ctx.moveTo(x,y(p.price))});ctx.stroke();ctx.setLineDash([]);
+  forecast.forEach((p,i)=>{const x=currentX+i*slot+slot/2;ctx.fillStyle='#9273e8';ctx.beginPath();ctx.arc(x,y(p.price),2.2,0,Math.PI*2);ctx.fill()});
+ }
+ const yNow=y(current);ctx.strokeStyle='#526fe3';ctx.setLineDash([3,4]);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(pad.l,yNow);ctx.lineTo(W-pad.r,yNow);ctx.stroke();ctx.setLineDash([]);
+ ctx.fillStyle='#526fe3';ctx.fillRect(W-pad.r+2,yNow-9,pad.r-4,18);ctx.fillStyle='#fff';ctx.font='bold 9px sans-serif';ctx.fillText(fmt(current),W-pad.r+5,yNow+3);
+ const split=pad.l+actual.length*slot;ctx.strokeStyle=dark?'#35415a':'#d8dcef';ctx.setLineDash([2,4]);ctx.beginPath();ctx.moveTo(split,pad.t);ctx.lineTo(split,pad.t+ch);ctx.stroke();ctx.setLineDash([]);
+ ctx.fillStyle=text;ctx.font='9px sans-serif';ctx.textAlign='left';ctx.fillText(mode===60?'−60 мин':'−3 ч',pad.l,H-8);ctx.textAlign='center';ctx.fillText('СЕЙЧАС',Math.min(W-pad.r-22,split),H-8);ctx.textAlign='right';ctx.fillText(mode===60?'+60 мин':'+6 ч',W-pad.r,H-8);ctx.textAlign='left';
+}
+function setMode(i,mode){
+ S.mode[i]=mode;
+ document.querySelectorAll(`[data-i="${i}"][data-mode]`).forEach(b=>b.classList.toggle('active',Number(b.dataset.mode)===mode));
+ const r=S.rows[i];if(r?.model)renderForecast(i,r,r.model);
+}
+function renderForecast(i,r,m){
+ if(!m.ok)return;
+ const mode=S.mode[i]||60,points=mode===60?m.short.points:m.six.points;
+ $('chartprice-'+i).textContent=money(r.price);
+ const delta=points.length?points.at(-1).price/r.price-1:0;
+ $('chartchange-'+i).textContent=(delta>=0?'+':'')+percent(delta)+' · расчётный сценарий';
+ $('chartchange-'+i).className='chart-change '+(delta>=0?'pos':'neg');
+ $('chartstamp-'+i).innerHTML=mode===60?'Прогноз на<br>60 минут':'Прогноз на<br>6 часов';
+ $('chartnote-'+i).textContent=`${m.direction} · RSI ${m.rsi.toFixed(0)} · обновлено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}`;
+ $('chartcaption-'+i).textContent=mode===60
+  ?'История: последние 60 минут по 5-минутным свечам. Прогноз: шаг 5 минут. Фиолетовая зона показывает модельный диапазон неопределённости.'
+  :'История: последние часы торгов. Прогноз: шаг 1 час на 6 часов вперёд. Диапазон расширяется вместе с неопределённостью.';
+ makeCanvas($('chart-'+i),m.short.history,mode===60?m.short:m.six,r.price,mode);
+ $('trend-'+i).textContent=m.direction;
+ $('trendmeta-'+i).textContent=m.drift>0?'Импульс положительный':m.drift<0?'Импульс отрицательный':'Смешанный импульс';
+ $('vol-'+i).textContent=percent(m.vol);
+ const conf=m.vol<.008?'Выше средней':m.vol<.02?'Умеренная':'Низкая';
+ $('confidence-'+i).textContent=conf;
+ $('confmeta-'+i).textContent=m.short.history.length<8?'Мало свечей':m.vol>.035?'Высокая волатильность':'Не вероятность успеха';
+ $('support-'+i).textContent=money(m.support);$('resistance-'+i).textContent=money(m.resistance);
+ $('rsi-'+i).textContent=m.rsi.toFixed(0);
+ $('path-title-'+i).textContent=mode===60?'Ближайшие 60 минут':'Прогноз на 6 часов';
+ $('path-note-'+i).textContent=mode===60?'Шаг 5 минут':'Шаг 1 час';
+ $('path-'+i).innerHTML=points.map((p,k)=>{
+  const prev=k?points[k-1].price:r.price,change=p.price/prev-1,relative=p.price/r.price-1;
+  const stamp=mode===60?`+${p.k*5} мин`:`+${p.k} ч`;
+  return `<div class="path-point"><div class="path-time">${stamp}</div><div class="path-value">${money(p.price)}</div><div class="path-delta ${change>=0?'pos':'neg'}">${change>=0?'+':''}${percent(change)}</div><div class="path-prob">от текущей ${relative>=0?'+':''}${percent(relative)}</div></div>`
+ }).join('');
+ const end=m.six.points.at(-1),sixDelta=end.price/r.price-1;
+ let verdict=m.direction==='Рост'
+  ?'Краткосрочный импульс положительный, но продолжение роста не подтверждено. Следи за реакцией цены у сопротивления.'
+  :m.direction==='Снижение'
+  ?'Краткосрочный импульс отрицательный. Покупку лучше не основывать только на снижении цены; важны признаки стабилизации.'
+  :'Однозначного преимущества покупателей или продавцов нет. Вероятен шумный диапазон, пока цена не подтвердит выход из него.';
+ $('analysis-'+i).textContent=verdict+` На ближайшие 60 минут модельный ориентир ${money(m.short.points.at(-1).price)}; на 6 часов — ${money(end.price)} (${sixDelta>=0?'+':''}${percent(sixDelta)} от текущей цены). Это базовый сценарий, а не статистически гарантированная вероятность.`;
+ const signal=m.direction==='Рост'&&m.rsi<70?'НАБЛЮДАТЬ ПОКУПКУ':m.direction==='Снижение'?'РИСК СНИЖЕНИЯ':'НАБЛЮДАТЬ';
+ $('signal-'+i).textContent=signal;$('signal-'+i).className='pill '+(m.direction==='Рост'&&m.rsi<70?'buy':m.direction==='Снижение'?'sell':'hold');
+ $('tradeqty-'+i).textContent=fmt(r.qty)+' шт.';$('tradeprice-'+i).textContent=money(r.price);
+ $('tradesell-'+i).textContent=money(end.price);
+ $('tradesellmeta-'+i).textContent=`Изменение сценария: ${sixDelta>=0?'+':''}${percent(sixDelta)}`;
+ const profit=(end.price-(r.avg||r.price))*r.qty;
  $('tradeprofit-'+i).textContent=(profit>0?'+':'')+money(profit);
  $('tradeprofit-'+i).className=profit>=0?'pos':'neg';
- $('tradeprofitmeta-'+i).textContent='Относительно средней цены покупки '+money(buy);
- $('tradehint-'+i).textContent=`Если продать всю позицию по расчётному ориентиру ${money(target)}, результат относительно средней цены покупки составит ${money(profit)}. От текущей рыночной стоимости разница — ${money((target-now)*qty)}. Оценка до комиссий и налогов; сценарий не гарантирован.`
+ $('tradeprofitmeta-'+i).textContent='Относительно средней цены покупки';
+ $('tradehint-'+i).textContent=`При цене ${money(end.price)} и текущей позиции ${fmt(r.qty)} шт. расчётный результат относительно средней цены покупки — ${money(profit)}. Без комиссий и налогов. Прогноз может не реализоваться.`;
 }
 async function loadDetail(i){
- const r=S.rows[i];if(!r||r.loading)return;r.loading=true;
+ const r=S.rows[i];if(!r||r.loading)return;
+ r.loading=true;
  try{
-  const [daily,hourly]=await Promise.all([getCandles(r.uid,'CANDLE_INTERVAL_DAY',400),getCandles(r.uid,'CANDLE_INTERVAL_HOUR',60).catch(()=>[])]);
-  r.loading=false;r.candles=daily.length>=12?daily:hourly;
-  const m=model(r.candles,hourly,r.price);r.model=m;
-  if(!m.ok){$('analysis-'+i).textContent=m.reason;return}
-  $('chartnote-'+i).textContent=`Тренд ${m.trend} · RSI ${m.rsi.toFixed(0)} · волатильность ${percent(m.vol)}`;
-  $('support-'+i).textContent=money(m.support);$('resistance-'+i).textContent=money(m.resistance);
-  $('f7-'+i).textContent=money(m.p7);$('f7pct-'+i).textContent=percent(m.p7/r.price-1)+' к текущей цене';
-  $('f30-'+i).textContent=money(m.p30);$('f30pct-'+i).textContent=percent(m.p30/r.price-1)+' к текущей цене';
-  $('analysis-'+i).textContent=m.advice+` Поддержка ${money(m.support)}, сопротивление ${money(m.resistance)}. RSI ${m.rsi.toFixed(0)}; риск ${m.vol>.035?'высокий':m.vol<.012?'умеренно низкий':'умеренный'}. Расчётный сценарий на 7 дней ${money(m.p7)} (${percent(m.p7/r.price-1)}), на 30 дней ${money(m.p30)} (${percent(m.p30/r.price-1)}). Это оценка по историческим данным, не гарантия движения цены.`;
-  const signal=m.trend==='восходящий'&&m.rsi<68?'ПОКУПАТЬ':m.trend==='нисходящий'?'ПРОДАВАТЬ':'ДЕРЖАТЬ';
-  $('signal-'+i).textContent=signal;$('signal-'+i).className='pill '+(signal==='ПОКУПАТЬ'?'buy':signal==='ПРОДАВАТЬ'?'sell':'hold');
-  $('path-'+i).innerHTML=m.intraday.map((p,k)=>{const prev=k?m.intraday[k-1].price:m.price,d=p.price-prev;return`<div class="point"><div class="time">${new Date(p.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}</div><div class="value">${money(p.price)}</div><div class="move ${d>=0?'pos':'neg'}">${d>=0?'+':''}${percent(d/prev)}</div></div>`}).join('');
-  renderTrade(i,r,m);draw($('chart-'+i),r.candles,m,r.price)
- }catch(e){r.loading=false;$('analysis-'+i).textContent='Не удалось получить историю: '+e.message}
+  setStatus('Получаю свежие свечи для '+r.ticker+'…');
+  const [five,hour,daily]=await Promise.all([
+   candles(r.uid,'CANDLE_INTERVAL_5_MIN',2),
+   candles(r.uid,'CANDLE_INTERVAL_HOUR',10).catch(()=>[]),
+   candles(r.uid,'CANDLE_INTERVAL_DAY',100).catch(()=>[])
+  ]);
+  r.loading=false;
+  const intraday=five.length>=5?five:hour;
+  if(intraday.length<5)throw Error('API вернул недостаточно свежих свечей.');
+  const current=r.price||intraday.at(-1).c;
+  const recent=intraday.slice(-Math.min(intraday.length,60));
+  const fiveModel=buildForecast(recent,current,12,5*60*1000);
+  const hourlyBase=hour.length>=5?hour:intraday;
+  const hourlyModel=buildForecast(hourlyBase.slice(-Math.min(hourlyBase.length,72)),current,6,60*60*1000);
+  if(!fiveModel.ok||!hourlyModel.ok)throw Error('Недостаточно данных для расчёта сценария.');
+  const histDaily=daily.length?daily:intraday;
+  const lows=histDaily.slice(-80).map(c=>c.l).filter(v=>v<current).sort((a,b)=>b-a);
+  const highs=histDaily.slice(-80).map(c=>c.h).filter(v=>v>current).sort((a,b)=>a-b);
+  const vol=Math.max(fiveModel.vol*Math.sqrt(12),hourlyModel.vol);
+  const rsi=calcRsi(recent.map(c=>c.c));
+  const direction=fiveModel.direction==='Рост'&&hourlyModel.direction!=='Снижение'?'Рост':
+   fiveModel.direction==='Снижение'&&hourlyModel.direction!=='Рост'?'Снижение':'Боковое движение';
+  r.model={
+   ok:true,price:current,short:{...fiveModel,history:recent},six:hourlyModel,
+   vol,rsi,direction,drift:hourlyModel.drift,
+   support:lows[0]||current*(1-vol*2),resistance:highs[0]||current*(1+vol*2)
+  };
+  renderForecast(i,r,r.model);
+  setStatus('Обновлено: '+new Date().toLocaleString('ru-RU'));
+ }catch(e){
+  r.loading=false;
+  $('analysis-'+i).textContent='Не удалось построить прогноз: '+e.message;
+  $('chartnote-'+i).textContent='Нет достаточных данных';
+  setStatus('Не удалось загрузить график '+r.ticker+': '+e.message,true);
+ }
 }
-$('run').addEventListener('click',async()=>{if(S.token){await refresh();return}const t=$('token').value.trim();if(!t){setStatus('Введи токен T-Invest.',true);return}S.token=t;localStorage.setItem('mzbox_token',t);setTokenUI();await refresh()});
+$('run').addEventListener('click',async()=>{
+ if(S.token){await refresh();return}
+ const t=$('token').value.trim();
+ if(!t){setStatus('Введи токен T-Invest.',true);return}
+ S.token=t;localStorage.setItem('mzbox_token',t);setTokenUI();await refresh()
+});
 $('refresh').addEventListener('click',refresh);
-$('reset').addEventListener('click',()=>{if(!confirm('Сбросить сохранённый токен?'))return;S.token='';S.rows=[];localStorage.removeItem('mzbox_token');setTokenUI();$('assets').innerHTML='<section class="card empty">Введи токен и нажми «Запустить».</section>';['total','count','pnl','ret'].forEach(id=>$(id).textContent='—');setStatus('Токен сброшен.')});
-$('theme').addEventListener('click',()=>{S.dark=!S.dark;setTheme();S.rows.forEach((r,i)=>{if(r.model&&$('chart-'+i))draw($('chart-'+i),r.candles,r.model,r.price)})});
+$('reset').addEventListener('click',()=>{
+ if(!confirm('Сбросить сохранённый токен?'))return;
+ S.token='';S.rows=[];localStorage.removeItem('mzbox_token');setTokenUI();
+ $('assets').innerHTML='<section class="card empty">Введи токен и нажми «Запустить».</section>';
+ ['total','count','pnl','ret'].forEach(id=>$(id).textContent='—');setStatus('Токен сброшен.')
+});
+$('theme').addEventListener('click',()=>{
+ S.dark=!S.dark;setTheme();
+ S.rows.forEach((r,i)=>{if(r.model&&$('chart-'+i))renderForecast(i,r,r.model)})
+});
 setTokenUI();setTheme();
 if(S.token)setStatus('Токен сохранён. Нажми «Актуализировать».');
-window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{if(r.model&&$('chart-'+i))draw($('chart-'+i),r.candles,r.model,r.price)}));
+window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{if(r.model&&$('chart-'+i))renderForecast(i,r,r.model)}));
 </script>
 </body>
 </html>
