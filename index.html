@@ -1,169 +1,380 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fc">
 <title>MZBOX AI</title>
 <style>
-:root{color-scheme:light;--bg:#f5f7fb;--card:#fff;--ink:#182235;--muted:#7d899d;--line:#e6ebf3;--green:#148568;--red:#c74b55;--blue:#4664d9;--shadow:0 7px 25px rgba(25,42,75,.045)}
+:root{color-scheme:light;--bg:#f5f7fb;--card:#fff;--ink:#182235;--muted:#7d899d;--line:#e6ebf3;--green:#148568;--red:#c74b55;--blue:#4664d9}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-button,input{font:inherit}
-button{cursor:pointer}
-main{max-width:1040px;margin:auto;padding:18px 16px 30px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 16px}
-.brand{font-size:22px;font-weight:800;letter-spacing:-.8px}
-.topright{text-align:right;color:var(--muted);font-size:11px}
-.tiny-result{font-size:11px;margin-top:3px;color:#68758a;font-weight:500}
-.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:15px;margin-bottom:12px}
-.section{font-size:10px;font-weight:800;letter-spacing:1.15px;color:#8792a5;margin:19px 2px 9px}
-.muted{color:var(--muted)}
-.small{font-size:11px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{min-width:0;padding:13px;border:1px solid var(--line);border-radius:13px}
-.stat span{display:block;color:var(--muted);font-size:10px;letter-spacing:.5px}
-.stat strong{display:block;font-size:19px;margin-top:4px;letter-spacing:-.4px;overflow-wrap:anywhere}
-.positive{color:var(--green)!important}
-.negative{color:var(--red)!important}
-.token-locked{background:#f3f5f9!important;color:#68758a!important}
-.token-note{font-size:10px;color:#7d899d;margin-top:6px}
-.path-wrap{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.path-title{padding:10px 11px;background:#f8f9fc;border-bottom:1px solid var(--line);font-size:11px;font-weight:750}
-.path-note{font-size:10px;color:var(--muted);padding:8px 11px 0}
-.path-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
-.path-point{padding:9px 8px;border-bottom:1px solid #edf0f6;min-width:0}
-.path-point:nth-child(3n+2),.path-point:nth-child(3n+3){border-left:1px solid #edf0f6}
-.path-point .time{font-size:10px;color:var(--muted)}
-.path-point .price{font-size:12px;font-weight:750;margin-top:3px;overflow-wrap:anywhere}
-.path-point .move{font-size:9px;margin-top:2px}
-.path-point.turning{background:#f6f3ff}
-.path-point.turning .time{color:#7858c5;font-weight:750}
-.income-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}
-.field input,.token-input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);outline:none}
-.field input:focus,.token-input:focus{border-color:#8b9df0}
-.needed{grid-column:1/-1;border-radius:12px;background:#f2f5ff;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.needed span{font-size:11px;color:#65718a}
-.needed strong{font-size:20px;color:var(--blue);white-space:nowrap}
-.btn{border:0;border-radius:11px;padding:11px 14px;background:#202b40;color:white;font-weight:700}
+button,input{font:inherit}button{cursor:pointer}
+main{max-width:1000px;margin:auto;padding:16px}
+header{display:flex;align-items:center;gap:12px;margin:5px 0 16px}
+.brand{font-size:23px;font-weight:800;letter-spacing:-.8px}
+.topright{margin-left:auto;text-align:right;font-size:11px;color:var(--muted)}
+.theme{width:28px;height:28px;flex:0 0 28px;padding:0;border:1px solid #9aa4b5;border-radius:3px;background:linear-gradient(135deg,#202b40 0 49%,#fff 51% 100%)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:12px;box-shadow:0 5px 20px #17233b08}
+.section{font-size:10px;font-weight:800;letter-spacing:1.1px;color:var(--muted);margin:18px 2px 9px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.muted,.small{color:var(--muted)}.small{font-size:11px}
+.tokenrow{display:flex;gap:8px;margin-top:10px}
+input{min-width:0;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);outline:none}
+.tokenrow input{flex:1}
+.locked{background:#f0f2f6!important;color:#69768a!important}
+.btn{border:0;border-radius:10px;padding:11px 14px;background:#202b40;color:#fff;font-weight:700}
 .btn.secondary{background:#edf1f8;color:#3b4a63}
 .btn:disabled{opacity:.5;cursor:wait}
-.tokenrow{display:flex;gap:8px;margin-top:10px}
-.tokenrow .token-input{min-width:0;flex:1}
-.status{font-size:11px;color:var(--muted);margin-top:9px;overflow-wrap:anywhere}
-.status.error{color:var(--red)}
-.asset{overflow:hidden}
-.asset-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;cursor:pointer;list-style:none}
-.asset-head::-webkit-details-marker{display:none}
-.asset-name{font-weight:750;font-size:14px}
-.asset-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.asset-price{text-align:right;font-weight:750;font-size:15px;white-space:nowrap}
-.asset-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px}
-.pill{display:inline-flex;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:800;border:1px solid transparent;white-space:nowrap}
-.pill.buy{background:#e5f7ee;color:#087b4d;border-color:#b9e6ce}
-.pill.hold{background:#edf1ff;color:#3d54bf;border-color:#d6defe}
-.pill.sell{background:#fff0ee;color:#b63e35;border-color:#f4d0cc}
-.asset-detail{border-top:1px solid var(--line);margin-top:13px;padding-top:13px}
-.chart-wrap{border:1px solid var(--line);border-radius:13px;padding:7px;overflow:hidden;background:#fff}
-.chart{width:100%;height:250px;display:block}
+.status{font-size:11px;margin-top:9px;color:var(--muted);overflow-wrap:anywhere}
+.error{color:var(--red)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{padding:12px;border:1px solid var(--line);border-radius:12px;min-width:0}
+.stat span{display:block;font-size:10px;color:var(--muted)}
+.stat strong{display:block;font-size:19px;margin-top:4px;overflow-wrap:anywhere}
+.positive{color:var(--green)}.negative{color:var(--red)}
+.asset{margin-bottom:10px}
+.asset-head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
+.asset-name{font-weight:750}.asset-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.asset-price{text-align:right;font-weight:750;white-space:nowrap}
+.pill{font-size:9px;font-weight:800;padding:5px 8px;border-radius:20px;display:inline-block}
+.buy{background:#e5f7ee;color:#087b4d}.hold{background:#edf1ff;color:#3d54bf}.sell{background:#fff0ee;color:#b63e35}
+.detail{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.chart{width:100%;height:230px;display:block}
+.chart-wrap{border:1px solid var(--line);border-radius:12px;padding:6px;overflow:hidden}
 .levels{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:9px 0}
-.level{border:1px solid var(--line);border-radius:11px;padding:10px}
+.level{border:1px solid var(--line);border-radius:10px;padding:10px}
 .level span{display:block;font-size:10px;color:var(--muted)}
-.level b{font-size:16px;display:block;margin-top:3px}
-.analysis{background:#f8f9fc;border:1px solid #edf0f6;border-radius:12px;padding:12px;margin-top:10px}
-.analysis h3{font-size:12px;margin:0 0 5px}
-.analysis p{font-size:12px;color:#58657b;line-height:1.55;margin:0}
-.empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:12px}
-.footer{text-align:center;color:#8993a5;font-size:10px;font-weight:400;margin-top:20px;line-height:1.8}
-.hidden{display:none!important}
+.level b{display:block;margin-top:3px;font-size:15px}
+.analysis{padding:12px;background:#f8f9fc;border:1px solid var(--line);border-radius:11px;margin-top:10px}
+.analysis h3{font-size:11px;margin:0 0 4px}.analysis p{font-size:12px;color:#58657b;margin:0;line-height:1.55}
+.forecast{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px}
+.point{padding:8px;border-bottom:1px solid var(--line);min-width:0}
+.point:nth-child(3n+2),.point:nth-child(3n+3){border-left:1px solid var(--line)}
+.point.turn{background:#f1edff}
+.point small{display:block;color:var(--muted);font-size:10px}
+.point b{display:block;font-size:12px;overflow-wrap:anywhere;margin-top:3px}
+.point em{font-size:9px;font-style:normal}
+.empty{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+.footer{text-align:center;color:var(--muted);font-size:10px;margin:20px 0}
 .spin{display:inline-block;width:10px;height:10px;border:2px solid #d5dbea;border-top-color:#4664d9;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.forecast-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
-.forecast-title{font-size:13px;font-weight:750}
-.forecast-sub{font-size:10px;color:var(--muted);margin-top:3px}
-.forecast-legend{display:flex;gap:10px;flex-wrap:wrap;margin:8px 2px 0;color:var(--muted);font-size:10px}
-.legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
-.forecast-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.forecast-stat{padding:11px;border:1px solid var(--line);border-radius:12px;min-width:0}
-.forecast-stat span{display:block;font-size:10px;color:var(--muted)}
-.forecast-stat b{display:block;font-size:16px;margin-top:4px;overflow-wrap:anywhere}
-.forecast-stat small{display:block;font-size:10px;color:var(--muted);margin-top:3px}
-.analysis-block{padding:11px 0;border-bottom:1px solid var(--line)}
-.analysis-block:last-child{border-bottom:0;padding-bottom:0}
-.analysis-block h3{font-size:11px;margin:0 0 4px;color:#354258}
-.analysis-block p{font-size:12px;color:#58657b;line-height:1.55;margin:0}
-@media(min-width:700px){
- .stats{grid-template-columns:1fr 1fr}
- .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
- .summary-grid .stat{height:100%}
- .asset-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
- .asset-list .asset{margin:0}
- .asset-detail{grid-column:1/-1}
- .chart{height:300px}
-}
-@media(max-width:430px){
- main{padding:13px 11px 24px}
- .brand{font-size:20px}
- .card{padding:12px;border-radius:15px}
- .stat{padding:11px}
- .stat strong{font-size:17px}
- .needed strong{font-size:18px}
- .chart{height:220px}
- .path-list{grid-template-columns:repeat(2,minmax(0,1fr))}
- .path-point:nth-child(3n+2),.path-point:nth-child(3n+3){border-left:0}
- .path-point:nth-child(even){border-left:1px solid #edf0f6}
- .tokenrow{flex-direction:column}
- .tokenrow .btn{width:100%}
-}
+body.dark{color-scheme:dark;--bg:#0d1016;--card:#151a23;--ink:#edf1f8;--muted:#9ba7ba;--line:#2a3241;background:var(--bg);color:var(--ink)}
+body.dark .theme{background:linear-gradient(135deg,#fff 0 49%,#202b40 51% 100%);border-color:#69768b}
+body.dark .locked{background:#202734!important;color:#b3bed0!important}
+body.dark .btn.secondary{background:#293243;color:#e1e8f4}
+body.dark .analysis{background:#111720;border-color:var(--line)}
+body.dark .analysis p{color:#aab6c9}
+body.dark .point{border-color:var(--line)}
+body.dark .point.turn{background:#252039}
+body.dark .buy{background:#163629;color:#8ce1b8}
+body.dark .hold{background:#242d4b;color:#b6c4ff}
+body.dark .sell{background:#3b2227;color:#ffb7b7}
+@media(min-width:700px){.assets{display:grid;grid-template-columns:1fr 1fr;gap:10px}.asset{margin:0}.chart{height:270px}}
+@media(max-width:440px){main{padding:11px}.card{padding:12px}.tokenrow{flex-direction:column}.tokenrow button{width:100%}.stat strong{font-size:17px}.forecast{grid-template-columns:repeat(2,minmax(0,1fr))}.point:nth-child(3n+2),.point:nth-child(3n+3){border-left:0}.point:nth-child(even){border-left:1px solid var(--line)}}
 </style>
 </head>
 <body>
 <main>
-<header class="top">
+<header>
  <div class="brand">MZBOX AI</div>
- <div class="topright">
-  <div id="lastUpdated">Нет обновлений</div>
-  <div class="tiny-result" id="allTimeIncome">Доход за всё время: —</div>
- </div>
+ <button id="theme" class="theme" title="Сменить тему" aria-label="Сменить тему"></button>
+ <div class="topright"><div id="updated">Нет обновлений</div><div id="income">Портфель T‑Invest</div></div>
 </header>
+
 <section class="card">
- <div class="row">
-  <div>
-   <div class="section" style="margin:0 0 8px">ПОДКЛЮЧЕНИЕ T‑INVEST</div>
-   <div class="small muted">После подключения токен блокируется до нажатия «Сбросить токен».</div>
-  </div>
-  <span id="busyIcon"></span>
- </div>
+ <div class="section" style="margin:0 0 8px">ПОДКЛЮЧЕНИЕ T‑INVEST</div>
+ <div class="small muted">Токен блокируется после запуска. Для замены нажми «Сбросить токен».</div>
  <div class="tokenrow">
-  <input id="token" class="token-input" type="password" autocomplete="off" spellcheck="false" placeholder="Вставь T‑Invest API-токен">
-  <button id="connect" class="btn">Подключить</button>
+  <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="Вставь T‑Invest API-токен">
+  <button id="run" class="btn">Запустить</button>
  </div>
- <div class="token-note" id="tokenNote">Токен не сохраняется после перезагрузки страницы. Блокировка защищает поле интерфейса, но не заменяет безопасное хранение токена.</div>
- <div class="status" id="status">Для начала введи токен и нажми «Подключить».</div>
+ <div class="small muted" style="margin-top:6px">Токен хранится только в памяти страницы и исчезнет после перезагрузки.</div>
+ <div id="status" class="status">Введи токен и нажми «Запустить».</div>
 </section>
+
 <div class="section">ПОРТФЕЛЬ</div>
 <section class="card">
- <div class="summary-grid">
-  <div class="stat">
-   <span>ВЛОЖЕНО В ПОРТФЕЛЬ · ОЦЕНКА</span>
-   <strong id="invested">—</strong>
-   <div class="small muted" id="marketValue">Рыночная стоимость: —</div>
-  </div>
-  <div class="stat">
-   <span>РЕЗУЛЬТАТ ПОРТФЕЛЯ</span>
-   <strong id="pnl">—</strong>
-   <div class="small muted" id="returnPct">—</div>
-  </div>
+ <div class="grid">
+  <div class="stat"><span>РЫНОЧНАЯ СТОИМОСТЬ</span><strong id="market">—</strong><div class="small muted" id="positions">Позиции: —</div></div>
+  <div class="stat"><span>РЕЗУЛЬТАТ ПОЗИЦИЙ</span><strong id="pnl">—</strong><div class="small muted" id="return">Изменение по текущим позициям</div></div>
  </div>
 </section>
-<div class="row">
- <div class="section" style="margin-top:15px">АКЦИИ ПОРТФЕЛЯ</div>
- <button id="refresh" class="btn secondary" style="padding:7px 10px;font-size:11px" disabled>Обновить</button>
-</div>
-<div id="assets" class="asset-list">
- <section class="card empty">После подключения здесь появятся активы портфеля.</section>
-</div>
-<div class="footer">Не является индивидуальной инвестиционной рекомендацией<br>Разработчик: Кутузов Дмитрий Владимич</div>
+
+<div class="row"><div class="section">АКЦИИ И АНАЛИЗ</div><button id="refresh" class="btn secondary" disabled>Обновить</button></div>
+<div id="assets" class="assets"><section class="card empty">Подключи счёт, чтобы загрузить портфель.</section></div>
+<div class="footer">Не является индивидуальной инвестиционной рекомендацией<br>Кутузов Дмитрий Владимирович</div>
 </main>
+
+<script>
+(()=>{
+'use strict';
+
+const API='https://invest-public-api.tinkoff.ru/rest/';
+const USERS='tinkoff.public.invest.api.contract.v1.UsersService';
+const OPS='tinkoff.public.invest.api.contract.v1.OperationsService';
+const MD='tinkoff.public.invest.api.contract.v1.MarketDataService';
+const $=id=>document.getElementById(id);
+const S={token:'',rows:[],accounts:[],busy:false,timer:null};
+const fmt=(n,d=2)=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d})+' ₽';
+const pct=n=>(n*100).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+const val=x=>{if(x==null)return 0;if(typeof x==='number')return x;if(typeof x==='string')return Number(x)||0;if(typeof x==='object'){if('units'in x||'nano'in x)return(Number(x.units)||0)+(Number(x.nano)||0)/1e9;if('value'in x)return val(x.value)}return 0};
+const get=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null)return o[k];return null};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function status(s,err=false){$('status').textContent=s;$('status').classList.toggle('error',err)}
+async function api(service,method,body={}){
+ const controller=new AbortController(),tm=setTimeout(()=>controller.abort(),20000);
+ try{
+  const r=await fetch(API+service+'/'+method,{
+   method:'POST',cache:'no-store',signal:controller.signal,
+   headers:{Authorization:'Bearer '+S.token,'Content-Type':'application/json'},
+   body:JSON.stringify(body)
+  });
+  const txt=await r.text();let d={};try{d=JSON.parse(txt)}catch{}
+  if(!r.ok)throw Error(`HTTP ${r.status}: ${d.message||d.description||txt.slice(0,160)||r.statusText}`);
+  return d;
+ }finally{clearTimeout(tm)}
+}
+async function prices(ids){
+ const out={};
+ for(let i=0;i<ids.length;i+=100){
+  const d=await api(MD,'GetLastPrices',{instrumentId:ids.slice(i,i+100)});
+  for(const p of d.lastPrices||[]){
+   const id=get(p,'instrumentUid','instrumentUID','instrument_uid','figi');
+   const price=val(get(p,'price','lastPrice'));
+   if(id&&price>0)out[id]=price;
+  }
+ }
+ return out;
+}
+async function getCandles(id,interval,days){
+ const to=new Date(),from=new Date(to.getTime()-days*86400000);
+ const d=await api(MD,'GetCandles',{instrumentId:id,from:from.toISOString(),to:to.toISOString(),interval});
+ return(d.candles||[]).map(c=>({
+  time:new Date(c.time||c.timestamp).getTime(),
+  o:val(c.open),h:val(c.high),l:val(c.low),c:val(c.close)
+ })).filter(c=>c.time&&c.c>0&&c.h>0&&c.l>0).sort((a,b)=>a.time-b.time);
+}
+function ema(a,n){if(!a.length)return 0;let e=a[0],k=2/(n+1);for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e}
+function model(daily,hourly,price){
+ const cs=daily.length>=12?daily:hourly;
+ const close=cs.map(x=>x.c).filter(x=>x>0);
+ if(close.length<8)return{ok:false,reason:'Недостаточно истории для анализа. Проверь доступ к рыночным данным.'};
+ const recent=close.slice(-Math.min(60,close.length));
+ const logs=recent.map(Math.log),n=logs.length;
+ const xm=(n-1)/2,ym=logs.reduce((a,b)=>a+b,0)/n;
+ let num=0,den=0;
+ for(let i=0;i<n;i++){num+=(i-xm)*(logs[i]-ym);den+=(i-xm)**2}
+ const slope=den?num/den:0;
+ const fast=ema(close.slice(-40),9),slow=ema(close.slice(-60),21);
+ const ret=[];
+ for(let i=Math.max(1,close.length-40);i<close.length;i++)ret.push(Math.log(close[i]/close[i-1]));
+ const mean=ret.reduce((a,b)=>a+b,0)/(ret.length||1);
+ const variance=ret.reduce((a,b)=>a+(b-mean)**2,0)/Math.max(1,ret.length-1);
+ const vol=Math.max(Math.sqrt(variance),.003);
+ const tail=close.slice(-15);let up=0,down=0;
+ for(let i=1;i<tail.length;i++){const z=tail[i]-tail[i-1];if(z>0)up+=z;else down-=z}
+ const rsi=100-100/(1+up/(down||1e-8));
+ const trend=fast>slow*1.003&&slope>0?'Восходящий':fast<slow*.997&&slope<0?'Нисходящий':'Боковой';
+ const sup=[],res=[];
+ for(let i=2;i<cs.length-2;i++){
+  if(cs[i].l<=cs[i-1].l&&cs[i].l<=cs[i-2].l&&cs[i].l<=cs[i+1].l&&cs[i].l<=cs[i+2].l)sup.push(cs[i].l);
+  if(cs[i].h>=cs[i-1].h&&cs[i].h>=cs[i-2].h&&cs[i].h>=cs[i+1].h&&cs[i].h>=cs[i+2].h)res.push(cs[i].h);
+ }
+ const support=sup.filter(x=>x<price).sort((a,b)=>b-a)[0]||cs.slice(-60).map(x=>x.l).filter(x=>x<price).sort((a,b)=>b-a)[0]||price*(1-vol*2);
+ const resistance=res.filter(x=>x>price).sort((a,b)=>a-b)[0]||cs.slice(-60).map(x=>x.h).filter(x=>x>price).sort((a,b)=>a-b)[0]||price*(1+vol*2);
+ let drift=Math.max(-.02,Math.min(.02,.55*slope+.45*(Math.log(close.at(-1)/close[Math.max(0,close.length-8)])/Math.min(7,close.length-1))));
+ const forecast=[];let p=price;
+ for(let k=1;k<=12;k++){
+  const oscillation=Math.sin(k*1.13+rsi/100*2.4)*vol*.75+Math.sin(k*.53+1.1)*vol*.4;
+  let delta=drift*.12+oscillation;
+  if(rsi>70)delta-=vol*.2;if(rsi<30)delta+=vol*.2;
+  let next=p*Math.exp(Math.max(-.025,Math.min(.025,delta)));
+  if(next<support*1.003)next=support*(1+Math.min(.004,Math.abs(next-support)/price*.18));
+  if(next>resistance*.997)next=resistance*(1-Math.min(.004,Math.abs(resistance-next)/price*.18));
+  forecast.push({time:Date.now()+k*1200000,price:next});
+  p=next;
+ }
+ for(let i=1;i<forecast.length-1;i++){
+  const a=forecast[i].price-forecast[i-1].price,b=forecast[i+1].price-forecast[i].price;
+  forecast[i].turn=a*b<=0;
+ }
+ const p7=price*Math.exp(drift*7),p30=price*Math.exp(drift*30);
+ const sigma=vol*Math.sqrt(7),sigma30=vol*Math.sqrt(30);
+ let advice;
+ if((price-support)/price<.015&&drift>=0)advice='Цена близко к поддержке. Дождись подтверждения отскока; при пробое поддержка может перестать работать.';
+ else if((resistance-price)/price<.02&&drift>0)advice='Цена приблизилась к сопротивлению. Не гонись за ростом: дождись закрепления выше уровня или отката.';
+ else if(trend==='Восходящий'&&rsi<68)advice='Импульс положительный, но вход после резкого роста повышает риск. Рассмотри откат или подтверждённый пробой.';
+ else if(trend==='Нисходящий')advice='Импульс отрицательный. Не усредняй падение автоматически; дождись стабилизации и подтверждения разворота.';
+ else advice='Выраженного преимущества нет. Дождись подтверждённого движения от уровней поддержки или сопротивления.';
+ return{ok:true,price,trend,rsi,vol,support,resistance,forecast,p7,p30,
+ low7:p7*Math.exp(-1.28*sigma),high7:p7*Math.exp(1.28*sigma),
+ low30:p30*Math.exp(-1.28*sigma30),high30:p30*Math.exp(1.28*sigma30),
+ advice,drift};
+}
+function draw(canvas,candles,m){
+ const rect=canvas.getBoundingClientRect(),w=Math.max(300,rect.width),h=230,dpr=window.devicePixelRatio||1;
+ canvas.width=w*dpr;canvas.height=h*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+ const dark=document.body.classList.contains('dark'),ink=dark?'#9ba7ba':'#7d899d',line=dark?'#2a3241':'#e6ebf3';
+ ctx.clearRect(0,0,w,h);
+ if(!candles||!candles.length){ctx.fillStyle=ink;ctx.font='12px sans-serif';ctx.fillText('История цены недоступна',12,30);return}
+ const hist=candles.slice(-35),values=hist.map(c=>c.c);
+ const future=m?.forecast||[];
+ const all=values.concat(future.map(x=>x.price));
+ if(m)all.push(m.support,m.resistance);
+ const lo=Math.min(...all)*.99,hi=Math.max(...all)*1.01;
+ const left=48,right=8,top=12,bottom=22,pw=w-left-right,ph=h-top-bottom;
+ const x=i=>left+i/Math.max(1,hist.length+future.length-1)*pw;
+ const y=v=>top+(hi-v)/(hi-lo||1)*ph;
+ ctx.strokeStyle=line;ctx.lineWidth=1;
+ for(let i=0;i<5;i++){let yy=top+i*ph/4;ctx.beginPath();ctx.moveTo(left,yy);ctx.lineTo(w-right,yy);ctx.stroke();ctx.fillStyle=ink;ctx.font='9px sans-serif';ctx.fillText((hi-(hi-lo)*i/4).toFixed(1),2,yy+3)}
+ ctx.strokeStyle='#c74b55';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(left,y(m?.resistance||hi));ctx.lineTo(w-right,y(m?.resistance||hi));ctx.stroke();
+ ctx.strokeStyle='#148568';ctx.beginPath();ctx.moveTo(left,y(m?.support||lo));ctx.lineTo(w-right,y(m?.support||lo));ctx.stroke();ctx.setLineDash([]);
+ ctx.beginPath();hist.forEach((c,i)=>{if(i===0)ctx.moveTo(x(i),y(c.c));else ctx.lineTo(x(i),y(c.c))});ctx.strokeStyle='#4664d9';ctx.lineWidth=2;ctx.stroke();
+ if(future.length){ctx.beginPath();ctx.moveTo(x(hist.length-1),y(hist.at(-1).c));future.forEach((p,i)=>ctx.lineTo(x(hist.length+i),y(p.price)));ctx.strokeStyle='#148568';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
+  future.forEach((p,i)=>{if(p.turn){ctx.beginPath();ctx.arc(x(hist.length+i),y(p.price),3,0,Math.PI*2);ctx.fillStyle='#7858c5';ctx.fill()}})
+ }
+}
+function signal(m){
+ if(m.trend==='Восходящий'&&m.rsi<68&&(m.resistance-m.price)/m.price>.025)return['ПОКУПАТЬ','buy'];
+ if(m.trend==='Нисходящий'&&m.rsi>36)return['ПРОДАВАТЬ','sell'];
+ return['ДЕРЖАТЬ','hold'];
+}
+function renderAssets(){
+ const root=$('assets');
+ root.innerHTML=S.rows.map((r,i)=>`<section class="card asset"><div class="asset-head" data-open="${i}"><div><div class="asset-name">${esc(r.name)} <span class="muted">${esc(r.ticker)}</span></div><div class="asset-sub">${r.qty.toLocaleString('ru-RU')} шт. · Средняя цена ${fmt(r.avg)}</div></div><div class="asset-price">${fmt(r.price)}<div class="small ${r.pnl>=0?'positive':'negative'}">${r.pnl>=0?'+':''}${fmt(r.pnl)}</div></div></div><div class="row" style="margin-top:10px"><span class="pill hold" id="signal-${i}">АНАЛИЗ</span><span class="small muted" id="time-${i}">Нажми, чтобы открыть анализ</span></div><div class="detail hidden" id="detail-${i}"><div class="chart-wrap"><canvas id="chart-${i}" class="chart"></canvas></div><div class="levels"><div class="level"><span>ПОДДЕРЖКА</span><b id="support-${i}">—</b></div><div class="level"><span>СОПРОТИВЛЕНИЕ</span><b id="resistance-${i}">—</b></div></div><div class="grid"><div class="stat"><span>СЦЕНАРИЙ · 7 ДНЕЙ</span><strong id="p7-${i}">—</strong><div class="small muted" id="r7-${i}">—</div></div><div class="stat"><span>СЦЕНАРИЙ · 30 ДНЕЙ</span><strong id="p30-${i}">—</strong><div class="small muted" id="r30-${i}">—</div></div></div><div class="section">ВНУТРИДНЕВНОЙ СЦЕНАРИЙ · 20 МИН</div><div id="forecast-${i}" class="forecast"></div><div class="analysis"><h3>Интеллектуальный анализ</h3><div id="analysis-${i}"></div></div></div></section>`).join('');
+ root.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click',()=>loadDetail(Number(el.dataset.open))));
+}
+async function loadDetail(i){
+ const r=S.rows[i];if(!r||r.loading)return;
+ const box=$('detail-'+i);
+ if(!box.classList.contains('hidden')&&r.loaded)return;
+ r.loading=true;box.classList.remove('hidden');$('time-'+i).textContent='Загрузка истории…';
+ try{
+  const [daily,hourly]=await Promise.all([
+   getCandles(r.uid,'CANDLE_INTERVAL_DAY',400),
+   getCandles(r.uid,'CANDLE_INTERVAL_HOUR',45).catch(()=>[])
+  ]);
+  const history=daily.length?daily:hourly;
+  const m=model(daily,hourly,r.price);
+  if(!m.ok)throw Error(m.reason);
+  r.model=m;r.chartCandles=hourly.length?hourly.slice(-30):history.slice(-30);
+  const s=signal(m);$('signal-'+i).textContent=s[0];$('signal-'+i).className='pill '+s[1];
+  $('support-'+i).textContent=fmt(m.support);$('resistance-'+i).textContent=fmt(m.resistance);
+  $('p7-'+i).textContent=fmt(m.p7);$('p30-'+i).textContent=fmt(m.p30);
+  $('r7-'+i).textContent=`${m.p7>=r.price?'+':''}${pct(m.p7/r.price-1)} · диапазон ${fmt(m.low7,0)}–${fmt(m.high7,0)}`;
+  $('r30-'+i).textContent=`${m.p30>=r.price?'+':''}${pct(m.p30/r.price-1)} · диапазон ${fmt(m.low30,0)}–${fmt(m.high30,0)}`;
+  $('forecast-'+i).innerHTML=m.forecast.map(p=>`<div class="point ${p.turn?'turn':''}"><small>${new Date(p.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}${p.turn?' · разворот':''}</small><b>${fmt(p.price)}</b><em class="${p.price>=r.price?'positive':'negative'}">${p.price>=r.price?'+':''}${pct(p.price/r.price-1)}</em></div>`).join('');
+  const risk=m.vol>.035?'высокая':m.vol<.012?'относительно низкая':'умеренная';
+  const blocks=[
+   ['Рыночная картина',`${m.trend}. EMA и динамика цены показывают текущий перевес, но не гарантируют продолжения движения.`],
+   ['Технический импульс',`RSI: ${m.rsi.toFixed(0)} из 100. ${m.rsi>70?'Риск перекупленности повышен.':m.rsi<30?'Акция сильно просела; отскок не гарантирован.':'Крайняя перекупленность или перепроданность не выявлена.'}`],
+   ['Ключевые уровни',`Поддержка ${fmt(m.support)}, сопротивление ${fmt(m.resistance)}. Это оценочные зоны по историческим экстремумам; при сильном импульсе они могут быть пробиты.`],
+   ['Сценарий цены',`7 дней: ${fmt(m.p7)} (${pct(m.p7/r.price-1)}). 30 дней: ${fmt(m.p30)} (${pct(m.p30/r.price-1)}). Это расчётный сценарий, не обещание цены.`],
+   ['Практическая тактика',m.advice],
+   ['Риски и ограничения',`Оценка риска: ${risk}. Прогноз чувствителен к новостям, ликвидности и рыночным гэпам. Не используй сценарий как единственное основание для сделки.`]
+  ];
+  $('analysis-'+i).innerHTML=blocks.map(([h,t])=>`<div style="padding:9px 0;border-bottom:1px solid var(--line)"><h3>${esc(h)}</h3><p>${esc(t)}</p></div>`).join('');
+  draw($('chart-'+i),r.chartCandles,m);$('time-'+i).textContent='История обновлена';
+  r.loaded=true;
+ }catch(e){
+  $('time-'+i).textContent='Нет данных';
+  $('analysis-'+i).innerHTML=`<p>${esc(explain(e))}</p>`;
+  status(explain(e),true);
+ }finally{r.loading=false}
+}
+function explain(e){
+ const m=String(e?.message||e);
+ if(/Failed to fetch|NetworkError|CORS|Load failed/i.test(m))return'Браузер не смог обратиться к API T‑Invest. Если это CORS, статическая HTML-страница не сможет подключиться напрямую: потребуется защищённый серверный прокси. Не публикуй токен.';
+ return m;
+}
+async function refresh(initial=false){
+ if(S.busy)return;
+ S.busy=true;$('run').disabled=true;$('refresh').disabled=true;
+ status(initial?'Подключение к T‑Invest…':'Обновление портфеля…');
+ try{
+  const a=await api(USERS,'GetAccounts',{status:'ACCOUNT_STATUS_OPEN'});
+  S.accounts=a.accounts||[];
+  if(!S.accounts.length)throw Error('Не найдены открытые счета. Проверь доступ токена.');
+  const rows=[];
+  for(const ac of S.accounts){
+   const aid=ac.id||ac.accountId;if(!aid)continue;
+   const p=await api(OPS,'GetPortfolio',{accountId:aid});
+   let positions=p.positions||[];
+   if(!positions.length){
+    const alt=await api(OPS,'GetPositions',{accountId:aid});
+    positions=alt.securities||alt.positions||[];
+   }
+   for(const x of positions){
+    const uid=get(x,'instrumentUid','instrumentUID','instrument_uid');
+    const qty=val(get(x,'quantity','balance','position'));
+    const type=String(get(x,'instrumentType','instrument_type')||'').toLowerCase();
+    if(!uid||qty<=0||['currency','cash','rub','currency_position'].includes(type))continue;
+    rows.push({uid,ticker:get(x,'ticker','figi')||uid.slice(0,8),name:get(x,'name','instrumentName')||get(x,'ticker')||uid.slice(0,8),qty,price:val(get(x,'currentPrice','price')),avg:val(get(x,'averagePositionPrice','averagePrice','average_price')),pnl:val(get(x,'expectedYield','pnl','profitLoss'))});
+   }
+  }
+  S.rows=[...new Map(rows.map(r=>[r.uid,r])).values()];
+  if(!S.rows.length)throw Error('Счёт подключён, но открытые позиции не найдены.');
+  status('Получаю последние цены…');
+  const pricesMap=await prices(S.rows.map(r=>r.uid));
+  for(const r of S.rows){if(pricesMap[r.uid]>0)r.price=pricesMap[r.uid];r.value=r.price*r.qty;if(!r.pnl&&r.avg>0)r.pnl=(r.price-r.avg)*r.qty;}
+  const market=S.rows.reduce((a,r)=>a+r.value,0),pnl=S.rows.reduce((a,r)=>a+r.pnl,0);
+  $('market').textContent=fmt(market);
+  $('positions').textContent='Позиций: '+S.rows.length;
+  $('pnl').textContent=(pnl>=0?'+':'')+fmt(pnl);
+  $('pnl').className=pnl>=0?'positive':'negative';
+  $('return').textContent='Суммарный результат открытых позиций; не вся история сделок';
+  renderAssets();
+  $('updated').textContent='Обновлено '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  status(`Загружено позиций: ${S.rows.length}. Автообновление каждые 10 минут, пока страница открыта.`);
+  S.lastRefresh=Date.now();
+  if(S.timer)clearInterval(S.timer);
+  S.timer=setInterval(()=>{if(document.visibilityState==='visible'&&!S.busy&&S.token)refresh(false)},600000);
+ }catch(e){
+  status(explain(e),true);
+  if(!S.rows.length)$('assets').innerHTML=`<section class="card empty">${esc(explain(e))}</section>`;
+ }finally{
+  S.busy=false;$('run').disabled=false;$('refresh').disabled=!S.token;
+ }
+}
+function lock(){
+ const el=$('token');el.readOnly=true;el.classList.add('locked');
+ $('run').textContent='Сбросить токен';$('run').classList.add('secondary');
+ $('token').setAttribute('aria-readonly','true');
+}
+function reset(){
+ if(S.timer)clearInterval(S.timer);
+ S.timer=null;S.token='';S.rows=[];S.accounts=[];
+ const el=$('token');el.value='';el.readOnly=false;el.classList.remove('locked');el.removeAttribute('aria-readonly');
+ $('run').textContent='Запустить';$('run').classList.remove('secondary');
+ $('market').textContent='—';$('positions').textContent='Позиции: —';
+ $('pnl').textContent='—';$('pnl').className='';$('return').textContent='Изменение по текущим позициям';
+ $('updated').textContent='Нет обновлений';$('income').textContent='Портфель T‑Invest';
+ $('assets').innerHTML='<section class="card empty">Подключи счёт, чтобы загрузить портфель.</section>';
+ $('refresh').disabled=true;status('Токен сброшен. Можно ввести новый.');
+}
+$('run').addEventListener('click',async()=>{
+ if(S.token){if(S.busy){status('Дождись завершения текущего запроса.',true);return}reset();return}
+ const t=$('token').value.trim();
+ if(!t){status('Сначала введи T‑Invest API-токен.',true);return}
+ S.token=t;lock();await refresh(true);
+});
+$('refresh').addEventListener('click',()=>refresh(false));
+const ti=$('token');
+['copy','cut','paste','contextmenu','selectstart','dragstart'].forEach(evt=>ti.addEventListener(evt,e=>{if(ti.readOnly)e.preventDefault()}));
+ti.addEventListener('keydown',e=>{if(ti.readOnly&&(e.ctrlKey||e.metaKey)&&['a','c','x','v'].includes(e.key.toLowerCase()))e.preventDefault()});
+$('theme').addEventListener('click',()=>{
+ const dark=!document.body.classList.contains('dark');
+ document.body.classList.toggle('dark',dark);
+ document.querySelector('meta[name="theme-color"]').content=dark?'#0d1016':'#f6f8fc';
+ $('theme').title=dark?'Светлая тема':'Тёмная тема';
+ try{localStorage.setItem('mzbox-theme',dark?'dark':'light')}catch{}
+ S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)draw(c,r.chartCandles,r.model)});
+});
+try{document.body.classList.toggle('dark',localStorage.getItem('mzbox-theme')==='dark')}catch{}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&S.token&&!S.busy&&Date.now()-S.lastRefresh>600000)refresh(false)});
+window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)draw(c,r.chartCandles,r.model)}));
+})();
+</script>
+</body>
+</html>
