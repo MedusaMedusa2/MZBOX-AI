@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f7f7f3"><title>MZBOX AI · V10</title>
+<meta name="theme-color" content="#f7f7f3"><title>MZBOX AI · V11</title>
 <style>
 :root{color-scheme:light;--bg:#f7f7f3;--card:#fff;--ink:#171717;--muted:#77776f;--line:#e8e6dc;--green:#28785c;--red:#b84b4b;--blue:#b6a24a;--yellow:#f0e4a3;--shadow:0 7px 25px rgba(25,25,20,.035)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}main{max-width:1040px;margin:auto;padding:18px 16px 30px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 16px}.brand{font-size:22px;font-weight:850;letter-spacing:-.9px;background:linear-gradient(90deg,var(--ink),#8e7b35);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.topright{text-align:right;color:var(--muted);font-size:11px}.tiny-result{font-size:11px;margin-top:3px;color:var(--muted);font-weight:500}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:15px;margin-bottom:12px}.section{font-size:10px;font-weight:800;letter-spacing:1.15px;color:var(--muted);margin:19px 2px 9px}.muted{color:var(--muted)}.small{font-size:11px}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{min-width:0;padding:13px;border:1px solid var(--line);border-radius:13px}.stat span{display:block;color:var(--muted);font-size:10px;letter-spacing:.5px}.stat strong{display:block;font-size:19px;margin-top:4px;letter-spacing:-.4px;overflow-wrap:anywhere}.positive{color:var(--green)!important}.negative{color:var(--red)!important}.token-locked{background:#f3f2eb!important;color:#77776f!important}.token-note{font-size:10px;color:var(--muted);margin-top:6px}.path-wrap{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden}.path-title{padding:10px 11px;background:#fbf8e8;border-bottom:1px solid var(--line);font-size:11px;font-weight:750}.path-note{font-size:10px;color:var(--muted);padding:8px 11px 0}.path-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}.path-point{padding:9px 8px;border-bottom:1px solid var(--line);min-width:0}.path-point:nth-child(3n+2),.path-point:nth-child(3n+3){border-left:1px solid var(--line)}.path-point .time{font-size:11px;color:var(--muted)}.path-point .price{font-size:11px;font-weight:750;margin-top:3px;overflow-wrap:anywhere}.path-point .move{font-size:11px;margin-top:2px}.path-point.turning{background:#fbf6d9}.path-point.turning .time{color:#8b792e;font-weight:750}.income-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 5px}.field input,.token-input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);outline:none}.field input:focus,.token-input:focus{border-color:#d6c46c}.needed{grid-column:1/-1;border-radius:12px;background:#fbf7df;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}.needed span{font-size:11px;color:#77704b}.needed strong{font-size:20px;color:#8c792b;white-space:nowrap}.btn{border:0;border-radius:11px;padding:11px 14px;background:#202b40;color:white;font-weight:700}.btn.secondary{background:#f4f0dc;color:#6c5d22}.btn:disabled{opacity:.5;cursor:wait}.tokenrow{display:flex;gap:8px;margin-top:10px}.tokenrow .token-input{min-width:0;flex:1}.status{font-size:11px;color:var(--muted);margin-top:9px;overflow-wrap:anywhere}.status.error{color:var(--red)}.asset{overflow:hidden}.asset-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;cursor:pointer;list-style:none}.asset-head::-webkit-details-marker{display:none}.asset-name{font-weight:750;font-size:14px}.asset-sub{font-size:11px;color:var(--muted);margin-top:2px}.asset-price{text-align:right;font-weight:750;font-size:15px;white-space:nowrap}.asset-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px}.pill{display:inline-flex;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:800;border:1px solid transparent;white-space:nowrap}.pill.buy{background:#e5f7ee;color:#087b4d;border-color:#b9e6ce}.pill.hold{background:#f5f1d9;color:#786827;border-color:#e7dca6}.pill.sell{background:#fff0ee;color:#b63e35;border-color:#f4d0cc}.asset-detail{border-top:1px solid var(--line);margin-top:13px;padding-top:13px}.chart-wrap{border:1px solid var(--line);border-radius:13px;padding:7px;overflow:hidden;background:#fff}.chart{width:100%;height:250px;display:block}.levels{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:9px 0}.level{border:1px solid var(--line);border-radius:11px;padding:10px}.level span{display:block;font-size:10px;color:var(--muted)}.level b{font-size:16px;display:block;margin-top:3px}.analysis{background:#fbfaf4;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}.analysis h3{font-size:12px;margin:0 0 5px}.analysis p{font-size:12px;color:var(--muted);line-height:1.55;margin:0}.empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:12px}.footer{text-align:center;color:#8993a5;font-size:10px;font-weight:400;margin-top:20px;line-height:1.8}.hidden{display:none!important}.spin{display:inline-block;width:10px;height:10px;border:2px solid #e6dfbd;border-top-color:#a58c2f;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
@@ -97,14 +97,207 @@ body.dark .market-launch{background:linear-gradient(120deg,var(--card),#17251f);
 
 .recommendation-card{margin-top:12px;padding:15px;border:1px solid color-mix(in srgb,var(--green) 25%,var(--line));border-radius:15px;background:color-mix(in srgb,var(--green) 5%,var(--card))}.recommendation-label{font-size:10px;font-weight:850;letter-spacing:1px;color:var(--green);margin-bottom:10px}.recommendation-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.recommendation-grid>div{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);min-width:0}.recommendation-grid span,.recommendation-grid small{display:block;font-size:10px;color:var(--muted)}.recommendation-grid b{display:block;font-size:17px;overflow-wrap:anywhere;margin:5px 0}.recommendation-grid small{line-height:1.5}.recommendation-profit{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding:11px 12px;border-radius:11px;background:var(--card)}.recommendation-profit span{font-size:11px;color:var(--muted)}.recommendation-profit strong{font-size:16px;white-space:nowrap}.recommendation-note{font-size:10px!important;line-height:1.5!important;margin-top:10px!important}.market-empty{padding:20px 12px;text-align:center;color:var(--muted);font-size:12px;border:1px dashed var(--line);border-radius:14px}.market-summary{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:3px}.market-summary>div{padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);min-width:0}.market-summary span{display:block;font-size:9px;letter-spacing:.25px;color:var(--muted);line-height:1.35}.market-summary b{display:block;font-size:12px;margin-top:4px;overflow-wrap:anywhere}.market-summary small{display:block;font-size:9px;color:var(--muted);margin-top:3px;line-height:1.35}.market-verdict{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:9px;background:var(--card);font-size:10px}.market-verdict strong{font-size:10px;letter-spacing:.5px}.market-verdict .watch{color:#8a7021}.market-verdict .skip{color:var(--red)}.market-verdict .look{color:var(--green)}body.dark .recommendation-card{background:#14231d;border-color:#2a5140}body.dark .recommendation-grid>div,body.dark .recommendation-profit{background:#151a23}@media(max-width:430px){.recommendation-card{padding:11px}.recommendation-grid{gap:7px}.recommendation-grid>div{padding:9px}.recommendation-grid b{font-size:14px}.recommendation-profit strong{font-size:14px}}
 
+
+/* V11 · refined premium market workspace */
+:root{--blue:#a88d3a;--green:#197a58;--red:#bd4c4c;--shadow:0 10px 32px rgba(28,25,15,.055)}
+.market-launch{display:flex;justify-content:flex-end;margin:0 0 12px;padding:0;background:transparent;border:0;box-shadow:none}
+.market-open{min-width:0;width:100%;min-height:58px;padding:0 20px;border-radius:16px;background:linear-gradient(115deg,#24231e,#4a4028 68%,#8b7335);color:#fff;justify-content:space-between;font-size:14px;letter-spacing:.15px;box-shadow:0 9px 22px rgba(89,71,27,.18);transition:transform .18s ease,box-shadow .18s ease}
+.market-open:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(89,71,27,.24)}
+.market-open span:last-child{font-size:20px;font-weight:400}
+.market-panel{border-radius:22px;padding:20px;background:var(--card);box-shadow:0 15px 45px rgba(22,22,15,.07)}
+.market-panel-head{align-items:center;padding-bottom:15px;border-bottom:1px solid var(--line)}
+.market-panel h2{font-size:21px;letter-spacing:-.65px;margin:0}
+.market-panel-sub{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}
+.market-close{border-radius:13px;background:var(--bg);border:1px solid var(--line);font-size:22px}
+.market-tabs{gap:8px;margin:16px 0 12px}
+.market-tab{min-height:45px;border-radius:13px;font-size:11px;transition:background .15s,border-color .15s}
+.market-tab.active{background:linear-gradient(120deg,#24231e,#55482b);border-color:#55482b;color:#fff}
+.market-actions{padding:11px 12px;margin-bottom:13px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.market-actions .small{font-size:11px;line-height:1.45}
+.market-actions .btn{min-height:43px;padding:10px 18px;border-radius:12px;background:#20231f;box-shadow:none}
+.market-results{gap:11px}
+.market-row{grid-template-columns:minmax(0,1fr) auto auto;gap:12px;padding:15px;border-radius:17px;background:var(--bg);border-color:color-mix(in srgb,var(--line) 75%,#b39a4a);transition:border-color .18s,transform .18s}
+.market-row:hover{border-color:#b49a4b;transform:translateY(-1px)}
+.market-stock strong{font-size:13px;line-height:1.45;letter-spacing:-.1px}
+.market-stock small{font-size:10px;margin-top:5px}
+.market-price{font-size:13px;font-variant-numeric:tabular-nums}
+.market-change{font-size:12px;font-variant-numeric:tabular-nums}
+.market-study{min-height:42px;padding:10px 14px;border-radius:12px;background:linear-gradient(120deg,#24231e,#51452b);color:#fff;font-size:11px;box-shadow:0 4px 10px rgba(25,25,20,.09);transition:transform .15s}
+.market-study:active{transform:scale(.98)}
+.market-summary{gap:8px;margin-top:5px}
+.market-summary>div{padding:12px;border-radius:13px;border-color:var(--line);box-shadow:0 2px 7px rgba(20,20,10,.018)}
+.market-summary span{font-size:9px;font-weight:750;letter-spacing:.45px;line-height:1.45}
+.market-summary b{font-size:14px;margin-top:7px;font-variant-numeric:tabular-nums;letter-spacing:-.25px}
+.market-summary small{font-size:10px;line-height:1.45;margin-top:4px}
+.market-summary>div:nth-child(1){border-color:color-mix(in srgb,#b29a4a 40%,var(--line))}
+.market-summary>div:nth-child(3){border-color:color-mix(in srgb,var(--green) 26%,var(--line))}
+.market-verdict{padding:10px 12px;border:1px solid var(--line);border-radius:12px;gap:10px}
+.market-verdict span{font-size:10px;font-weight:500;letter-spacing:0}
+.market-verdict strong{font-size:10px;white-space:nowrap}
+.market-verdict .look{background:#e7f5ed;color:#146a49;padding:6px 9px;border-radius:8px}
+.market-verdict .watch{background:#f7f0d8;color:#7d641b;padding:6px 9px;border-radius:8px}
+.market-verdict .skip{background:#fbe9e7;color:#a63b36;padding:6px 9px;border-radius:8px}
+.market-empty{border-radius:15px;padding:24px 15px}
+body.dark .market-open,body.dark .market-study{background:linear-gradient(115deg,#e8dfbd,#bda65b);color:#1b1b18;border-color:#bda65b}
+body.dark .market-tab.active{background:#d9c783;color:#191a17;border-color:#d9c783}
+body.dark .market-actions{background:#10151d}
+body.dark .market-verdict .look{background:#163629;color:#8ce1b8}
+body.dark .market-verdict .watch{background:#302d1d;color:#e9d98b}
+body.dark .market-verdict .skip{background:#3b2227;color:#ffb7b7}
+@media(max-width:600px){
+ .market-launch{margin-bottom:10px}
+ .market-open{min-height:56px;border-radius:15px}
+ .market-panel{padding:14px;border-radius:18px}
+ .market-panel h2{font-size:19px}
+ .market-panel-sub{max-width:235px}
+ .market-tabs{gap:5px;margin:14px 0 10px}
+ .market-tab{min-height:44px;padding:8px 4px;font-size:10px;border-radius:11px}
+ .market-actions{gap:8px;padding:10px}
+ .market-actions .btn{min-height:44px}
+ .market-row{padding:12px;gap:8px;border-radius:15px}
+ .market-stock strong{font-size:12px}
+ .market-price{font-size:11px}
+ .market-study{min-height:44px;border-radius:11px}
+ .market-summary{gap:7px}
+ .market-summary>div{padding:10px;border-radius:11px}
+ .market-summary span{font-size:8px}
+ .market-summary b{font-size:13px}
+ .market-summary small{font-size:9px}
+ .market-verdict{align-items:flex-start;flex-direction:column;gap:7px}
+ .market-verdict strong{white-space:normal}
+}
+
+
+/* V11 · gold-tier system-wide finish */
+body{font-feature-settings:"tnum" 1,"ss01" 1;letter-spacing:.01px;-webkit-font-smoothing:antialiased}
+main{max-width:1080px;padding-top:22px}
+.top{margin-bottom:20px;align-items:center}
+.brand{font-size:25px;letter-spacing:-1.1px}
+.card{border-radius:20px;padding:18px;box-shadow:0 8px 30px rgba(35,30,17,.035);transition:border-color .18s,box-shadow .18s}
+.section{font-size:10px;letter-spacing:1.35px;margin-top:22px;margin-bottom:10px}
+.btn{min-height:44px;border-radius:13px;padding:12px 17px;background:linear-gradient(120deg,#25241f,#55482c);box-shadow:0 5px 13px rgba(35,31,20,.11);transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.985)}
+.icon-square,.theme-toggle,.reset-square{width:39px;height:39px;flex-basis:39px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);box-shadow:0 2px 7px rgba(20,20,10,.025);font-size:16px}
+.theme-toggle{background:linear-gradient(135deg,#1b1b19 0 49%,#d4bd69 51% 100%);border-color:#c6b36c}
+.connection-card{padding:19px;border-color:color-mix(in srgb,#b49a4b 25%,var(--line))}
+.tokenrow{gap:10px;margin-top:13px}
+.tokenrow .token-input,.field input{min-height:46px;border-radius:13px;padding:12px 14px;border-color:var(--line)}
+.token-note,.status{line-height:1.5}
+.portfolio-line{border-color:color-mix(in srgb,#b49a4b 35%,var(--line));background:linear-gradient(125deg,var(--card),color-mix(in srgb,#c5ac5a 7%,var(--card)))}
+.stat,.level,.forecast-stat{border-radius:15px;padding:14px}
+.asset-list{display:grid;gap:11px}
+.asset{border-radius:18px;padding:16px;border-color:var(--line);box-shadow:0 7px 24px rgba(20,20,10,.025)}
+.asset[open]{border-color:color-mix(in srgb,#b49a4b 43%,var(--line));box-shadow:0 9px 30px rgba(45,37,16,.055)}
+.asset-name{font-size:14px;line-height:1.5;letter-spacing:-.1px}
+.asset-sub{line-height:1.45}
+.asset-price{font-size:15px;font-variant-numeric:tabular-nums}
+.asset-meta{gap:7px}
+.pill{padding:6px 9px;border-radius:999px;letter-spacing:.1px}
+.asset-detail{margin-top:16px;padding-top:16px}
+.chart-wrap{border-radius:16px;padding:10px}
+.chart{height:270px}
+.analysis{border-radius:15px;padding:15px}
+.analysis-block{padding:13px 0}
+.forecast-stat{background:var(--bg)}
+.search-card{padding:14px}
+.search-row{gap:10px}
+.search-row input{min-height:48px;border-radius:13px;padding:12px 14px}
+.search-btn{min-height:48px;border-radius:13px;padding:12px 20px}
+.footer{padding:5px 10px 0}
+body.dark .card{box-shadow:0 9px 28px rgba(0,0,0,.13)}
+body.dark .portfolio-line{background:linear-gradient(125deg,var(--card),#252218)}
+body.dark .btn{background:linear-gradient(120deg,#d9c783,#b39b53);color:#191a17}
+body.dark .icon-square,body.dark .reset-square{background:var(--card);color:var(--ink);border-color:var(--line)}
+@media(max-width:600px){
+ main{padding:14px 11px 28px}
+ .top{margin-bottom:15px}
+ .brand{font-size:23px}
+ .card{padding:14px;border-radius:17px}
+ .connection-card{padding:15px}
+ .asset{padding:13px;border-radius:16px}
+ .chart{height:240px}
+ .portfolio-line{padding:15px}
+ .icon-square,.theme-toggle,.reset-square{width:36px;height:36px;flex-basis:36px;border-radius:11px}
+ .tokenrow{gap:7px}
+ .tokenrow .btn{padding:11px 12px}
+}
+/* V11 · refined premium market workspace */
+:root{--blue:#a88d3a;--green:#197a58;--red:#bd4c4c;--shadow:0 10px 32px rgba(28,25,15,.055)}
+.market-launch{display:flex;justify-content:flex-end;margin:0 0 12px;padding:0;background:transparent;border:0;box-shadow:none}
+.market-open{min-width:0;width:100%;min-height:58px;padding:0 20px;border-radius:16px;background:linear-gradient(115deg,#24231e,#4a4028 68%,#8b7335);color:#fff;justify-content:space-between;font-size:14px;letter-spacing:.15px;box-shadow:0 9px 22px rgba(89,71,27,.18);transition:transform .18s ease,box-shadow .18s ease}
+.market-open:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(89,71,27,.24)}
+.market-open span:last-child{font-size:20px;font-weight:400}
+.market-panel{border-radius:22px;padding:20px;background:var(--card);box-shadow:0 15px 45px rgba(22,22,15,.07)}
+.market-panel-head{align-items:center;padding-bottom:15px;border-bottom:1px solid var(--line)}
+.market-panel h2{font-size:21px;letter-spacing:-.65px;margin:0}
+.market-panel-sub{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45}
+.market-close{border-radius:13px;background:var(--bg);border:1px solid var(--line);font-size:22px}
+.market-tabs{gap:8px;margin:16px 0 12px}
+.market-tab{min-height:45px;border-radius:13px;font-size:11px;transition:background .15s,border-color .15s}
+.market-tab.active{background:linear-gradient(120deg,#24231e,#55482b);border-color:#55482b;color:#fff}
+.market-actions{padding:11px 12px;margin-bottom:13px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.market-actions .small{font-size:11px;line-height:1.45}
+.market-actions .btn{min-height:43px;padding:10px 18px;border-radius:12px;background:#20231f;box-shadow:none}
+.market-results{gap:11px}
+.market-row{grid-template-columns:minmax(0,1fr) auto auto;gap:12px;padding:15px;border-radius:17px;background:var(--bg);border-color:color-mix(in srgb,var(--line) 75%,#b39a4a);transition:border-color .18s,transform .18s}
+.market-row:hover{border-color:#b49a4b;transform:translateY(-1px)}
+.market-stock strong{font-size:13px;line-height:1.45;letter-spacing:-.1px}
+.market-stock small{font-size:10px;margin-top:5px}
+.market-price{font-size:13px;font-variant-numeric:tabular-nums}
+.market-change{font-size:12px;font-variant-numeric:tabular-nums}
+.market-study{min-height:42px;padding:10px 14px;border-radius:12px;background:linear-gradient(120deg,#24231e,#51452b);color:#fff;font-size:11px;box-shadow:0 4px 10px rgba(25,25,20,.09);transition:transform .15s}
+.market-study:active{transform:scale(.98)}
+.market-summary{gap:8px;margin-top:5px}
+.market-summary>div{padding:12px;border-radius:13px;border-color:var(--line);box-shadow:0 2px 7px rgba(20,20,10,.018)}
+.market-summary span{font-size:9px;font-weight:750;letter-spacing:.45px;line-height:1.45}
+.market-summary b{font-size:14px;margin-top:7px;font-variant-numeric:tabular-nums;letter-spacing:-.25px}
+.market-summary small{font-size:10px;line-height:1.45;margin-top:4px}
+.market-summary>div:nth-child(1){border-color:color-mix(in srgb,#b29a4a 40%,var(--line))}
+.market-summary>div:nth-child(3){border-color:color-mix(in srgb,var(--green) 26%,var(--line))}
+.market-verdict{padding:10px 12px;border:1px solid var(--line);border-radius:12px;gap:10px}
+.market-verdict span{font-size:10px;font-weight:500;letter-spacing:0}
+.market-verdict strong{font-size:10px;white-space:nowrap}
+.market-verdict .look{background:#e7f5ed;color:#146a49;padding:6px 9px;border-radius:8px}
+.market-verdict .watch{background:#f7f0d8;color:#7d641b;padding:6px 9px;border-radius:8px}
+.market-verdict .skip{background:#fbe9e7;color:#a63b36;padding:6px 9px;border-radius:8px}
+.market-empty{border-radius:15px;padding:24px 15px}
+body.dark .market-open,body.dark .market-study{background:linear-gradient(115deg,#e8dfbd,#bda65b);color:#1b1b18;border-color:#bda65b}
+body.dark .market-tab.active{background:#d9c783;color:#191a17;border-color:#d9c783}
+body.dark .market-actions{background:#10151d}
+body.dark .market-verdict .look{background:#163629;color:#8ce1b8}
+body.dark .market-verdict .watch{background:#302d1d;color:#e9d98b}
+body.dark .market-verdict .skip{background:#3b2227;color:#ffb7b7}
+@media(max-width:600px){
+ .market-launch{margin-bottom:10px}
+ .market-open{min-height:56px;border-radius:15px}
+ .market-panel{padding:14px;border-radius:18px}
+ .market-panel h2{font-size:19px}
+ .market-panel-sub{max-width:235px}
+ .market-tabs{gap:5px;margin:14px 0 10px}
+ .market-tab{min-height:44px;padding:8px 4px;font-size:10px;border-radius:11px}
+ .market-actions{gap:8px;padding:10px}
+ .market-actions .btn{min-height:44px}
+ .market-row{padding:12px;gap:8px;border-radius:15px}
+ .market-stock strong{font-size:12px}
+ .market-price{font-size:11px}
+ .market-study{min-height:44px;border-radius:11px}
+ .market-summary{gap:7px}
+ .market-summary>div{padding:10px;border-radius:11px}
+ .market-summary span{font-size:8px}
+ .market-summary b{font-size:13px}
+ .market-summary small{font-size:9px}
+ .market-verdict{align-items:flex-start;flex-direction:column;gap:7px}
+ .market-verdict strong{white-space:normal}
+}
+
 </style>
 </head>
 <body><main>
 <header class="top"><div class="brand-wrap"><div class="brand">MZBOX AI</div><div id="tokenBadge" class="token-badge"><i></i><span>Токен не подключён</span></div></div><span id="lastUpdated" class="hidden"></span><div class="header-actions"><button id="refresh" class="icon-square" type="button" disabled aria-label="Актуализировать данные" title="Обновить данные и перезагрузить сайт">⟳</button><button id="copyToken" class="icon-square" type="button" aria-label="Скопировать токен" title="Скопировать зарегистрированный токен">⧉</button><button id="resetToken" class="icon-square reset-square" type="button" aria-label="Полный сброс приложения" title="Полный сброс: токен, список акций, доступ и тема">×</button><button id="themeToggle" class="theme-toggle" type="button" aria-label="Сменить тему" title="Сменить тему">◐</button></div></header>
 <section class="card connection-card" id="tokenCard"><div class="row"><div id="tokenHeading"><div class="section" style="margin:0 0 8px">ПОДКЛЮЧЕНИЕ T‑INVEST</div><div class="small muted">Токен сохраняется только на этом устройстве.</div></div><span id="busyIcon"></span></div><div class="tokenrow" id="tokenRow"><input id="token" class="token-input" type="password" autocomplete="off" spellcheck="false" placeholder="Вставь T‑Invest API-токен"><button id="connect" class="btn" type="button">Подключить</button></div><div class="token-note" id="tokenNote">Введи токен и нажми «Подключить».</div><div class="status" id="status">Подключи счёт, чтобы загрузить портфель.</div></section>
 <div class="section">ПОРТФЕЛЬ</div><section class="card portfolio-line"><div class="portfolio-metric"><span>СТОИМОСТЬ ПОРТФЕЛЯ</span><strong id="invested">—</strong></div><div class="portfolio-divider"></div><div class="portfolio-metric result-metric"><span>РЕЗУЛЬТАТ</span><strong id="pnl">—</strong><small id="returnPct">—</small></div><span id="marketValue" class="hidden"></span></section>
-<section class="market-launch card"><div><h2>Сканирование рынка</h2></div><button id="marketOpen" class="btn market-open" type="button"><span>Изучить рынок</span><span aria-hidden="true">↗</span></button></section>
-<section id="marketPanel" class="card market-panel hidden"><div class="market-panel-head"><div><h2>Сканирование рынка</h2></div><button id="marketClose" class="icon-square market-close" type="button" aria-label="Закрыть сканирование рынка">×</button></div><div class="market-tabs" role="tablist"><button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button><button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button><button type="button" class="market-tab" data-market-tab="popular">Популярные</button></div><div class="market-actions"><span id="marketStatus" class="small muted">Подключи T‑Invest, чтобы сканировать рынок.</span><button id="marketScan" class="btn" type="button">Сканировать</button></div><div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div><p class="market-footnote">Сканер проверяет ограниченную выборку доступных акций, а не гарантированно весь рынок. Падение само по себе не означает выгодную покупку.</p></section>
+<section class="market-launch"><button id="marketOpen" class="btn market-open" type="button"><span>Анализ рынка</span><span aria-hidden="true">↗</span></button></section>
+<section id="marketPanel" class="card market-panel hidden"><div class="market-panel-head"><div><h2>Анализ рынка</h2><div class="market-panel-sub">Цены входа, выхода и потенциальный результат на одну акцию</div></div><button id="marketClose" class="icon-square market-close" type="button" aria-label="Закрыть анализ рынка">×</button></div><div class="market-tabs" role="tablist"><button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button><button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button><button type="button" class="market-tab" data-market-tab="popular">Популярные</button></div><div class="market-actions"><span id="marketStatus" class="small muted">Подключи T‑Invest, чтобы сканировать рынок.</span><button id="marketScan" class="btn" type="button">Сканировать</button></div><div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div></section>
 <section class="analysis-gate daily-gate" id="dailyGate"><p id="dailyGateText">Введите дневной код, чтобы открыть прогнозы и полный анализ всех акций.</p><div class="pin-row"><input class="pin-input" id="dailyPin" type="password" readonly inputmode="none" maxlength="4" placeholder="— — — —" aria-label="Дневной код доступа"><button class="pin-open" id="dailyUnlock" type="button">Открыть</button></div><div class="pin-keypad" id="dailyKeypad"><button type="button" data-digit="1">1</button><button type="button" data-digit="2">2</button><button type="button" data-digit="3">3</button><button type="button" data-digit="4">4</button><button type="button" data-digit="5">5</button><button type="button" data-digit="6">6</button><button type="button" data-digit="7">7</button><button type="button" data-digit="8">8</button><button type="button" data-digit="9">9</button><button type="button" data-clear="1">Сброс</button><button type="button" data-digit="0">0</button><button type="button" data-back="1">⌫</button></div><div class="pin-error" id="dailyPinError"></div></section>
 <div id="assets" class="asset-list"><section class="card empty">После подключения здесь появятся активы портфеля.</section></div>
 <section class="card search-card">
@@ -395,21 +588,30 @@ $('marketClose').addEventListener('click',()=>marketPanel.classList.add('hidden'
 document.querySelectorAll('[data-market-tab]').forEach(b=>b.addEventListener('click',()=>{marketMode=b.dataset.marketTab;document.querySelectorAll('[data-market-tab]').forEach(x=>x.classList.toggle('active',x===b));renderMarketResults();}));
 function marketPlan(x){
  const price=Number(x.price)||0,range=Math.max(0,Number(x.dayRange)||0),low=Number(x.recentLow)||0,high=Number(x.recentHigh)||0;
- if(!price)return {entry:0,target:0,potential:0,horizon:'—',verdict:'НЕТ ДАННЫХ',kind:'skip'};
- // Conservative technical levels from the latest available daily candles; these are screening estimates, not orders.
- const entry=low>0&&low<price*.999?Math.max(low,price*(1-Math.min(.035,Math.max(.008,range*.55)))):price*(1-Math.min(.025,Math.max(.008,range*.55)));
- const target=high>price*1.002?high:price*(1+Math.min(.035,Math.max(.01,range*.7)));
+ const momentum=Number(x.momentum)||0;
+ if(!price)return {entry:0,target:0,potential:0,profit:0,verdict:'НЕТ ДАННЫХ',kind:'skip'};
+ // Short-horizon estimate uses recent volatility and 3–5-session momentum,
+ // not the raw support/resistance values. It is a planning estimate, not a guarantee.
+ const vol=Math.min(.045,Math.max(.004,range));
+ let pullback=Math.min(.018,Math.max(.0025,vol*.30));
+ if(momentum>0.025)pullback*=.78;
+ if(momentum<-.025)pullback*=1.18;
+ let entry=price*(1-pullback);
+ // Avoid a buy target far below price when the recent range is tight; avoid pretending a low is guaranteed.
+ if(low>0&&low<price&&price-low<price*.025)entry=Math.max(entry,low+Math.max(0,price-low)*.22);
+ entry=Math.min(price*.998,Math.max(price*.975,entry));
+ let projectedMove=Math.min(.04,Math.max(.006,vol*.72+Math.max(-.006,Math.min(.012,momentum*.22))));
+ if(momentum<-.035)projectedMove*=.78;
+ const target=entry*(1+projectedMove);
+ const profit=target-entry;
  const potential=(target/entry-1)*100;
- const dailyMove=Math.max(.003,range||Math.abs(x.change||0)/100);
- const sessions=Math.max(1,Math.min(15,Math.ceil(Math.abs(target-price)/price/dailyMove)));
- const horizon=sessions<=2?'≈ 1–2 сессии':sessions<=5?'≈ 3–5 сессий':`≈ ${sessions} сессий`;
- const extreme=Math.abs(Number(x.change)||0)>=8;
- const verdict=potential>=2.2&&!extreme?'СТОИТ ИЗУЧИТЬ':potential>=1.2?'НАБЛЮДАТЬ':'ПОКА ПРОПУСТИТЬ';
+ const extreme=Math.abs(Number(x.change)||0)>=9;
+ const verdict=potential>=1.8&&!extreme&&momentum>-.045?'СТОИТ ИЗУЧИТЬ':potential>=1.05?'НАБЛЮДАТЬ':'ПОКА ПРОПУСТИТЬ';
  const kind=verdict==='СТОИТ ИЗУЧИТЬ'?'look':verdict==='НАБЛЮДАТЬ'?'watch':'skip';
- return {entry,target,potential,horizon,verdict,kind};
+ return {entry,target,potential,profit,verdict,kind};
 }
-function renderMarketResults(){const root=$('marketResults');let rows=[...marketCache];if(marketMode==='losers')rows=rows.filter(x=>x.change<0).sort((a,b)=>a.change-b.change).slice(0,10);else if(marketMode==='gainers')rows=rows.filter(x=>x.change>0).sort((a,b)=>b.change-a.change).slice(0,10);else rows=rows.sort((a,b)=>Number(b.liquidity)-Number(a.liquidity)||Math.abs(b.change)-Math.abs(a.change)).slice(0,10);if(!rows.length){root.innerHTML='<div class="market-empty">Нет результатов в проверенной выборке. Попробуй позже или выбери другую вкладку.</div>';return}root.innerHTML=rows.map(x=>{const p=marketPlan(x);return `<div class="market-row"><div class="market-stock"><strong>${esc(x.ticker)} · ${esc(x.name)}</strong><small>${x.liquidity?'Ликвидная акция по данным каталога T‑Invest':'Акция T‑Invest'} · ${x.inPortfolio?'уже в портфеле':x.inWatch?'в наблюдении':'ещё не куплена'}</small></div><div class="market-price">${fmt(x.price)}</div><div class="market-change ${x.change>=0?'up':'down'}">${x.change>0?'+':''}${x.change.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})}%</div><button class="market-study" type="button" data-study-market="${esc(x.uid)}">${x.inPortfolio?'Открыть анализ':x.inWatch?'Открыть анализ':'Изучить акцию'}</button><div class="market-summary"><div><span>ОРИЕНТИР ПОКУПКИ</span><b>${fmt(p.entry)}</b><small>за акцию</small></div><div><span>ТЕКУЩАЯ ЦЕНА</span><b>${fmt(x.price)}</b><small>${x.change>0?'+':''}${x.change.toLocaleString('ru-RU',{maximumFractionDigits:2})}% за день</small></div><div><span>ЦЕЛЬ ПРОДАЖИ</span><b>${fmt(p.target)}</b><small>технический ориентир</small></div><div><span>ПОТЕНЦИАЛ ОТ ВХОДА</span><b class="${p.potential>=0?'positive':'negative'}">${p.potential>0?'+':''}${p.potential.toLocaleString('ru-RU',{maximumFractionDigits:1,minimumFractionDigits:1})}%</b><small>до расчётной цели</small></div><div class="market-verdict"><span>Ориентир по времени: ${p.horizon}. Не прогноз точной даты.</span><strong class="${p.kind}">${p.verdict}</strong></div></div></div>`}).join('');}
-async function scanMarket(){if(!S.token){$('marketStatus').textContent='Сначала подключи T‑Invest токен.';return}if(S.marketBusy)return;S.marketBusy=true;$('marketScan').disabled=true;$('marketScan').textContent='Сканирую…';$('marketStatus').textContent='Получаю каталог акций и котировки…';$('marketResults').innerHTML='<div class="market-empty"><span class="spin"></span> Анализирую доступные данные рынка. Это может занять до минуты.</div>';try{const d=await api(INS,'Shares',{instrumentStatus:'INSTRUMENT_STATUS_BASE'},22000);let instruments=(d.instruments||d.shares||[]).filter(x=>get(x,'uid','instrumentUid','instrumentUID')&&get(x,'ticker')&&(get(x,'apiTradeAvailableFlag')!==false));if(!instruments.length)throw new Error('T‑Invest не вернул список акций для сканирования.');instruments=instruments.filter(x=>String(get(x,'currency')||'rub').toLowerCase()==='rub'&&!get(x,'forQualInvestorFlag'));const allPrices=await lastPrices(instruments.map(x=>get(x,'uid','instrumentUid','instrumentUID')));let candidates=instruments.map(x=>({uid:get(x,'uid','instrumentUid','instrumentUID'),ticker:get(x,'ticker'),name:get(x,'name')||get(x,'ticker'),currency:get(x,'currency')||'rub',price:allPrices[get(x,'uid','instrumentUid','instrumentUID')]||0,liquidity:Boolean(get(x,'liquidityFlag'))})).filter(x=>x.price>0);candidates.sort((a,b)=>Number(b.liquidity)-Number(a.liquidity));candidates=candidates.slice(0,60);$('marketStatus').textContent=`Получаю дневные изменения: ${candidates.length} акций…`;let done=0;const results=[];for(let start=0;start<candidates.length;start+=5){const batch=candidates.slice(start,start+5);const group=await Promise.all(batch.map(async x=>{try{const to=new Date(),from=new Date(to.getTime()-20*86400000);const cd=await api(MD,'GetCandles',{instrumentId:x.uid,from:from.toISOString(),to:to.toISOString(),interval:'CANDLE_INTERVAL_DAY'},12000);const cs=(cd.candles||[]).map(c=>({time:new Date(c.time||c.timestamp).getTime(),close:val(c.close),high:val(c.high),low:val(c.low)})).filter(c=>c.time&&c.close>0).sort((a,b)=>a.time-b.time);if(cs.length<2)return null;const today=new Date().toDateString(),last=cs[cs.length-1],prev=cs.length>=2?cs[cs.length-2]:null;const base=prev?prev.close:last.close;const change=base>0?(x.price/base-1)*100:0;const recent=cs.slice(-5),recentLow=Math.min(...recent.map(c=>c.low||c.close)),recentHigh=Math.max(...recent.map(c=>c.high||c.close)),dayRange=recent.reduce((sum,c)=>sum+Math.max(0,((c.high||c.close)-(c.low||c.close))/c.close),0)/Math.max(1,recent.length);return {...x,change,base,recentLow,recentHigh,dayRange,inPortfolio:S.portfolioRows.some(p=>p.uid===x.uid),inWatch:S.watchRows.some(w=>w.uid===x.uid)}}catch{return null}}));results.push(...group.filter(Boolean));done+=batch.length;$('marketStatus').textContent=`Проверено ${Math.min(done,candidates.length)} из ${candidates.length} акций…`}marketCache=results;renderMarketResults();$('marketStatus').textContent=`Готово: ${results.length} акций с доступной дневной историей. Обновлено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}.`;if(!results.length)throw new Error('Не удалось получить достаточно дневных свечей.');}catch(e){$('marketStatus').textContent='Сканирование не завершено: '+explainError(e);$('marketResults').innerHTML='<div class="market-empty">Нет данных для сканирования. Проверь токен и доступность API, затем попробуй снова.</div>'}finally{S.marketBusy=false;$('marketScan').disabled=false;$('marketScan').textContent='Сканировать'}}
+function renderMarketResults(){const root=$('marketResults');let rows=[...marketCache];if(marketMode==='losers')rows=rows.filter(x=>x.change<0).sort((a,b)=>a.change-b.change).slice(0,10);else if(marketMode==='gainers')rows=rows.filter(x=>x.change>0).sort((a,b)=>b.change-a.change).slice(0,10);else rows=rows.sort((a,b)=>Number(b.liquidity)-Number(a.liquidity)||Math.abs(b.change)-Math.abs(a.change)).slice(0,10);if(!rows.length){root.innerHTML='<div class="market-empty">Нет результатов по выбранному разделу. Попробуй другую вкладку или обнови анализ.</div>';return}root.innerHTML=rows.map(x=>{const p=marketPlan(x);return `<div class="market-row"><div class="market-stock"><strong>${esc(x.ticker)} · ${esc(x.name)}</strong><small>${x.inPortfolio?'В портфеле':x.inWatch?'В наблюдении':x.liquidity?'Ликвидная акция':'Акция T‑Invest'}</small></div><div class="market-price">${fmt(x.price)}</div><div class="market-change ${x.change>=0?'up':'down'}">${x.change>0?'+':''}${x.change.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})}%</div><button class="market-study" type="button" data-study-market="${esc(x.uid)}">${x.inPortfolio||x.inWatch?'Подробно':'Изучить'}</button><div class="market-summary"><div><span>ПОКУПКА · ЗА 1 ШТ.</span><b>${fmt(p.entry)}</b><small>расчётная лимитная цена</small></div><div><span>СЕЙЧАС · ЗА 1 ШТ.</span><b>${fmt(x.price)}</b><small>${x.change>0?'+':''}${x.change.toLocaleString('ru-RU',{maximumFractionDigits:2})}% за день</small></div><div><span>ПРОДАЖА · ЗА 1 ШТ.</span><b>${fmt(p.target)}</b><small>расчётная цена выхода</small></div><div><span>ВОЗМОЖНЫЙ ДОХОД / ШТ.</span><b class="${p.profit>=0?'positive':'negative'}">${p.profit>0?'+':''}${fmt(p.profit)}</b><small>${p.potential.toLocaleString('ru-RU',{maximumFractionDigits:1,minimumFractionDigits:1})}% от входа</small></div><div class="market-verdict"><span>Краткая оценка по текущим данным</span><strong class="${p.kind}">${p.verdict}</strong></div></div></div>`}).join('');}
+async function scanMarket(){if(!S.token){$('marketStatus').textContent='Сначала подключи T‑Invest токен.';return}if(S.marketBusy)return;S.marketBusy=true;$('marketScan').disabled=true;$('marketScan').textContent='Сканирую…';$('marketStatus').textContent='Получаю каталог акций и котировки…';$('marketResults').innerHTML='<div class="market-empty"><span class="spin"></span> Анализирую доступные данные рынка. Это может занять до минуты.</div>';try{const d=await api(INS,'Shares',{instrumentStatus:'INSTRUMENT_STATUS_BASE'},22000);let instruments=(d.instruments||d.shares||[]).filter(x=>get(x,'uid','instrumentUid','instrumentUID')&&get(x,'ticker')&&(get(x,'apiTradeAvailableFlag')!==false));if(!instruments.length)throw new Error('T‑Invest не вернул список акций для сканирования.');instruments=instruments.filter(x=>String(get(x,'currency')||'rub').toLowerCase()==='rub'&&!get(x,'forQualInvestorFlag'));const allPrices=await lastPrices(instruments.map(x=>get(x,'uid','instrumentUid','instrumentUID')));let candidates=instruments.map(x=>({uid:get(x,'uid','instrumentUid','instrumentUID'),ticker:get(x,'ticker'),name:get(x,'name')||get(x,'ticker'),currency:get(x,'currency')||'rub',price:allPrices[get(x,'uid','instrumentUid','instrumentUID')]||0,liquidity:Boolean(get(x,'liquidityFlag'))})).filter(x=>x.price>0);candidates.sort((a,b)=>Number(b.liquidity)-Number(a.liquidity));candidates=candidates.slice(0,60);$('marketStatus').textContent=`Получаю дневные изменения: ${candidates.length} акций…`;let done=0;const results=[];for(let start=0;start<candidates.length;start+=5){const batch=candidates.slice(start,start+5);const group=await Promise.all(batch.map(async x=>{try{const to=new Date(),from=new Date(to.getTime()-20*86400000);const cd=await api(MD,'GetCandles',{instrumentId:x.uid,from:from.toISOString(),to:to.toISOString(),interval:'CANDLE_INTERVAL_DAY'},12000);const cs=(cd.candles||[]).map(c=>({time:new Date(c.time||c.timestamp).getTime(),close:val(c.close),high:val(c.high),low:val(c.low)})).filter(c=>c.time&&c.close>0).sort((a,b)=>a.time-b.time);if(cs.length<2)return null;const today=new Date().toDateString(),last=cs[cs.length-1],prev=cs.length>=2?cs[cs.length-2]:null;const base=prev?prev.close:last.close;const change=base>0?(x.price/base-1)*100:0;const recent=cs.slice(-5),recentLow=Math.min(...recent.map(c=>c.low||c.close)),recentHigh=Math.max(...recent.map(c=>c.high||c.close)),dayRange=recent.reduce((sum,c)=>sum+Math.max(0,((c.high||c.close)-(c.low||c.close))/c.close),0)/Math.max(1,recent.length),momentum=recent.length>1?(recent[recent.length-1].close/recent[0].close-1):0;return {...x,change,base,recentLow,recentHigh,dayRange,momentum,inPortfolio:S.portfolioRows.some(p=>p.uid===x.uid),inWatch:S.watchRows.some(w=>w.uid===x.uid)}}catch{return null}}));results.push(...group.filter(Boolean));done+=batch.length;$('marketStatus').textContent=`Проверено ${Math.min(done,candidates.length)} из ${candidates.length} акций…`}marketCache=results;renderMarketResults();$('marketStatus').textContent=`Готово: ${results.length} акций с доступной дневной историей. Обновлено ${new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}.`;if(!results.length)throw new Error('Не удалось получить достаточно дневных свечей.');}catch(e){$('marketStatus').textContent='Сканирование не завершено: '+explainError(e);$('marketResults').innerHTML='<div class="market-empty">Нет данных для сканирования. Проверь токен и доступность API, затем попробуй снова.</div>'}finally{S.marketBusy=false;$('marketScan').disabled=false;$('marketScan').textContent='Сканировать'}}
 $('marketScan').addEventListener('click',scanMarket);
 $('marketResults').addEventListener('click',async e=>{const b=e.target.closest('[data-study-market]');if(!b)return;const uid=b.dataset.studyMarket;let item=marketCache.find(x=>x.uid===uid);if(!item)return;let idx=S.rows.findIndex(x=>x.uid===uid);if(idx<0){const watch={uid,ticker:item.ticker,name:item.name,currency:item.currency,qty:0,avg:0,pnl:0,price:item.price,value:0,watch:true};S.watchRows.push(watch);try{localStorage.setItem('mzbox-watchlist',JSON.stringify(S.watchRows.map(({uid,ticker,name,currency})=>({uid,ticker,name,currency}))))}catch{}S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];renderRows(S.rows);idx=S.rows.findIndex(x=>x.uid===uid)}const el=document.querySelector(`details.asset[data-index="${idx}"]`);if(el){el.open=true;loadDetail(idx);el.scrollIntoView({behavior:'smooth',block:'start'})}});
 function explainError(e){const m=String(e&&e.message||e);if(/Failed to fetch|NetworkError|CORS|Load failed/i.test(m))return 'Браузер не смог обратиться к API. GitHub Pages — статический хостинг; если запрос блокируется политикой CORS T‑Invest, понадобится небольшой защищённый серверный прокси. Не вставляй токен в опубликованный код.';return m}
