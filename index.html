@@ -598,14 +598,14 @@ main.app-main>.footer{margin-top:auto;padding-top:24px;flex-shrink:0}
 body.dark,body.dark html{background:var(--bg)!important}
 
 
-/* V21.7: separate stock search and market analysis accordions; faster first paint */
+/* V21.8: separate stock search and market analysis accordions; faster first paint */
 .search-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;padding:0 1px}
 .search-panel-head strong{font-size:11px;letter-spacing:.2px;color:var(--muted);font-weight:750}
 .search-close{width:27px;height:27px;flex-basis:27px;border-radius:8px;font-size:19px}
 .search-reopen{display:flex;align-items:center;justify-content:space-between;width:100%;margin:0 0 12px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:12px;font-weight:700;text-align:left}
 .search-reopen span{font-size:18px;line-height:1;color:var(--muted)}
 main.app-main{min-height:100svh;min-height:100vh;display:flex;flex-direction:column;padding-bottom:0!important}
-main.app-main>.footer{order:9999;margin-top:auto;padding-top:18px;padding-bottom:max(2px,env(safe-area-inset-bottom));flex-shrink:0;width:100%}
+main.app-main>.footer{order:9999;margin-top:auto;padding-top:18px;padding-bottom:max(8px,env(safe-area-inset-bottom));flex-shrink:0;width:100%}
 body.dark .search-reopen{background:var(--card);color:var(--ink);border-color:var(--line)}
 .market-reopen{margin-top:0!important}
 .market-panel-sub{font-size:11px;color:var(--muted);margin-top:4px}
@@ -630,8 +630,8 @@ body.dark .search-reopen{background:var(--card);color:var(--ink);border-color:va
 
 <section class="analysis-gate daily-gate" id="dailyGate"><div class="pin-row"><input class="pin-input" id="dailyPin" type="password" readonly inputmode="none" maxlength="4" placeholder="— — — —" aria-label="Дневной код доступа"><button class="pin-open" id="dailyUnlock" type="button">Открыть</button></div><div class="pin-keypad" id="dailyKeypad"><button type="button" data-digit="1">1</button><button type="button" data-digit="2">2</button><button type="button" data-digit="3">3</button><button type="button" data-digit="4">4</button><button type="button" data-digit="5">5</button><button type="button" data-digit="6">6</button><button type="button" data-digit="7">7</button><button type="button" data-digit="8">8</button><button type="button" data-digit="9">9</button><button type="button" data-back="1" aria-label="Удалить последнюю цифру">⌫</button><button type="button" data-digit="0">0</button><button type="button" data-clear="1">Сброс</button></div><div class="pin-error" id="dailyPinError"></div></section>
 <div id="assets" class="asset-list"></div>
-<button id="searchReopen" class="search-reopen hidden" type="button">Поиск акций <span aria-hidden="true">＋</span></button>
-<section class="card search-card" id="stockSearchPanel">
+<button id="searchReopen" class="search-reopen" type="button">Поиск акций <span aria-hidden="true">＋</span></button>
+<section class="card search-card hidden" id="stockSearchPanel">
   <div class="search-panel-head"><strong>Поиск акций</strong><button id="stockSearchClose" class="icon-square search-close" type="button" aria-label="Закрыть поиск акций" title="Скрыть поиск">×</button></div>
   <form class="search-row" id="stockSearchForm"><input id="stockSearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="Тикер или название" aria-label="Тикер или название"><button class="search-btn" id="stockSearchBtn" type="submit">Поиск</button></form>
   <div class="status" id="stockSearchStatus" aria-live="polite"></div>
@@ -639,7 +639,7 @@ body.dark .search-reopen{background:var(--card);color:var(--ink);border-color:va
 </section>
 <button id="marketOpen" class="search-reopen market-reopen" type="button" aria-expanded="false" aria-controls="marketPanel">Анализ акций <span aria-hidden="true">＋</span></button>
 <section id="marketPanel" class="card market-panel hidden"><div class="market-panel-head"><div><h2>Анализ акций</h2><p class="market-panel-sub">Отдельный обзор рынка: падения, рост и популярные бумаги.</p></div><button id="marketClose" class="icon-square search-close" type="button" aria-label="Свернуть анализ акций" title="Свернуть">−</button></div><div class="market-tabs" role="tablist"><button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button><button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button><button type="button" class="market-tab" data-market-tab="popular">Популярные</button></div><div class="market-actions"><span id="marketStatus" class="small muted">Подключи T‑Invest, чтобы сканировать рынок.</span><button id="marketScan" class="btn" type="button">Сканировать</button></div><div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div></section>
-<div class="footer">Не является индивидуальной инвестиционной рекомендацией<br>Разработчик: Кутузов Дмитрий Владимирович<br><span class="build-version">Сборка V21.7 · 25.10.2026</span></div>
+<div class="footer">Не является индивидуальной инвестиционной рекомендацией<br>Разработчик: Кутузов Дмитрий Владимирович<br><span class="build-version">Сборка V21.8 · 25.10.2026</span></div>
 </main>
 <script>
 (()=>{'use strict';
@@ -968,7 +968,7 @@ async function refreshPortfolio(initial=false){
    return positions.map(x=>({x,aid,ai}));
   }));
   const all=[];for(const group of accountPositions)for(const {x,aid} of group){const uid=get(x,'instrumentUid','instrumentUID','instrument_uid');const quantity=val(get(x,'quantity','balance','position'));const type=String(get(x,'instrumentType','instrument_type')||'').toLowerCase();if(!uid||quantity<=0||['currency','cash','rub','currency_position'].includes(type))continue;all.push({uid,ticker:get(x,'ticker','figi')||uid.slice(0,8),name:get(x,'name','instrumentName')||get(x,'ticker')||uid.slice(0,8),qty:quantity,price:val(get(x,'currentPrice','price')),avg:val(get(x,'averagePositionPrice','averagePrice','average_price')),pnl:val(get(x,'expectedYield','pnl','profitLoss')),raw:x,accountId:aid})}
-  setLoadProgress(48,'Позиции получены. Обновляю котировки…');const unique=[...new Map(all.map(r=>[r.uid,r])).values()];for(const r of unique){r.value=(Number(r.price)||0)*(Number(r.qty)||0);r.pricePending=!(Number(r.price)>0)}for(const w of S.watchRows)w.pricePending=true;S.portfolioRows=unique;S.rows=[...unique,...S.watchRows.filter(w=>!unique.some(p=>p.uid===w.uid))];calcSummary(unique);renderRows(S.rows);
+  setLoadProgress(48,'Позиции получены. Обновляю котировки…');const unique=[...new Map(all.map(r=>[r.uid,r])).values()];for(const r of unique){r.value=(Number(r.price)||0)*(Number(r.qty)||0);r.pricePending=!(Number(r.price)>0)}for(const w of S.watchRows)w.pricePending=true;S.portfolioRows=unique;S.rows=[...unique,...S.watchRows.filter(w=>!unique.some(p=>p.uid===w.uid))];calcSummary(unique);renderRows(S.rows);hideBootScreen();
   const watchIds=S.watchRows.filter(w=>!unique.some(p=>p.uid===w.uid)).map(w=>w.uid),ids=[...unique.map(r=>r.uid),...watchIds];setLoadProgress(58,'Получаю актуальные цены акций…');const prices=ids.length?await lastPrices(ids):{};
   setLoadProgress(82,'Считаю стоимость портфеля…');for(const r of unique){const latest=prices[r.uid];if(latest>0)r.price=latest;r.pricePending=false;r.value=r.price*r.qty;if(!r.pnl&&r.avg>0)r.pnl=(r.price-r.avg)*r.qty;r.pnl=Number.isFinite(r.pnl)?r.pnl:0;}for(const w of S.watchRows){if(unique.some(p=>p.uid===w.uid))continue;w.price=prices[w.uid]||0;w.pricePending=false;}
   S.watchRows=S.watchRows.filter(w=>unique.some(p=>p.uid===w.uid)||w.price>0);S.portfolioRows=unique;S.rows=[...unique,...S.watchRows.filter(w=>!unique.some(p=>p.uid===w.uid))];calcSummary(unique);renderRows(S.rows);setLoadProgress(94,'Формирую карточки…');
