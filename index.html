@@ -695,6 +695,8 @@ body.dark .chart-wrap{background:#191a17!important}
 .footer{transform:translateY(-7px)!important;padding-bottom:calc(20px + env(safe-area-inset-bottom))!important}
 body.dark .search-reopen,body.dark .calc-reveal{background:#1b1c18!important;border-color:#393a31!important;color:var(--ink)!important}
 
+
+.chart-range{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:7px 2px 2px;font-size:10px;font-weight:750;font-variant-numeric:tabular-nums}.chart-range .range-min{color:#36845f}.chart-range .range-max{color:#c34f46}.chart-range .range-period{color:var(--muted);font-size:9px;font-weight:650}@media(max-width:360px){.chart-range{font-size:9px;gap:5px}.chart-range .range-period{display:none}}
 </style>
 <style id="v22-5-finish">
 :root{--bg:#f4f1e8;--card:#fbf9f2;--ink:#292a26;--muted:#858378;--line:#d9d5c8;--green:#a18b42;--red:#a9685d;--shadow:0 8px 25px rgba(57,52,38,.055)}
@@ -906,14 +908,26 @@ function drawChart(canvas,cs,model,currentPrice){
  ctx.strokeStyle=dark?'#d7d0b3':'#8b887d';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(pad.l,y(current));ctx.lineTo(W-pad.r,y(current));ctx.stroke();ctx.setLineDash([]);
  const labelAt=(x,label)=>{ctx.fillStyle=muted;ctx.font='8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='center';ctx.fillText(label,x,H-8)};
  if(period===1){
-  all.forEach((c,i)=>{const dt=new Date(c.time);if(i%2===0)labelAt(pad.l+i*slot+slot/2,dt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}))});
+  // Intraday axis: show whole hours only (no minutes); keep labels spaced on narrow screens.
+  let lastHour='';
+  all.forEach((c,i)=>{const dt=new Date(c.time),hour=dt.toLocaleTimeString('ru-RU',{hour:'2-digit',hour12:false});
+   if((i%2===0||i===all.length-1)&&hour!==lastHour){labelAt(pad.l+i*slot+slot/2,hour+':00');lastHour=hour;}
+  });
  }else if(period===7){
   all.forEach((c,i)=>{if(i%2===0||i===all.length-1){const d=new Date(c.time);labelAt(pad.l+i*slot+slot/2,d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'}))}});
  }else{
   all.forEach((c,i)=>{if(i===0||i===hist.length||i===all.length-1||(c.future&&c.day%5===0)){const d=new Date(c.time);labelAt(pad.l+i*slot+slot/2,d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'}))}});
  }
  ctx.textAlign='left';
- const rangeEl=$('chart-range-'+idx);if(rangeEl)rangeEl.textContent='';
+ // Forecast period extrema: render dashed price levels and a compact min/max summary.
+ const lowY=y(forecastLow),highY=y(forecastHigh);
+ ctx.save();ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.strokeStyle=dark?'#7caa92':'#36845f';
+ ctx.beginPath();ctx.moveTo(futureX,lowY);ctx.lineTo(W-pad.r,lowY);ctx.stroke();
+ ctx.strokeStyle=dark?'#d6a29c':'#c34f46';ctx.beginPath();ctx.moveTo(futureX,highY);ctx.lineTo(W-pad.r,highY);ctx.stroke();ctx.restore();
+ const rangeEl=$('chart-range-'+idx);if(rangeEl){
+  const label=period===1?'СУТКИ':period===7?'7 ДНЕЙ':'МЕСЯЦ';
+  rangeEl.innerHTML=`<span class="range-min">МИН · ${fmtPrice(forecastLow)}</span><span class="range-period">${label}</span><span class="range-max">МАКС · ${fmtPrice(forecastHigh)}</span>`;
+ }
 }
 
 function renderPath(i,model){
