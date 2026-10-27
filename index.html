@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#111210"><title>MZBOX AI · V22.6.1</title>
+<meta name="theme-color" content="#111210"><title>MZBOX AI · V22.7.0</title>
 
 
 
@@ -732,6 +732,29 @@ body.dark .analyst-status,body.dark .analyst-risk{background:#34352e!important}b
 body.dark .chart-tool{background:#252620;color:var(--ink);border-color:var(--line)}body.dark .chart-tool.active{background:#3a3524;color:#f0df91;border-color:#b5a45c}
 </style>
 <style id="mzbox-refinement-20261027">.asset-help{width:25px!important;height:25px!important;flex-basis:25px!important;font-size:14px!important;border-radius:7px!important}.portfolio-metric{display:flex;align-items:center;min-width:0}.portfolio-metric strong{margin:0!important}.portfolio-line .result-value-line{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0}.portfolio-line .result-value-line small{font-size:10px!important;white-space:nowrap}.footer .footer-legal,.footer .build-version{display:block!important;font-size:10px!important;line-height:1.65!important;font-weight:400!important;letter-spacing:.35px!important;opacity:.75}.forecast-head{min-height:0!important;margin-bottom:7px!important}.forecast-head:empty{display:none!important}</style>
+
+<style id="v22-7-forecast-ui">
+.chart-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:6px 8px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.chart-periods{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.chart-tool{border:0;border-right:1px solid var(--line);background:transparent;color:var(--muted);border-radius:0;padding:0;min-width:44px;height:34px;font-size:12px;font-weight:750;display:grid;place-items:center;transition:background .15s,color .15s}
+.chart-tool:last-child{border-right:0}
+.chart-tool.active{background:#e8d98a;color:#3d3414;font-weight:850}
+.chart-tool:active{transform:none}
+.chart-zoom{display:flex;align-items:center;gap:6px}
+.chart{height:320px!important}
+@media(max-width:420px){
+ .chart-tools{padding:5px 6px}
+ .chart-tool{min-width:38px;height:32px;font-size:11px}
+ .chart{height:300px!important}
+}
+body.dark .chart-tools{background:#1c1d19;border-color:var(--line)}
+body.dark .chart-periods{background:#252620;border-color:var(--line)}
+body.dark .chart-tool{color:var(--muted);border-color:var(--line)}
+body.dark .chart-tool.active{background:#c9b15a;color:#1b1a14}
+.btn,.search-btn,.market-study,.pin-open,.market-open{border-radius:11px!important}
+.calc-reveal{border-radius:11px!important;min-height:40px;font-weight:750}
+</style>
+
 </head>
 <body>
 <div id="bootScreen" class="boot-screen" role="status" aria-live="polite"><div class="boot-brand">MZBOX <span>AI</span></div><div class="boot-spinner"></div><div class="boot-label">Загружаем систему</div><div class="boot-sub">Подготавливаем данные и графики</div></div><div id="analysisModal" class="analysis-modal" aria-hidden="true"><div class="analysis-modal-backdrop" data-analysis-close></div><section class="analysis-modal-panel" role="dialog" aria-modal="true" aria-labelledby="analysisModalTitle"><div class="analysis-modal-head"><div><span class="analysis-modal-kicker">MZBOX AI · РАЗБОР</span><h2 id="analysisModalTitle">Инвестиционный анализ</h2><p id="analysisModalTicker">Подготовка данных…</p></div><button type="button" class="analysis-modal-x" data-analysis-close aria-label="Закрыть">×</button></div><div id="analysisModalContent" class="analysis-modal-content"><div class="analysis-modal-loading"><span class="spin"></span> Загружаю историю и формирую итог…</div></div></section></div><main class="app-main">
@@ -757,7 +780,7 @@ body.dark .chart-tool{background:#252620;color:var(--ink);border-color:var(--lin
 <button id="marketOpen" class="search-reopen market-reopen" type="button" aria-expanded="false" aria-controls="marketPanel">Анализ акций</button>
 <section id="marketPanel" class="card market-panel hidden"><div class="market-panel-head panel-tap-head" id="marketPanelHead" role="button" tabindex="0" aria-label="Свернуть анализ акций"><div><h2>Анализ акций</h2></div></div><div class="market-tabs" role="tablist"><button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button><button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button><button type="button" class="market-tab" data-market-tab="popular">Популярные</button></div><div class="market-actions"><span id="marketStatus" class="small muted">Подключи T‑Invest, чтобы сканировать рынок.</span><button id="marketScan" class="btn" type="button">Сканировать</button></div><div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div></section>
 
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.6.1 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.7.0 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -797,8 +820,8 @@ function signalFromModel(m){
  if(m.trend==='нисходящее движение'&&m.rsi>36)return {name:'ПРОДАВАТЬ',key:'sell'};
  return {name:'ДЕРЖАТЬ',key:'hold'};
 }
-function forecastModel(daily,hourly,current,shortCandles=[]){
- // Do not mix daily and hourly candles: that would corrupt the time unit of the trend and volatility.
+function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
+ // Instrument-specific forecast: uses this asset's returns, vol structure, skew and a stable seed from uid+history.
  const cs=(daily||[]).filter(c=>c&&c.c>0).sort((a,b)=>a.time-b.time);
  const closes=cs.map(c=>c.c).filter(x=>x>0);
  if(closes.length<12)return {ok:false,reason:'Недостаточно дневной истории для прогноза. Нужны хотя бы 12 корректных дневных закрытий.'};
@@ -808,23 +831,31 @@ function forecastModel(daily,hourly,current,shortCandles=[]){
  const slope=den?num/den:0;
  const eFast=ema(closes.slice(-Math.min(40,closes.length)),9),eSlow=ema(closes.slice(-Math.min(80,closes.length)),21);
  const returns=[];for(let i=Math.max(1,closes.length-60);i<closes.length;i++)returns.push(Math.log(closes[i]/closes[i-1]));
- const mean=returns.reduce((a,b)=>a+b,0)/(returns.length||1),variance=returns.reduce((a,b)=>a+(b-mean)**2,0)/Math.max(1,returns.length-1),vol=Math.sqrt(Math.max(variance,.000001));
+ const mean=returns.reduce((a,b)=>a+b,0)/(returns.length||1);
+ const variance=returns.reduce((a,b)=>a+(b-mean)**2,0)/Math.max(1,returns.length-1);
+ const vol=Math.sqrt(Math.max(variance,.000001));
+ // Skew of recent returns — makes paths lean differently for different stocks
+ let m3=0;for(const r of returns)m3+=Math.pow(r-mean,3);
+ const skew=returns.length>4?m3/(returns.length*Math.pow(vol,3)||1e-9):0;
  const short=closes.slice(-Math.min(10,closes.length)),shortSlope=short.length>1?(Math.log(short.at(-1))-Math.log(short[0]))/(short.length-1):0;
- const hc=(hourly||[]).filter(c=>c&&c.c>0).map(c=>c.c).slice(-36),hourlySlope=hc.length>1?(Math.log(hc.at(-1))-Math.log(hc[0]))/Math.max(1,hc.length-1):0;
- const recent5=(shortCandles||[]).filter(c=>c&&c.c>0).slice(-18);const short5Slope=recent5.length>1?(Math.log(recent5.at(-1).c)-Math.log(recent5[0].c))/Math.max(1,recent5.length-1)*12:hourlySlope;
- const latest5=recent5.length?recent5.at(-1).c:0;const currentAnchor=current>0?current:(latest5>0?latest5:closes.at(-1));
- // Keep units consistent: daily history estimates multi-day drift; hourly history drives the intraday path.
- // Robust forecast blend: trend regression + short impulse + EMA spread; dampen noisy outliers.
+ const hc=(hourly||[]).filter(c=>c&&c.c>0).map(c=>c.c).slice(-36);
+ const hourlySlope=hc.length>1?(Math.log(hc.at(-1))-Math.log(hc[0]))/Math.max(1,hc.length-1):0;
+ const recent5=(shortCandles||[]).filter(c=>c&&c.c>0).slice(-18);
+ const short5Slope=recent5.length>1?(Math.log(recent5.at(-1).c)-Math.log(recent5[0].c))/Math.max(1,recent5.length-1)*12:hourlySlope;
+ const latest5=recent5.length?recent5.at(-1).c:0;
+ const currentAnchor=current>0?current:(latest5>0?latest5:closes.at(-1));
  const emaMomentum=Math.log(Math.max(eFast,1e-9)/Math.max(eSlow,1e-9))/Math.max(8,Math.min(21,closes.length));
- let drift=.42*slope+.33*shortSlope+.25*emaMomentum;
- const driftCap=Math.max(.0025,Math.min(.012,vol*.65));
+ // Drift: more weight on short slope and actual recent returns; wider but still controlled range
+ let drift=.38*slope+.40*shortSlope+.22*emaMomentum;
+ const driftCap=Math.max(.0035,Math.min(.018,vol*1.15));
  drift=Math.max(-driftCap,Math.min(driftCap,drift));
+ // Slight skew bias so assets with negative-skew history don't all look the same
+ drift+=Math.max(-.002,Math.min(.002,skew*vol*.08));
  const blendedHourSlope=recent5.length>=4 ? .72*short5Slope+.28*hourlySlope : hourlySlope;
- const hourDrift=Math.max(-.0035,Math.min(.0035,.78*blendedHourSlope+.22*(drift/24)));
+ const hourDrift=Math.max(-.0045,Math.min(.0045,.80*blendedHourSlope+.20*(drift/24)));
  const price=currentAnchor,tail=closes.slice(-15);let gains=0,losses=0;
  for(let i=1;i<tail.length;i++){const d=tail[i]-tail[i-1];if(d>0)gains+=d;else losses-=d}
  const rsi=100-100/(1+gains/(losses||1e-9));
- // Locate repeated local pivots, then use the closest credible support and resistance.
  const pivL=[],pivH=[];
  for(let i=2;i<cs.length-2;i++){
   if(cs[i].l<=cs[i-1].l&&cs[i].l<=cs[i-2].l&&cs[i].l<=cs[i+1].l&&cs[i].l<=cs[i+2].l)pivL.push(cs[i].l);
@@ -832,46 +863,65 @@ function forecastModel(daily,hourly,current,shortCandles=[]){
  }
  const supports=pivL.filter(v=>v<price).sort((a,b)=>b-a),resistances=pivH.filter(v=>v>price).sort((a,b)=>a-b);
  const lows=cs.slice(-90).map(c=>c.l).filter(v=>v<price).sort((a,b)=>b-a),highs=cs.slice(-90).map(c=>c.h).filter(v=>v>price).sort((a,b)=>a-b);
- const support=supports[0]||lows[0]||price*(1-vol*2),resistance=resistances[0]||highs[0]||price*(1+vol*2);
+ const support=supports[0]||lows[0]||price*(1-vol*2.2),resistance=resistances[0]||highs[0]||price*(1+vol*2.2);
  let trend='боковое движение';if(eFast>eSlow*1.003&&drift>0)trend='восходящее движение';else if(eFast<eSlow*.997&&drift<0)trend='нисходящее движение';
  const risk=vol>.035?'высокая':vol<.012?'относительно низкий':'умеренный';
+ // Stable per-instrument seed from uid + last closes + vol (same asset always gets same path shape)
+ const seedStr=String(uid||'')+':'+closes.slice(-8).map(c=>c.toFixed(4)).join(',')+':'+vol.toFixed(6);
+ let seed=2166136261;
+ for(let i=0;i<seedStr.length;i++){seed^=seedStr.charCodeAt(i);seed=Math.imul(seed,16777619)}
+ seed=seed>>>0;
+ const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+ // Autocorr of last returns — path "memory" unique to this series
+ let ac1=0;if(returns.length>3){const r1=returns.slice(0,-1),r2=returns.slice(1);const m1=r1.reduce((a,b)=>a+b,0)/r1.length,m2=r2.reduce((a,b)=>a+b,0)/r2.length;let cov=0,v1=0,v2=0;for(let i=0;i<r1.length;i++){const a=r1[i]-m1,b=r2[i]-m2;cov+=a*b;v1+=a*a;v2+=b*b}ac1=(v1*v2)>0?cov/Math.sqrt(v1*v2):0}
+ // Intraday path
  const now=Date.now(),intraday=[],stepMs=60*60*1000;
- // Intraday volatility is calculated from hourly closes only; do not mix daily candle units into an hourly chart.
  let p=price;
- const volatilitySeries=recent5.length>=5?recent5.map(c=>c.c):hc;const hourReturns=[];for(let i=1;i<volatilitySeries.length;i++)hourReturns.push(Math.log(volatilitySeries[i]/volatilitySeries[i-1])*(recent5.length>=5?Math.sqrt(12):1));
+ const volatilitySeries=recent5.length>=5?recent5.map(c=>c.c):hc;
+ const hourReturns=[];for(let i=1;i<volatilitySeries.length;i++)hourReturns.push(Math.log(volatilitySeries[i]/volatilitySeries[i-1])*(recent5.length>=5?Math.sqrt(12):1));
  const recentHourVol=hourReturns.length>3?Math.sqrt(hourReturns.reduce((a,b)=>a+b*b,0)/hourReturns.length):0;
- const sigma=hc.length>=6?Math.max(.0008,Math.min(.018,recentHourVol*.72)):.0008;
+ const sigma=hc.length>=6?Math.max(.0009,Math.min(.022,recentHourVol*.78)):Math.max(.0009,vol*.12);
+ // Unique phase / amplitude per instrument
+ const phaseA=0.7+rnd()*1.6, phaseB=0.25+rnd()*0.9, ampA=0.45+rnd()*0.55, ampB=0.2+rnd()*0.35;
  for(let k=1;k<=12;k++){
-  const t=now+k*stepMs,phase=k;
-  const oscillation=Math.sin(phase*1.13+(rsi/100)*2.4)*sigma*.65+Math.sin(phase*.53+1.1)*sigma*.3;
-  let delta=hourDrift+oscillation;
-  // RSI extremes temper momentum; repeated levels act as soft barriers, not guaranteed walls.
-  if(rsi>70)delta-=sigma*.28;if(rsi<30)delta+=sigma*.28;
-  let next=p*Math.exp(Math.max(-.025,Math.min(.025,delta)));
+  const t=now+k*stepMs;
+  // Momentum persistence + mean-reversion toward support/resistance zone + unique noise
+  const reversion=support<price&&resistance>price?((support+resistance)/2-p)/price*0.04:0;
+  const noise=(rnd()-0.5)*2*sigma*(0.7+0.6*rnd());
+  const oscillation=Math.sin(k*phaseA+(rsi/100)*2.1+seed*0.0001)*sigma*ampA + Math.sin(k*phaseB+1.7)*sigma*ampB;
+  let delta=hourDrift*(1+0.35*ac1) + oscillation + reversion*0.35 + noise;
+  if(rsi>72)delta-=sigma*.32;if(rsi<28)delta+=sigma*.32;
+  let next=p*Math.exp(Math.max(-.028,Math.min(.028,delta)));
   const nearSupport=(next-support)/price,nearResistance=(resistance-next)/price;
-  // Support/resistance gently temper the scenario; they must never pin the forecast to a flat artificial line.
-  if(support<price&&nearSupport<.004&&delta<0)delta*=Math.max(.35,nearSupport/.004);
-  if(resistance>price&&nearResistance<.004&&delta>0)delta*=Math.max(.35,nearResistance/.004);
-  next=p*Math.exp(Math.max(-.025,Math.min(.025,delta)));
-  delta=Math.log(next/p)
+  if(support<price&&nearSupport<.005&&delta<0)delta*=Math.max(.3,nearSupport/.005);
+  if(resistance>price&&nearResistance<.005&&delta>0)delta*=Math.max(.3,nearResistance/.005);
+  next=p*Math.exp(Math.max(-.028,Math.min(.028,delta)));
   p=next;
-  intraday.push({time:t,price:p,delta,turning:false,low:p*Math.exp(-sigma*.75),high:p*Math.exp(sigma*.75)});
+  const band=sigma*(0.9+rnd()*0.5);
+  intraday.push({time:t,price:p,delta:Math.log(p/(intraday.length?intraday[intraday.length-1].price:price)),turning:false,low:p*Math.exp(-band),high:p*Math.exp(band)});
  }
  if(hc.length<6&&recent5.length<4)intraday.length=0;
  for(let i=1;i<intraday.length-1;i++){
   const a=intraday[i].price-intraday[i-1].price,b=intraday[i+1].price-intraday[i].price;
   if(a===0||b===0||Math.sign(a)!==Math.sign(b))intraday[i].turning=true;
  }
- const points=[];for(let day=0;day<=30;day++){
-  let mid=price*Math.exp(drift*day);
-  // Softly bend the longer scenario toward nearby support/resistance as the horizon extends.
-  if(resistance>price&&mid>resistance)mid=resistance+(mid-resistance)*.28;
-  if(support<price&&mid<support)mid=support-(support-mid)*.28;
-  const sig=Math.min(.65,vol*Math.sqrt(day));
-  points.push({day,mid,low:mid*Math.exp(-1.28*sig),high:mid*Math.exp(1.28*sig)});
+ // Multi-day scenario points (used for text + trade calc)
+ const points=[];
+ let walk=price;
+ for(let day=0;day<=30;day++){
+  if(day===0){points.push({day:0,mid:price,low:price,high:price});continue}
+  const dayNoise=(rnd()-0.5)*2*vol*0.55;
+  const meanRev=support<price&&resistance>price?(((support+resistance)/2)-walk)/price*0.015:0;
+  const step=drift + meanRev + dayNoise*(1-Math.min(0.6,Math.abs(ac1)));
+  walk=walk*Math.exp(Math.max(-.04,Math.min(.04,step)));
+  // Soft barrier
+  if(resistance>price&&walk>resistance)walk=resistance+(walk-resistance)*.22;
+  if(support<price&&walk<support)walk=support-(support-walk)*.22;
+  const sig=Math.min(.7,vol*Math.sqrt(day)*(0.85+0.3*rnd()));
+  points.push({day,mid:walk,low:walk*Math.exp(-1.25*sig),high:walk*Math.exp(1.25*sig)});
  }
  const p7=points[7],p30=points[30];
- const summary=`Фон рынка — ${trend}. EMA ${eFast>eSlow?'подтверждают перевес покупателей':eFast<eSlow?'показывают перевес продавцов':'не дают выраженного преимущества'}. Оценка строится по истории цены, импульсу и волатильности.`;
+ const summary=`Фон рынка — ${trend}. EMA ${eFast>eSlow?'подтверждают перевес покупателей':eFast<eSlow?'показывают перевес продавцов':'не дают выраженного преимущества'}. Оценка строится по истории именно этой акции: импульс, волатильность и характер последних движений.`;
  const momentum=`RSI — ${rsi.toFixed(0)} из 100: ${rsi>=70?'движение перегрето, покупки на пике рискованны':rsi<=30?'цена сильно просела, но отскок не гарантирован':'индикатор не показывает крайнюю перекупленность или перепроданность'}. Краткосрочный импульс ${drift>0?'положительный':drift<0?'отрицательный':'нейтральный'}.`;
  let levelsText=`Ближайшая расчётная поддержка — ${fmt(support)}, сопротивление — ${fmt(resistance)}. `;
  levelsText+=`Модель ограничивает прогноз при приближении к этим зонам: у поддержки усиливается сценарий отскока, у сопротивления — сценарий замедления или отката. Уровни не являются непробиваемыми.`;
@@ -884,8 +934,9 @@ function forecastModel(daily,hourly,current,shortCandles=[]){
  else if(trend==='нисходящее движение') advice='Преимущество у продавцов. Не усреднять падение автоматически; дождаться стабилизации у поддержки и подтверждения разворота. Если вход всё же рассматривается, заранее ограничить допустимый убыток.';
  else advice='Явного преимущества нет. Практичнее ждать подтверждённого выхода из диапазона либо реакции цены на поддержку/сопротивление, чем принимать решение по одной свече.';
  const riskText=`Риск ${risk}. Внутридневная траектория особенно чувствительна к шуму, ликвидности и новостям. Модель не знает будущих заявок и не учитывает внезапные гэпы; уровни могут быть пробиты.`;
- return {ok:true,price,cs,support,resistance,vol,rsi,trend,risk,points,p7,p30,summary,riskText,levelsText,momentum,scenario,advice,drift,intraday,sigma};
+ return {ok:true,price,cs,support,resistance,vol,rsi,trend,risk,points,p7,p30,summary,riskText,levelsText,momentum,scenario,advice,drift,intraday,sigma,ac1,skew,seed};
 }
+
 const MZ_CHART_SETTINGS={};
 function chartSettings(i){return MZ_CHART_SETTINGS[i]||(MZ_CHART_SETTINGS[i]={period:1})}
 function drawChart(canvas,cs,model,currentPrice){
@@ -910,24 +961,38 @@ function drawChart(canvas,cs,model,currentPrice){
   const count=period===7?7:30;let prev=current;
   // Forecast shape is derived from THIS instrument's own daily candles, never from a shared template.
   const dailyCloses=(Array.isArray(row.daily)?row.daily:[]).filter(c=>c&&Number(c.c)>0).sort((a,b)=>a.time-b.time).map(c=>Number(c.c));
-  const returns=[];for(let j=Math.max(1,dailyCloses.length-21);j<dailyCloses.length;j++){const a=dailyCloses[j-1],b=dailyCloses[j];if(a>0&&b>0)returns.push(Math.log(b/a));}
+  const returns=[];for(let j=Math.max(1,dailyCloses.length-30);j<dailyCloses.length;j++){const a=dailyCloses[j-1],b=dailyCloses[j];if(a>0&&b>0)returns.push(Math.log(b/a));}
   const mean=returns.length?returns.reduce((a,b)=>a+b,0)/returns.length:0;
   const variance=returns.length>1?returns.reduce((a,b)=>a+(b-mean)**2,0)/(returns.length-1):0;
-  const dailyVol=Math.max(.001,Math.min(.035,Math.sqrt(Math.max(0,variance))));
+  const dailyVol=Math.max(.0012,Math.min(.045,Math.sqrt(Math.max(0,variance))));
   const recentMomentum=dailyCloses.length>=6?Math.log(dailyCloses[dailyCloses.length-1]/dailyCloses[dailyCloses.length-6])/5:0;
   const modelDrift=Number(model?.drift)||0;
-  const drift=Math.max(-.012,Math.min(.012,.55*modelDrift+.30*mean+.15*recentMomentum));
-  const maxMove=period===7?.045:.10;
-  // Instrument-specific phase comes from recent returns; deterministic so redraws do not invent a new path.
-  const phaseSeed=returns.slice(-7).reduce((a,b,i)=>a+(i+1)*b*1000,0);
+  // Wider, more instrument-specific drift
+  const drift=Math.max(-.018,Math.min(.018,.48*modelDrift+.32*mean+.20*recentMomentum));
+  // Strong unique seed from this instrument's uid + recent closes
+  const seedBase=String(uid||row.uid||idx)+':'+dailyCloses.slice(-6).map(c=>Number(c).toFixed(3)).join('|')+':'+String(period);
+  let seed=2166136261;
+  for(let si=0;si<seedBase.length;si++){seed^=seedBase.charCodeAt(si);seed=Math.imul(seed,16777619)}
+  seed=seed>>>0;
+  const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+  // Autocorr for path memory
+  let ac=0;if(returns.length>4){const a=returns.slice(0,-1),b=returns.slice(1);const ma=a.reduce((s,v)=>s+v,0)/a.length,mb=b.reduce((s,v)=>s+v,0)/b.length;let cov=0,va=0,vb=0;for(let i=0;i<a.length;i++){const x=a[i]-ma,y=b[i]-mb;cov+=x*y;va+=x*x;vb+=y*y}ac=(va*vb)>0?Math.max(-0.85,Math.min(0.85,cov/Math.sqrt(va*vb))):0}
+  const maxMove=period===7?.07:.14;
+  let prevLog=0;
   for(let day=1;day<=count;day++){
-   const cumulative=Math.max(-maxMove,Math.min(maxMove,drift*day));
-   const wiggle=Math.sin(day*1.17+phaseSeed)*Math.min(.012,dailyVol*.55)+Math.sin(day*.43+phaseSeed*.37)*Math.min(.006,dailyVol*.25);
-   const projected=current*Math.exp(cumulative+wiggle),price=Number.isFinite(projected)&&projected>0?projected:current;
-   const spread=Math.min(.035,Math.max(.002,dailyVol*.65));
+   // Momentum persistence + unique noise + mild mean reversion feel from recent series
+   const innov=(rnd()-0.5)*2*dailyVol*(0.75+0.5*rnd());
+   const step=drift + ac*prevLog*0.55 + innov*(1-Math.abs(ac)*0.35);
+   prevLog=step;
+   const cumulative=Math.max(-maxMove,Math.min(maxMove, (Math.log(prev/current||1) + step) ));
+   // Extra instrument-specific wiggle (different frequencies per seed)
+   const wiggle=Math.sin(day*(0.9+rnd()*1.4)+seed*0.00001)*Math.min(.018,dailyVol*.7) + Math.sin(day*(0.3+rnd()*0.7)+1.3)*Math.min(.01,dailyVol*.35);
+   const projected=current*Math.exp(Math.max(-maxMove,Math.min(maxMove,Math.log(prev/current||1)+step+wiggle*0.45)));
+   const price=Number.isFinite(projected)&&projected>0?projected:prev;
+   const spread=Math.min(.04,Math.max(.0025,dailyVol*(0.55+rnd()*0.5)));
    future.push({time:Date.now()+day*86400000,o:prev,c:price,h:Math.max(price,prev)*Math.exp(spread),l:Math.min(price,prev)*Math.exp(-spread),future:true,day});prev=price;
   }
-}
+ }
  if(!future.length){ctx.fillStyle=text;ctx.font='11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillText('Недостаточно данных для прогноза',14,26);return}
  const all=[...hist,...future],pad={l:12,r:70,t:18,b:32},plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b,slot=plotW/Math.max(1,all.length),body=Math.max(2,Math.min(8,slot*.58));
  const forecastLow=Math.min(...future.map(c=>c.l)),forecastHigh=Math.max(...future.map(c=>c.h));let vals=all.flatMap(c=>[c.l,c.h,c.o,c.c]).filter(v=>Number.isFinite(v)&&v>0);vals.push(current);let min=Math.min(...vals),max=Math.max(...vals);if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min){min=current*.98;max=current*1.02}
@@ -1081,7 +1146,7 @@ async function loadDetail(i){
   const [daily,hourly,shortCandles]=await Promise.all([candles(r.uid,'CANDLE_INTERVAL_DAY',400),candles(r.uid,'CANDLE_INTERVAL_HOUR',60).catch(()=>[]),candles(r.uid,'CANDLE_INTERVAL_5_MIN',100).catch(()=>[])]);
   const cs=daily.length?daily:hourly;r.candles=cs;r.daily=daily;r.hourly=hourly;r.shortCandles=shortCandles;r.chartCandles=(hourly.length?hourly:daily).slice(-(hourly.length?18:24));r.detailLoaded=true;
   $('time-'+i).textContent='';
-  const model=forecastModel(daily,hourly,r.price,shortCandles);
+  const model=forecastModel(daily,hourly,r.price,shortCandles,r.uid);
   if(!model.ok){$('analysis-'+i).innerHTML=`<div class="analysis-block"><h3>Данных пока недостаточно</h3><p>${esc(model.reason)}</p></div>`;requestAnimationFrame(()=>requestAnimationFrame(()=>drawChart($('chart-'+i),r.chartCandles,null,r.price)));return}
   r.model=model;calcTrade(i);const sig=signalFromModel(model),signalEl=$('signal-'+i);if(signalEl){signalEl.textContent=sig.name;signalEl.className='pill '+sig.key;}
   const direction=model.drift>0?'Рост':model.drift<0?'Снижение':'Без направления';const info=$('analysis-'+i);if(info){info.innerHTML='';info.parentElement.classList.add('hidden')}
@@ -1091,7 +1156,7 @@ async function loadDetail(i){
 }
 function refreshForecastForCurrentPrice(i){
  const r=S.rows[i];if(!r||!r.detailLoaded||!((Array.isArray(r.daily)&&r.daily.length)||(Array.isArray(r.hourly)&&r.hourly.length)))return;
- const model=forecastModel(r.daily,r.hourly||[],Number(r.price)||0,r.shortCandles||[]);if(!model||!model.ok)return;
+ const model=forecastModel(r.daily,r.hourly||[],Number(r.price)||0,r.shortCandles||[],r.uid);if(!model||!model.ok)return;
  r.model=model;calcTrade(i);
  const direction=model.drift>0?'Рост':model.drift<0?'Снижение':'Без направления';
  const a=$('analysis-'+i);if(a){a.innerHTML='';a.parentElement.classList.add('hidden')}
