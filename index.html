@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.8.3</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.8.4</title>
 
 
 
@@ -1308,10 +1308,86 @@ body.dark .brand,body.dark .brand em{color:#f3f3f3!important;-webkit-text-fill-c
 body.dark .icon-square,body.dark .theme-toggle{background:#1e1e1e!important;border-color:#2e2e2e!important;color:#f3f3f3!important}
 </style>
 
+
+<style id="v22-8-4-polish">
+/* Full-bleed background — no side/crop strips */
+html,body{
+  min-height:100%!important;min-height:100dvh!important;width:100%!important;max-width:100%!important;
+  margin:0!important;overflow-x:hidden!important;background:var(--bg)!important;
+}
+body{position:relative}
+main.app-main,main{
+  max-width:720px!important;width:100%!important;margin:0 auto!important;
+  padding:16px 14px 40px!important;box-sizing:border-box!important;
+}
+/* Brand logo square + title */
+.brand-lockup{
+  display:inline-flex!important;align-items:center!important;gap:10px!important;
+  border:0!important;background:transparent!important;padding:0!important;cursor:pointer!important;
+  color:inherit!important;
+}
+.brand-mark-sq{
+  display:inline-block;width:1em;height:1em;background:var(--ink);border-radius:3px;
+  flex:0 0 auto;
+}
+body.dark .brand-mark-sq{background:#f3f3f3}
+.brand{display:inline-flex;align-items:baseline;gap:4px;font-size:20px!important;font-weight:750!important;
+  letter-spacing:-.03em;color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important;background:none!important}
+.brand em{font-style:normal!important;font-weight:750!important;color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important}
+
+/* About overlay */
+.about-overlay{
+  position:fixed;inset:0;z-index:200000;display:grid;place-items:center;
+  padding:24px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
+}
+.about-overlay.hidden{display:none!important}
+.about-card{
+  width:min(420px,100%);background:var(--card);color:var(--ink);
+  border:1px solid var(--line);border-radius:16px;padding:28px 24px 22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+  animation:aboutIn .28s ease both;
+}
+@keyframes aboutIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.about-kicker{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.about-title{font-size:22px;font-weight:750;letter-spacing:-.03em;line-height:1.25;margin:0 0 14px}
+.about-text{font-size:15px;line-height:1.55;color:var(--ink);margin:0 0 12px;opacity:.92}
+.about-foot{font-size:12px;color:var(--muted);margin:16px 0 0;text-align:center}
+
+/* Chart tools single row */
+.chart-tools{display:block!important;margin:0 0 10px!important}
+.chart-bar{
+  display:flex!important;align-items:stretch!important;width:100%!important;
+  border:1px solid var(--line)!important;border-radius:12px!important;overflow:hidden!important;
+  background:var(--bg)!important;
+}
+.chart-sep{width:1px;background:var(--line);flex:0 0 1px}
+.chart-tool,.draw-tool{
+  flex:1 1 0!important;min-width:0!important;height:40px!important;border:0!important;
+  border-right:1px solid var(--line)!important;border-radius:0!important;
+  background:transparent!important;color:var(--muted)!important;
+  font-size:14px!important;font-weight:700!important;display:grid!important;place-items:center!important;
+}
+.chart-bar .chart-tool:last-child,.chart-bar .draw-tool:last-child{border-right:0!important}
+.chart-tool.active,.draw-tool.active{background:var(--ink)!important;color:var(--card)!important}
+body.dark .chart-tool.active,body.dark .draw-tool.active{background:#f3f3f3!important;color:#121212!important}
+
+/* Hide empty level-time lines */
+.level-time:empty{display:none!important}
+</style>
+
 </head>
 <body>
 <div id="bootScreen" class="boot-screen" role="status" aria-live="polite"><div class="boot-brand">MZBOX <span>AI</span></div><div class="boot-spinner" aria-hidden="true"></div></div><div id="analysisModal" class="analysis-modal" aria-hidden="true"><div class="analysis-modal-backdrop" data-analysis-close></div><section class="analysis-modal-panel" role="dialog" aria-modal="true" aria-labelledby="analysisModalTitle"><div class="analysis-modal-head"><div><span class="analysis-modal-kicker">MZBOX AI · РАЗБОР</span><h2 id="analysisModalTitle">Инвестиционный анализ</h2><p id="analysisModalTicker">Подготовка данных…</p></div><button type="button" class="analysis-modal-x" data-analysis-close aria-label="Закрыть">×</button></div><div id="analysisModalContent" class="analysis-modal-content"><div class="analysis-modal-loading"><span class="spin"></span> Загружаю историю и формирую итог…</div></div></section></div><main class="app-main">
-<header class="top"><div class="brand-wrap"><div class="brand-lockup"><div class="brand">MZBOX <em>AI</em></div></div></div><span id="lastUpdated" class="hidden"></span><div class="header-actions"><button id="refresh" class="icon-square" type="button" aria-label="Актуализировать данные" title="Обновить данные и перезагрузить сайт"><svg class="refresh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4.8 9a7.5 7.5 0 0 1 12.7-3L20 9M4 17v-5h5m10.2 3a7.5 7.5 0 0 1-12.7 3L4 15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="copyToken" class="icon-square" type="button" aria-label="Скопировать токен" title="Скопировать зарегистрированный токен">⧉</button><button id="themeToggle" class="theme-toggle" type="button" aria-label="Сменить тему" title="Сменить тему"><svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"/></svg></button></div></header>
+<header class="top"><div class="brand-wrap"><button type="button" class="brand-lockup" id="brandAboutBtn" aria-label="О проекте MZBOX AI"><span class="brand-mark-sq" aria-hidden="true"></span><span class="brand">MZBOX <em>AI</em></span></button></div>
+<div id="aboutOverlay" class="about-overlay hidden" aria-hidden="true" role="dialog" aria-label="О проекте">
+  <div class="about-card">
+    <div class="about-kicker">MZBOX AI</div>
+    <h2 class="about-title">Спокойный взгляд на портфель</h2>
+    <p class="about-text">MZBOX AI — личный рабочий экран для инвестора. Здесь собраны позиции, котировки и аккуратные сценарии движения цены, чтобы решения опирались на данные, а не на шум.</p>
+    <p class="about-text">Система не обещает доход и не подталкивает к сделке. Она помогает видеть структуру портфеля, сравнивать горизонты и держать внимание на том, что действительно важно.</p>
+    <p class="about-foot">Нажмите в любом месте, чтобы закрыть</p>
+  </div>
+</div><span id="lastUpdated" class="hidden"></span><div class="header-actions"><button id="refresh" class="icon-square" type="button" aria-label="Актуализировать данные" title="Обновить данные и перезагрузить сайт"><svg class="refresh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4.8 9a7.5 7.5 0 0 1 12.7-3L20 9M4 17v-5h5m10.2 3a7.5 7.5 0 0 1-12.7 3L4 15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="copyToken" class="icon-square" type="button" aria-label="Скопировать токен" title="Скопировать зарегистрированный токен">⧉</button><button id="themeToggle" class="theme-toggle" type="button" aria-label="Сменить тему" title="Сменить тему"><svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"/></svg></button></div></header>
 
 <section class="welcome-strip card" id="welcomeStrip" aria-label="Информация дня" role="button" tabindex="0" aria-expanded="true" title="Нажми, чтобы свернуть или развернуть">
  <div class="welcome-top"><div class="welcome-greeting"><div class="welcome-kicker" id="welcomeDate">MZBOX · СЕГОДНЯ</div><h1 id="welcomeGreeting">Доброе утро, Дмитрий.</h1></div><div class="welcome-clock"><strong id="welcomeClock">--:--</strong><span id="welcomeWeather">Москва</span></div></div>
@@ -1327,11 +1403,11 @@ body.dark .icon-square,body.dark .theme-toggle{background:#1e1e1e!important;bord
 
 <section class="card tools-workspace" id="toolsWorkspace">
   <div class="tools-bar">
-    <button type="button" class="tools-open-btn" id="openMarket" aria-expanded="false">Анализ акций</button>
-    <button type="button" class="tools-open-btn" id="openSearch" aria-expanded="false">Поиск акций</button>
+    <button type="button" class="tools-open-btn" id="openMarket" aria-expanded="false">Анализ</button>
+    <button type="button" class="tools-open-btn" id="openSearch" aria-expanded="false">Поиск</button>
   </div>
   <div class="tools-panel hidden" id="panelMarket">
-    <div class="tools-panel-head" id="closeMarket" role="button" tabindex="0">Анализ акций <span class="tools-close">Скрыть</span></div>
+    <div class="tools-panel-head" id="closeMarket" role="button" tabindex="0">Анализ <span class="tools-close">Скрыть</span></div>
     <div class="market-tabs" role="tablist">
       <button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button>
       <button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button>
@@ -1344,7 +1420,7 @@ body.dark .icon-square,body.dark .theme-toggle{background:#1e1e1e!important;bord
     <div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div>
   </div>
   <div class="tools-panel hidden" id="panelSearch">
-    <div class="tools-panel-head" id="closeSearch" role="button" tabindex="0">Поиск акций <span class="tools-close">Скрыть</span></div>
+    <div class="tools-panel-head" id="closeSearch" role="button" tabindex="0">Поиск <span class="tools-close">Скрыть</span></div>
     <form class="search-row" id="stockSearchForm">
       <input id="stockSearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="Тикер или название" aria-label="Тикер или название">
       <button class="search-btn" id="stockSearchBtn" type="submit">Поиск</button>
@@ -1356,7 +1432,7 @@ body.dark .icon-square,body.dark .theme-toggle{background:#1e1e1e!important;bord
 
 
 
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.8.3 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.8.4 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -1664,7 +1740,7 @@ async function lifetimeIncome(accounts){
  if(seen===0&&unavailable>0)throw new Error('История операций недоступна через API. Проверь доступ токена к операциям.');
  return {total,seen,unavailable};
 }
-function renderRows(rows){const root=$('assets');if(!rows.length){root.innerHTML='';return}root.innerHTML=rows.map((r,i)=>`<details class="card asset" data-index="${i}"><summary class="asset-head"><div class="asset-main"><div class="asset-title-line">${r.watch||r.temp?'<span class="qty-chip watch-chip">Наблюд.</span>':`<span class="qty-chip">${qtyFmt(r.qty)} шт.</span>`}</div><div class="asset-sub asset-subline"><span class="asset-name-sub">${esc((r.name&&r.name.toUpperCase()!==String(r.ticker||'').toUpperCase())?r.name:r.ticker)}</span>${(r.name&&r.name.toUpperCase()!==String(r.ticker||'').toUpperCase())?`<span>· ${esc(r.ticker)}</span>`:''}</div><div class="asset-meta">${r.watch?'':`<span class="asset-signal ${r.pnl>0?'gain':r.pnl<0?'loss':'flat'}"><i aria-hidden="true"></i><span>${r.pnl>0?'+':''}${fmt(r.pnl)}</span></span>`}<button type="button" class="asset-help ${(r.signalKey==='buy'?'sig-buy':r.signalKey==='sell'?'sig-sell':r.signalKey==='hold'?'sig-hold':'')}" data-asset-help="${i}" aria-label="Открыть инвестиционный анализ" title="${r.signalKey==='buy'?'Сигнал: покупать':r.signalKey==='sell'?'Сигнал: продавать':r.signalKey==='hold'?'Сигнал: рассматривать':'Инвестиционный анализ'}">?</button></div></div><div class="asset-price-wrap">${r.watch?`<button class="watch-remove" type="button" data-remove-watch="${esc(r.uid)}" aria-label="Удалить из наблюдения" title="Удалить карточку">×</button>`:''}<div class="asset-price">${r.pricePending?'<span class="price-loading"><span class="spin"></span> Загрузка цены…</span>':(Number(r.price)>0?fmtPrice(r.price):'Нет котировки')}<div class="asset-sub">цена акции</div>${!r.watch?(r.pricePending?'<div class="asset-position-value price-loading">Загрузка стоимости…</div>':(Number(r.value)>0?`<div class="asset-position-value">${fmt(r.value)}</div>`:'')):''}</div></div></summary><div class="asset-detail"><div class="locked-content ${S.analysisUnlocked?'unlocked':''}" id="locked-${i}"><div class="forecast-head"><span class="small muted" id="time-${i}">Загрузка истории…</span></div><div class="chart-tools" data-chart-tools="${i}"><div class="chart-periods" role="group" aria-label="Период графика"><button type="button" class="chart-tool ${chartSettings(i).period===1?'active':''}" data-chart-period="1" data-chart-index="${i}" aria-label="Один день">1</button><button type="button" class="chart-tool ${chartSettings(i).period===7?'active':''}" data-chart-period="7" data-chart-index="${i}" aria-label="Семь дней">7</button><button type="button" class="chart-tool ${chartSettings(i).period===30?'active':''}" data-chart-period="30" data-chart-index="${i}" aria-label="Тридцать дней">30</button></div><div class="chart-draw-tools" role="group" aria-label="Рисование на графике"><button type="button" class="draw-tool" data-draw="hline" data-chart-index="${i}" title="Горизонт" aria-label="Горизонт">―</button><button type="button" class="draw-tool" data-draw="line" data-chart-index="${i}" title="Тренд" aria-label="Тренд">╱</button><button type="button" class="draw-tool" data-draw="ray" data-chart-index="${i}" title="Луч" aria-label="Луч">→</button><button type="button" class="draw-tool" data-draw="rect" data-chart-index="${i}" title="Прямоугольник" aria-label="Прямоугольник">▭</button><button type="button" class="draw-tool" data-draw="pen" data-chart-index="${i}" title="Карандаш" aria-label="Карандаш">✎</button><button type="button" class="draw-tool" data-draw="clear" data-chart-index="${i}" title="Очистить" aria-label="Очистить">✕</button></div></div><div class="chart-wrap"><canvas class="chart" id="chart-${i}" data-instrument-uid="${esc(r.uid)}"></canvas></div><button type="button" class="calc-reveal" data-calc-toggle="${i}" aria-expanded="false">Калькулятор сделки</button><div class="trade-calc hidden" id="tradeCalc-${i}"><h3>Калькулятор сделки</h3><div class="income-grid"><div class="field"><label for="calcEntry-${i}">Цена входа, ₽</label><input id="calcEntry-${i}" type="number" min="0" step="0.01" value="" data-calc-entry="${i}" placeholder="Текущая"></div><div class="field"><label for="calcMoney-${i}">Сумма вложения, ₽</label><input id="calcMoney-${i}" type="number" min="0" step="100" value="1000" data-calc-money="${i}"></div><div class="field"><label for="calcQty-${i}">Количество акций</label><input id="calcQty-${i}" type="number" min="0" step="1" value="1" data-calc-qty="${i}"></div><div class="field"><label>Горизонт</label><div class="calc-horizons" data-calc-horizons="${i}"><button type="button" class="active" data-calc-h="1" data-i="${i}">1д</button><button type="button" data-calc-h="7" data-i="${i}">7д</button><button type="button" data-calc-h="30" data-i="${i}">30д</button></div></div></div><div class="calc-output"><div><span>Стоимость входа</span><b id="calcCost-${i}">—</b></div><div><span>Ожидаемый результат</span><b id="calcProfit-${i}">—</b></div><div><span>Стоимость к горизонту</span><b id="calcValue7-${i}">—</b></div><div><span>Изменение, %</span><b id="calcProfit30-${i}">—</b></div></div><div class="calc-note" id="calcHorizon-${i}">Укажите цену входа и горизонт. Расчёт по сценарию модели этой акции.</div><div class="best-levels"><div><span>Предполагаемая покупка</span><b id="bestBuy-${i}">—</b><small class="level-time" id="bestBuyTime-${i}">Срок не определяется</small></div><div><span>Предполагаемая продажа</span><b id="bestSell-${i}">—</b><small class="level-time" id="bestSellTime-${i}">Срок не определяется</small></div></div></div><div class="path-wrap hidden"><div class="path-title">Сценарий</div><div class="path-list" id="path-${i}"></div></div></div><div class="analysis"><div id="analysis-${i}"><div class="analysis-block"><p>Загрузка истории, волатильности и сценариев…</p></div></div></div></div></div></details>`).join('');root.querySelectorAll('[data-chart-period]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();const i=Number(b.dataset.chartIndex);const set=chartSettings(i);set.period=[1,7,30].includes(Number(b.dataset.chartPeriod))?Number(b.dataset.chartPeriod):1;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-chart-period]').forEach(x=>x.classList.toggle('active',x===b));const r=S.rows[i];if(r){drawChart($('chart-'+i),r.chartCandles,r.model,r.price);redrawDrawings($('chart-'+i),i);}}));
+function renderRows(rows){const root=$('assets');if(!rows.length){root.innerHTML='';return}root.innerHTML=rows.map((r,i)=>`<details class="card asset" data-index="${i}"><summary class="asset-head"><div class="asset-main"><div class="asset-title-line"><span class="qty-chip">${r.watch||r.temp?'0':qtyFmt(r.qty)} шт.</span></div><div class="asset-sub asset-subline"><span class="asset-name-sub">${esc((r.name&&r.name.toUpperCase()!==String(r.ticker||'').toUpperCase())?r.name:r.ticker)}</span>${(r.name&&r.name.toUpperCase()!==String(r.ticker||'').toUpperCase())?`<span>· ${esc(r.ticker)}</span>`:''}</div><div class="asset-meta">${r.watch?'':`<span class="asset-signal ${r.pnl>0?'gain':r.pnl<0?'loss':'flat'}"><i aria-hidden="true"></i><span>${r.pnl>0?'+':''}${fmt(r.pnl)}</span></span>`}<button type="button" class="asset-help ${(r.signalKey==='buy'?'sig-buy':r.signalKey==='sell'?'sig-sell':r.signalKey==='hold'?'sig-hold':'')}" data-asset-help="${i}" aria-label="Открыть инвестиционный анализ" title="${r.signalKey==='buy'?'Сигнал: покупать':r.signalKey==='sell'?'Сигнал: продавать':r.signalKey==='hold'?'Сигнал: рассматривать':'Инвестиционный анализ'}">?</button></div></div><div class="asset-price-wrap">${r.watch?`<button class="watch-remove" type="button" data-remove-watch="${esc(r.uid)}" aria-label="Удалить из наблюдения" title="Удалить карточку">×</button>`:''}<div class="asset-price">${r.pricePending?'<span class="price-loading"><span class="spin"></span> Загрузка цены…</span>':(Number(r.price)>0?fmtPrice(r.price):'Нет котировки')}<div class="asset-sub">цена акции</div>${!r.watch?(r.pricePending?'<div class="asset-position-value price-loading">Загрузка стоимости…</div>':(Number(r.value)>0?`<div class="asset-position-value">${fmt(r.value)}</div>`:'')):''}</div></div></summary><div class="asset-detail"><div class="locked-content ${S.analysisUnlocked?'unlocked':''}" id="locked-${i}"><div class="forecast-head"><span class="small muted" id="time-${i}">Загрузка истории…</span></div><div class="chart-tools" data-chart-tools="${i}"><div class="chart-bar" role="group" aria-label="Период и рисование"><button type="button" class="chart-tool ${chartSettings(i).period===1?'active':''}" data-chart-period="1" data-chart-index="${i}" aria-label="1 день">1</button><button type="button" class="chart-tool ${chartSettings(i).period===7?'active':''}" data-chart-period="7" data-chart-index="${i}" aria-label="7 дней">7</button><button type="button" class="chart-tool ${chartSettings(i).period===30?'active':''}" data-chart-period="30" data-chart-index="${i}" aria-label="30 дней">30</button><span class="chart-sep" aria-hidden="true"></span><button type="button" class="draw-tool" data-draw="hline" data-chart-index="${i}" title="Горизонт" aria-label="Горизонт">―</button><button type="button" class="draw-tool" data-draw="pen" data-chart-index="${i}" title="Карандаш" aria-label="Карандаш">✎</button><button type="button" class="draw-tool" data-draw="clear" data-chart-index="${i}" title="Очистить" aria-label="Очистить">✕</button></div></div><button type="button" class="calc-reveal" data-calc-toggle="${i}" aria-expanded="false">Калькулятор сделки</button><div class="trade-calc hidden" id="tradeCalc-${i}"><h3>Калькулятор сделки</h3><div class="income-grid"><div class="field"><label for="calcEntry-${i}">Цена входа, ₽</label><input id="calcEntry-${i}" type="number" min="0" step="0.01" value="" data-calc-entry="${i}" placeholder="Текущая"></div><div class="field"><label for="calcMoney-${i}">Сумма вложения, ₽</label><input id="calcMoney-${i}" type="number" min="0" step="100" value="1000" data-calc-money="${i}"></div><div class="field"><label for="calcQty-${i}">Количество акций</label><input id="calcQty-${i}" type="number" min="0" step="1" value="1" data-calc-qty="${i}"></div><div class="field"><label>Горизонт</label><div class="calc-horizons" data-calc-horizons="${i}"><button type="button" class="active" data-calc-h="1" data-i="${i}">1д</button><button type="button" data-calc-h="7" data-i="${i}">7д</button><button type="button" data-calc-h="30" data-i="${i}">30д</button></div></div></div><div class="calc-output"><div><span>Стоимость входа</span><b id="calcCost-${i}">—</b></div><div><span>Ожидаемый результат</span><b id="calcProfit-${i}">—</b></div><div><span>Стоимость к горизонту</span><b id="calcValue7-${i}">—</b></div><div><span>Изменение, %</span><b id="calcProfit30-${i}">—</b></div></div><div class="calc-note" id="calcHorizon-${i}">Укажите цену входа и горизонт. Расчёт по сценарию модели этой акции.</div><div class="best-levels"><div><span>Предполагаемая покупка</span><b id="bestBuy-${i}">—</b><small class="level-time" id="bestBuyTime-${i}"></small></div><div><span>Предполагаемая продажа</span><b id="bestSell-${i}">—</b><small class="level-time" id="bestSellTime-${i}"></small></div></div></div><div class="path-wrap hidden"><div class="path-title">Сценарий</div><div class="path-list" id="path-${i}"></div></div></div><div class="analysis"><div id="analysis-${i}"><div class="analysis-block"><p>Загрузка истории, волатильности и сценариев…</p></div></div></div></div></div></details>`).join('');root.querySelectorAll('[data-chart-period]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();const i=Number(b.dataset.chartIndex);const set=chartSettings(i);set.period=[1,7,30].includes(Number(b.dataset.chartPeriod))?Number(b.dataset.chartPeriod):1;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-chart-period]').forEach(x=>x.classList.toggle('active',x===b));const r=S.rows[i];if(r){drawChart($('chart-'+i),r.chartCandles,r.model,r.price);redrawDrawings($('chart-'+i),i);}}));
 root.querySelectorAll('[data-draw]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const i=Number(b.dataset.chartIndex);const st=drawState(i);const tool=b.dataset.draw;if(tool==='clear'){st.items=[];st.draft=null;st.tool=null;root.querySelectorAll(`[data-draw][data-chart-index="${i}"]`).forEach(x=>x.classList.remove('active'));const r=S.rows[i];if(r)drawChart($('chart-'+i),r.chartCandles,r.model,r.price);return;}st.tool=st.tool===tool?null:tool;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-draw]').forEach(x=>x.classList.toggle('active',x.dataset.draw===st.tool));const canvas=$('chart-'+i);if(canvas){bindChartDrawing(canvas,i);canvas.style.cursor=st.tool?'crosshair':'default';}}));
 root.querySelectorAll('details.asset').forEach(d=>d.addEventListener('toggle',()=>{if(d.open){const i=Number(d.dataset.index);loadDetail(i)}onAssetToggleRefresh();}));root.querySelectorAll('[data-remove-watch]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const uid=b.dataset.removeWatch;S.watchRows=S.watchRows.filter(x=>x.uid!==uid);S.rows=S.rows.filter(x=>!(x.temp&&x.uid===uid));persistWatchlist();rebuildRows();renderRows(S.rows)}));root.querySelectorAll('[data-asset-help]').forEach(b=>b.addEventListener('click',async e=>{e.preventDefault();e.stopPropagation();const r=S.rows[Number(b.dataset.assetHelp)]||null;if(!r)return;const text=String(r.name||r.ticker||'').trim();try{if(text){if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);else{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}const prev=b.textContent;b.textContent='✓';setTimeout(()=>{b.textContent=prev||'?';},900);}}catch{}openQuickInfo(r);}));}
 
@@ -1799,7 +1875,7 @@ function updateTradeCalculator(i){
  set('calcHorizon',`Вход ${fmtPrice(entry)} · горизонт ${horizon}д · без комиссий и налогов.${band}`);
  set('bestBuy',fmtPrice(Number(r.buyTarget)||entry));
  set('bestSell',fmtPrice(Number(r.sellTarget)||exit));
- const eta=(targetPx,side)=>{const pts=Array.isArray(m.intraday)?m.intraday:[];const p=pts.find(x=>side==='buy'?Number(x.price)<=targetPx:Number(x.price)>=targetPx);if(!p)return 'Срок по внутридневному сценарию не определяется';const dt=Math.max(0,Number(p.time)-Date.now());if(dt<3600000)return 'Ориентир: в течение часа';if(dt<86400000)return 'Ориентир: около '+Math.round(dt/3600000)+' ч';return 'Ориентир: около '+Math.round(dt/86400000)+' дн.'};
+ const eta=(targetPx,side)=>{const pts=Array.isArray(m.intraday)?m.intraday:[];const p=pts.find(x=>side==='buy'?Number(x.price)<=targetPx:Number(x.price)>=targetPx);if(!p)return '';const dt=Math.max(0,Number(p.time)-Date.now());if(dt<3600000)return 'Ориентир: в течение часа';if(dt<86400000)return 'Ориентир: около '+Math.round(dt/3600000)+' ч';return 'Ориентир: около '+Math.round(dt/86400000)+' дн.'};
  set('bestBuyTime',eta(Number(r.buyTarget)||entry,'buy'));
  set('bestSellTime',eta(Number(r.sellTarget)||exit,'sell'));
 }
@@ -2004,8 +2080,12 @@ async function openInstrumentFull(item){
  if(!item||!item.uid)return;
  let idx=S.rows.findIndex(x=>x.uid===item.uid);
  if(idx<0){
-  const row={uid:item.uid,ticker:item.ticker,name:item.name||item.ticker,currency:item.currency||'rub',qty:0,avg:0,pnl:0,price:Number(item.price)||0,value:0,watch:true,temp:true};
-  S.rows=[...S.rows,row];
+  const row={uid:item.uid,ticker:item.ticker,name:item.name||item.ticker,currency:item.currency||'rub',qty:0,avg:0,pnl:0,price:Number(item.price)||0,value:0,watch:true,temp:false};
+  if(!S.watchRows.some(w=>w.uid===row.uid)&&!S.portfolioRows.some(p=>p.uid===row.uid)){
+   S.watchRows.push({uid:row.uid,ticker:row.ticker,name:row.name,currency:row.currency,qty:0,avg:0,pnl:0,price:row.price,value:0,watch:true});
+   try{persistWatchlist()}catch{try{localStorage.setItem('mzbox-watchlist',JSON.stringify(S.watchRows.map(({uid,ticker,name,currency})=>({uid,ticker,name,currency}))))}catch{}}
+  }
+  S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];
   renderRows(S.rows);
   idx=S.rows.findIndex(x=>x.uid===item.uid);
  }
