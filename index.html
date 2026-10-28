@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#111210"><title>MZBOX AI · V22.7.3</title>
+<meta name="theme-color" content="#111210"><title>MZBOX AI · V22.7.4</title>
 
 
 
@@ -899,9 +899,102 @@ body.dark .temp-badge{background:#302d1d;color:#e9d98b;border-color:#5c5228}
 body.dark .welcome-rec-add{background:#1c1d19;border-color:var(--line);color:var(--ink)}
 </style>
 
+
+<style id="v22-7-4-polish">
+:root{
+  --bg:#f3f2ee;--card:#ffffff;--ink:#1a1b19;--muted:#6e6f68;
+  --line:#d8d7d0;--gold:#b89a45;--gold-soft:#e8d98a;
+  --green:#2f7a55;--green-soft:#e6f3ec;--scarlet:#b9443c;--scarlet-soft:#f8eaea;
+  --graphite:#2a2b28;--shadow:0 6px 20px rgba(30,30,24,.05);
+}
+body.dark{
+  --bg:#141513;--card:#1e1f1c;--ink:#f0efe8;--muted:#a3a29a;
+  --line:#353632;--gold:#d4bd6a;--gold-soft:#3a3524;
+  --green:#6fc49a;--green-soft:#1a2e24;--scarlet:#e07a72;--scarlet-soft:#3a2220;
+  --graphite:#0f100e;--shadow:0 8px 24px rgba(0,0,0,.25);
+}
+html,body{background:var(--bg)!important;color:var(--ink)!important;overflow-x:hidden!important}
+
+/* Boot: only brand + spinner */
+.boot-screen{position:fixed;inset:0;z-index:200000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:var(--bg);color:var(--ink);transition:opacity .35s ease,visibility .35s}
+.boot-screen.done{opacity:0;visibility:hidden;pointer-events:none}
+.boot-brand{font-size:28px;font-weight:850;letter-spacing:-.8px;color:var(--ink)}
+.boot-brand span{color:var(--gold)}
+.boot-spinner{width:28px;height:28px;border:2.5px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+.boot-label,.boot-sub{display:none!important}
+
+/* Pre-token: hide everything except token card */
+body.pre-token .welcome-strip,
+body.pre-token #portfolioSummary,
+body.pre-token #assets,
+body.pre-token #searchReopen,
+body.pre-token #stockSearchPanel,
+body.pre-token #marketOpen,
+body.pre-token #marketPanel,
+body.pre-token .footer .footer-legal,
+body.pre-token .footer .build-version{display:none!important}
+body.pre-token #tokenCard{display:block!important}
+body.pre-token .connection-card{margin-top:24px}
+
+/* Welcome always expanded by default — no auto-collapse forced */
+.welcome-strip.collapsed .welcome-top,
+.welcome-strip.collapsed .welcome-bottom,
+.welcome-strip.collapsed .welcome-recs{display:none!important}
+
+/* Recommendations as mini asset cards */
+.welcome-recs{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.welcome-recs[hidden]{display:none!important}
+.welcome-recs-label{font-size:10px;font-weight:800;letter-spacing:.8px;color:var(--muted);margin-bottom:9px;text-transform:uppercase}
+.welcome-recs-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:600px){.welcome-recs-list{grid-template-columns:1fr;gap:7px}}
+.rec-mini{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:11px 12px;border:1px solid var(--line);border-radius:12px;
+  background:var(--card);cursor:pointer;text-align:left;width:100%;
+  box-shadow:none;color:var(--ink);
+}
+.rec-mini:active{transform:scale(.99)}
+.rec-mini-main{min-width:0}
+.rec-mini-ticker{display:block;font-size:13px;font-weight:800;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-mini-name{display:block;font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-mini-side{text-align:right;flex:0 0 auto}
+.rec-mini-pct{display:block;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+.rec-mini-pct.up{color:var(--green)}
+.rec-mini-pct.down{color:var(--scarlet)}
+.rec-mini-hint{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+
+/* Chart draw tools */
+.chart-draw-tools{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.draw-tool{border:0;border-right:1px solid var(--line);background:transparent;color:var(--muted);min-width:34px;height:34px;padding:0 9px;font-size:13px;font-weight:750;display:grid;place-items:center;cursor:pointer}
+.draw-tool:last-child{border-right:0}
+.draw-tool.active{background:var(--gold-soft);color:var(--graphite)}
+body.dark .draw-tool.active{background:#3a3524;color:var(--gold)}
+.draw-tool[data-draw="clear"]{font-size:11px}
+
+/* Detail actions */
+.asset-detail-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.asset-detail-actions .btn-mini{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  min-height:34px;padding:7px 12px;border-radius:9px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+  font-size:11px;font-weight:750;cursor:pointer;
+}
+.asset-detail-actions .btn-mini:active{transform:scale(.98)}
+.asset-detail-actions .btn-mini.copied{border-color:var(--gold);color:var(--gold)}
+
+/* Hide legacy temp/pin chrome */
+.temp-badge,.welcome-rec-add,[data-pin-watch]{display:none!important}
+
+/* Signal colors stay green/gold/scarlet */
+.asset-help.sig-buy{background:var(--green-soft)!important;color:var(--green)!important;border-color:color-mix(in srgb,var(--green) 35%,var(--line))!important}
+.asset-help.sig-hold{background:var(--gold-soft)!important;color:#8a7020!important;border-color:color-mix(in srgb,var(--gold) 40%,var(--line))!important}
+.asset-help.sig-sell{background:var(--scarlet-soft)!important;color:var(--scarlet)!important;border-color:color-mix(in srgb,var(--scarlet) 35%,var(--line))!important}
+body.dark .asset-help.sig-hold{color:var(--gold)!important}
+</style>
+
 </head>
 <body>
-<div id="bootScreen" class="boot-screen" role="status" aria-live="polite"><div class="boot-brand">MZBOX <span>AI</span></div><div class="boot-spinner"></div><div class="boot-label">Загружаем систему</div><div class="boot-sub">Подготавливаем данные и графики</div></div><div id="analysisModal" class="analysis-modal" aria-hidden="true"><div class="analysis-modal-backdrop" data-analysis-close></div><section class="analysis-modal-panel" role="dialog" aria-modal="true" aria-labelledby="analysisModalTitle"><div class="analysis-modal-head"><div><span class="analysis-modal-kicker">MZBOX AI · РАЗБОР</span><h2 id="analysisModalTitle">Инвестиционный анализ</h2><p id="analysisModalTicker">Подготовка данных…</p></div><button type="button" class="analysis-modal-x" data-analysis-close aria-label="Закрыть">×</button></div><div id="analysisModalContent" class="analysis-modal-content"><div class="analysis-modal-loading"><span class="spin"></span> Загружаю историю и формирую итог…</div></div></section></div><main class="app-main">
+<div id="bootScreen" class="boot-screen" role="status" aria-live="polite"><div class="boot-brand">MZBOX <span>AI</span></div><div class="boot-spinner" aria-hidden="true"></div></div><div id="analysisModal" class="analysis-modal" aria-hidden="true"><div class="analysis-modal-backdrop" data-analysis-close></div><section class="analysis-modal-panel" role="dialog" aria-modal="true" aria-labelledby="analysisModalTitle"><div class="analysis-modal-head"><div><span class="analysis-modal-kicker">MZBOX AI · РАЗБОР</span><h2 id="analysisModalTitle">Инвестиционный анализ</h2><p id="analysisModalTicker">Подготовка данных…</p></div><button type="button" class="analysis-modal-x" data-analysis-close aria-label="Закрыть">×</button></div><div id="analysisModalContent" class="analysis-modal-content"><div class="analysis-modal-loading"><span class="spin"></span> Загружаю историю и формирую итог…</div></div></section></div><main class="app-main">
 <header class="top"><div class="brand-wrap"><div class="brand-lockup"><div class="brand">MZBOX <em>AI</em></div></div></div><span id="lastUpdated" class="hidden"></span><div class="header-actions"><button id="refresh" class="icon-square" type="button" aria-label="Актуализировать данные" title="Обновить данные и перезагрузить сайт"><svg class="refresh-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4.8 9a7.5 7.5 0 0 1 12.7-3L20 9M4 17v-5h5m10.2 3a7.5 7.5 0 0 1-12.7 3L4 15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="copyToken" class="icon-square" type="button" aria-label="Скопировать токен" title="Скопировать зарегистрированный токен">⧉</button><button id="themeToggle" class="theme-toggle" type="button" aria-label="Сменить тему" title="Сменить тему"><svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"/></svg></button></div></header>
 
 <section class="welcome-strip card" id="welcomeStrip" aria-label="Информация дня" role="button" tabindex="0" aria-expanded="true" title="Нажми, чтобы свернуть или развернуть">
@@ -928,10 +1021,11 @@ body.dark .welcome-rec-add{background:#1c1d19;border-color:var(--line);color:var
 <button id="marketOpen" class="search-reopen market-reopen" type="button" aria-expanded="false" aria-controls="marketPanel">Анализ акций</button>
 <section id="marketPanel" class="card market-panel hidden"><div class="market-panel-head panel-tap-head" id="marketPanelHead" role="button" tabindex="0" aria-label="Свернуть анализ акций"><div><h2>Анализ акций</h2></div></div><div class="market-tabs" role="tablist"><button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button><button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button><button type="button" class="market-tab" data-market-tab="popular">Популярные</button></div><div class="market-actions"><span id="marketStatus" class="small muted">Подключи T‑Invest, чтобы сканировать рынок.</span><button id="marketScan" class="btn" type="button">Сканировать</button></div><div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div></section>
 
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.7.3 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.7.4 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
+try{if(!localStorage.getItem('mzbox-token'))document.body.classList.add('pre-token');else document.body.classList.remove('pre-token')}catch{document.body.classList.add('pre-token')}
 const API='https://invest-public-api.tinkoff.ru/rest/';
 const S={token:'',accounts:[],rows:[],portfolioRows:[],watchRows:[],timer:null,busy:false,lastRefresh:0,activeRequest:0,lifetimeAt:0,lifetimeValue:null,searchBusy:false,analysisUnlocked:false};
 const $=id=>document.getElementById(id);
@@ -1223,9 +1317,8 @@ async function lifetimeIncome(accounts){
  if(seen===0&&unavailable>0)throw new Error('История операций недоступна через API. Проверь доступ токена к операциям.');
  return {total,seen,unavailable};
 }
-function renderRows(rows){const root=$('assets');if(!rows.length){root.innerHTML='';return}root.innerHTML=rows.map((r,i)=>`<details class="card asset" data-index="${i}"><summary class="asset-head"><div class="asset-main"><div class="asset-title-line">${r.temp?'<span class="temp-badge">ПРОСМОТР</span>':(r.watch?'<span class="qty-chip watch-chip">Наблюд.</span>':`<span class="qty-chip">${qtyFmt(r.qty)} шт.</span>`)}</div><div class="asset-sub asset-subline"><span class="asset-name-sub">${esc((r.name&&r.name.toUpperCase()!==String(r.ticker||'').toUpperCase())?r.name:r.ticker)}</span>${(r.name&&r.name.toUpperCase()!==String(r.ticker||'').toUpperCase())?`<span>· ${esc(r.ticker)}</span>`:''}</div><div class="asset-meta">${r.watch?'':`<span class="asset-signal ${r.pnl>0?'gain':r.pnl<0?'loss':'flat'}"><i aria-hidden="true"></i><span>${r.pnl>0?'+':''}${fmt(r.pnl)}</span></span>`}<button type="button" class="asset-help ${(r.signalKey==='buy'?'sig-buy':r.signalKey==='sell'?'sig-sell':r.signalKey==='hold'?'sig-hold':'')}" data-asset-help="${i}" aria-label="Открыть инвестиционный анализ" title="${r.signalKey==='buy'?'Сигнал: покупать':r.signalKey==='sell'?'Сигнал: продавать':r.signalKey==='hold'?'Сигнал: рассматривать':'Инвестиционный анализ'}">?</button></div></div><div class="asset-price-wrap">${r.watch?`<button class="watch-remove" type="button" data-remove-watch="${esc(r.uid)}" aria-label="Удалить из наблюдения" title="Удалить карточку">×</button>`:''}<div class="asset-price">${r.pricePending?'<span class="price-loading"><span class="spin"></span> Загрузка цены…</span>':(Number(r.price)>0?fmtPrice(r.price):'Нет котировки')}<div class="asset-sub">цена акции</div>${!r.watch?(r.pricePending?'<div class="asset-position-value price-loading">Загрузка стоимости…</div>':(Number(r.value)>0?`<div class="asset-position-value">${fmt(r.value)}</div>`:'')):''}</div></div></summary><div class="asset-detail"><div class="locked-content ${S.analysisUnlocked?'unlocked':''}" id="locked-${i}"><div class="forecast-head"><span class="small muted" id="time-${i}">Загрузка истории…</span></div><div class="chart-tools" data-chart-tools="${i}"><div class="chart-periods" role="group" aria-label="Период графика"><button type="button" class="chart-tool ${chartSettings(i).period===1?'active':''}" data-chart-period="1" data-chart-index="${i}" aria-label="Один день">1</button><button type="button" class="chart-tool ${chartSettings(i).period===7?'active':''}" data-chart-period="7" data-chart-index="${i}" aria-label="Семь дней">7</button><button type="button" class="chart-tool ${chartSettings(i).period===30?'active':''}" data-chart-period="30" data-chart-index="${i}" aria-label="Тридцать дней">30</button></div><div class="chart-draw-tools" role="group" aria-label="Рисование на графике"><button type="button" class="draw-tool" data-draw="hline" data-chart-index="${i}" title="Горизонтальная линия" aria-label="Горизонтальная линия">―</button><button type="button" class="draw-tool" data-draw="line" data-chart-index="${i}" title="Трендовая линия" aria-label="Трендовая линия">╱</button><button type="button" class="draw-tool" data-draw="pen" data-chart-index="${i}" title="Карандаш" aria-label="Карандаш">✎</button><button type="button" class="draw-tool" data-draw="clear" data-chart-index="${i}" title="Очистить рисунки" aria-label="Очистить">✕</button></div></div><div class="asset-detail-actions"><a class="btn-mini" data-asset-site="${i}" href="${tickerSiteUrl(r.ticker)}" target="_blank" rel="noopener noreferrer">Сайт акции ↗</a>${r.temp?`<button type="button" class="btn-mini primary" data-pin-watch="${esc(r.uid)}">＋ Добавить в список</button>`:(r.watch?`<button type="button" class="btn-mini" data-remove-watch="${esc(r.uid)}">Убрать из списка</button>`:'')}</div><div class="chart-wrap"><canvas class="chart" id="chart-${i}" data-instrument-uid="${esc(r.uid)}"></canvas></div><button type="button" class="calc-reveal" data-calc-toggle="${i}" aria-expanded="false">Калькулятор сделки</button><div class="trade-calc hidden" id="tradeCalc-${i}"><h3>Калькулятор сделки</h3><div class="income-grid"><div class="field"><label for="calcMoney-${i}">Сумма вложения, ₽</label><input id="calcMoney-${i}" type="number" min="0" step="100" value="1000" data-calc-money="${i}"></div><div class="field"><label for="calcQty-${i}">Количество акций</label><input id="calcQty-${i}" type="number" min="0" step="1" value="1" data-calc-qty="${i}"></div></div><div class="calc-output"><div><span>Оценка покупки</span><b id="calcCost-${i}">—</b></div><div><span>Результат за сутки</span><b id="calcProfit-${i}">—</b></div><div><span>Стоимость через сутки</span><b id="calcValue7-${i}">—</b></div><div><span>Изменение за сутки, %</span><b id="calcProfit30-${i}">—</b></div></div><div class="calc-horizon" id="calcHorizon-${i}">Оценка по внутридневной траектории.</div><div class="best-levels"><div><span>Предполагаемая покупка</span><b id="bestBuy-${i}">—</b><small class="level-time" id="bestBuyTime-${i}">Срок не определяется</small></div><div><span>Предполагаемая продажа</span><b id="bestSell-${i}">—</b><small class="level-time" id="bestSellTime-${i}">Срок не определяется</small></div></div></div><div class="path-wrap hidden"><div class="path-title">Сценарий</div><div class="path-list" id="path-${i}"></div></div></div><div class="analysis"><div id="analysis-${i}"><div class="analysis-block"><p>Загрузка истории, волатильности и сценариев…</p></div></div></div></div></div></details>`).join('');root.querySelectorAll('[data-chart-period]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();const i=Number(b.dataset.chartIndex);const set=chartSettings(i);set.period=[1,7,30].includes(Number(b.dataset.chartPeriod))?Number(b.dataset.chartPeriod):1;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-chart-period]').forEach(x=>x.classList.toggle('active',x===b));const r=S.rows[i];if(r){drawChart($('chart-'+i),r.chartCandles,r.model,r.price);redrawDrawings($('chart-'+i),i);}}));
+function renderRows(rows){const root=$('assets');if(!rows.length){root.innerHTML='';return}root.innerHTML=rows.map((r,i)=>`<details class="card asset" data-index="${i}"><summary class="asset-head"><div class="asset-main"><div class="asset-title-line">${r.watch||r.temp?'<span class="qty-chip watch-chip">Наблюд.</span>':`<span class="qty-chip">${qtyFmt(r.qty)} шт.</span>`}</div><div class="asset-sub asset-subline"><span class="asset-name-sub">${esc((r.name&&r.name.toUpperCase()!==String(r.ticker||'').toUpperCase())?r.name:r.ticker)}</span>${(r.name&&r.name.toUpperCase()!==String(r.ticker||'').toUpperCase())?`<span>· ${esc(r.ticker)}</span>`:''}</div><div class="asset-meta">${r.watch?'':`<span class="asset-signal ${r.pnl>0?'gain':r.pnl<0?'loss':'flat'}"><i aria-hidden="true"></i><span>${r.pnl>0?'+':''}${fmt(r.pnl)}</span></span>`}<button type="button" class="asset-help ${(r.signalKey==='buy'?'sig-buy':r.signalKey==='sell'?'sig-sell':r.signalKey==='hold'?'sig-hold':'')}" data-asset-help="${i}" aria-label="Открыть инвестиционный анализ" title="${r.signalKey==='buy'?'Сигнал: покупать':r.signalKey==='sell'?'Сигнал: продавать':r.signalKey==='hold'?'Сигнал: рассматривать':'Инвестиционный анализ'}">?</button></div></div><div class="asset-price-wrap">${r.watch?`<button class="watch-remove" type="button" data-remove-watch="${esc(r.uid)}" aria-label="Удалить из наблюдения" title="Удалить карточку">×</button>`:''}<div class="asset-price">${r.pricePending?'<span class="price-loading"><span class="spin"></span> Загрузка цены…</span>':(Number(r.price)>0?fmtPrice(r.price):'Нет котировки')}<div class="asset-sub">цена акции</div>${!r.watch?(r.pricePending?'<div class="asset-position-value price-loading">Загрузка стоимости…</div>':(Number(r.value)>0?`<div class="asset-position-value">${fmt(r.value)}</div>`:'')):''}</div></div></summary><div class="asset-detail"><div class="locked-content ${S.analysisUnlocked?'unlocked':''}" id="locked-${i}"><div class="forecast-head"><span class="small muted" id="time-${i}">Загрузка истории…</span></div><div class="chart-tools" data-chart-tools="${i}"><div class="chart-periods" role="group" aria-label="Период графика"><button type="button" class="chart-tool ${chartSettings(i).period===1?'active':''}" data-chart-period="1" data-chart-index="${i}" aria-label="Один день">1</button><button type="button" class="chart-tool ${chartSettings(i).period===7?'active':''}" data-chart-period="7" data-chart-index="${i}" aria-label="Семь дней">7</button><button type="button" class="chart-tool ${chartSettings(i).period===30?'active':''}" data-chart-period="30" data-chart-index="${i}" aria-label="Тридцать дней">30</button></div><div class="chart-draw-tools" role="group" aria-label="Рисование на графике"><button type="button" class="draw-tool" data-draw="hline" data-chart-index="${i}" title="Горизонт" aria-label="Горизонт">―</button><button type="button" class="draw-tool" data-draw="line" data-chart-index="${i}" title="Тренд" aria-label="Тренд">╱</button><button type="button" class="draw-tool" data-draw="ray" data-chart-index="${i}" title="Луч" aria-label="Луч">→</button><button type="button" class="draw-tool" data-draw="rect" data-chart-index="${i}" title="Прямоугольник" aria-label="Прямоугольник">▭</button><button type="button" class="draw-tool" data-draw="pen" data-chart-index="${i}" title="Карандаш" aria-label="Карандаш">✎</button><button type="button" class="draw-tool" data-draw="clear" data-chart-index="${i}" title="Очистить" aria-label="Очистить">✕</button></div></div><div class="asset-detail-actions"><button type="button" class="btn-mini" data-copy-ticker="${esc(r.ticker)}" data-copy-name="${esc(r.name||r.ticker)}">Скопировать название</button></div><div class="chart-wrap"><canvas class="chart" id="chart-${i}" data-instrument-uid="${esc(r.uid)}"></canvas></div><button type="button" class="calc-reveal" data-calc-toggle="${i}" aria-expanded="false">Калькулятор сделки</button><div class="trade-calc hidden" id="tradeCalc-${i}"><h3>Калькулятор сделки</h3><div class="income-grid"><div class="field"><label for="calcMoney-${i}">Сумма вложения, ₽</label><input id="calcMoney-${i}" type="number" min="0" step="100" value="1000" data-calc-money="${i}"></div><div class="field"><label for="calcQty-${i}">Количество акций</label><input id="calcQty-${i}" type="number" min="0" step="1" value="1" data-calc-qty="${i}"></div></div><div class="calc-output"><div><span>Оценка покупки</span><b id="calcCost-${i}">—</b></div><div><span>Результат за сутки</span><b id="calcProfit-${i}">—</b></div><div><span>Стоимость через сутки</span><b id="calcValue7-${i}">—</b></div><div><span>Изменение за сутки, %</span><b id="calcProfit30-${i}">—</b></div></div><div class="calc-horizon" id="calcHorizon-${i}">Оценка по внутридневной траектории.</div><div class="best-levels"><div><span>Предполагаемая покупка</span><b id="bestBuy-${i}">—</b><small class="level-time" id="bestBuyTime-${i}">Срок не определяется</small></div><div><span>Предполагаемая продажа</span><b id="bestSell-${i}">—</b><small class="level-time" id="bestSellTime-${i}">Срок не определяется</small></div></div></div><div class="path-wrap hidden"><div class="path-title">Сценарий</div><div class="path-list" id="path-${i}"></div></div></div><div class="analysis"><div id="analysis-${i}"><div class="analysis-block"><p>Загрузка истории, волатильности и сценариев…</p></div></div></div></div></div></details>`).join('');root.querySelectorAll('[data-chart-period]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();const i=Number(b.dataset.chartIndex);const set=chartSettings(i);set.period=[1,7,30].includes(Number(b.dataset.chartPeriod))?Number(b.dataset.chartPeriod):1;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-chart-period]').forEach(x=>x.classList.toggle('active',x===b));const r=S.rows[i];if(r){drawChart($('chart-'+i),r.chartCandles,r.model,r.price);redrawDrawings($('chart-'+i),i);}}));
 root.querySelectorAll('[data-draw]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const i=Number(b.dataset.chartIndex);const st=drawState(i);const tool=b.dataset.draw;if(tool==='clear'){st.items=[];st.draft=null;st.tool=null;root.querySelectorAll(`[data-draw][data-chart-index="${i}"]`).forEach(x=>x.classList.remove('active'));const r=S.rows[i];if(r)drawChart($('chart-'+i),r.chartCandles,r.model,r.price);return;}st.tool=st.tool===tool?null:tool;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-draw]').forEach(x=>x.classList.toggle('active',x.dataset.draw===st.tool));const canvas=$('chart-'+i);if(canvas){bindChartDrawing(canvas,i);canvas.style.cursor=st.tool?'crosshair':'default';}}));
-root.querySelectorAll('[data-pin-watch]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();pinWatch(b.dataset.pinWatch);}));
 root.querySelectorAll('details.asset').forEach(d=>d.addEventListener('toggle',()=>{if(d.open){const i=Number(d.dataset.index);loadDetail(i)}}));root.querySelectorAll('[data-remove-watch]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const uid=b.dataset.removeWatch;S.watchRows=S.watchRows.filter(x=>x.uid!==uid);S.rows=S.rows.filter(x=>!(x.temp&&x.uid===uid));persistWatchlist();rebuildRows();renderRows(S.rows)}));root.querySelectorAll('[data-asset-help]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openQuickInfo(S.rows[Number(b.dataset.assetHelp)]||null)}));}
 
 async function searchShares(query){
@@ -1375,7 +1468,7 @@ async function refreshPortfolio(initial=false){
 
 async function restoreWatchlist(){let saved=[];try{saved=JSON.parse(localStorage.getItem('mzbox-watchlist')||'[]')}catch{}if(!Array.isArray(saved)||!saved.length)return;try{const prices=await lastPrices(saved.map(x=>x.uid));for(const x of saved){const price=prices[x.uid]||0;if(price>0&&!S.portfolioRows.some(p=>p.uid===x.uid))S.watchRows.push({...x,price,qty:0,avg:0,pnl:0,value:0,watch:true})}S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];renderRows(S.rows)}catch{}}
 function startAuto(){if(S.timer)clearInterval(S.timer);S.timer=setInterval(()=>{if(document.visibilityState==='visible'&&S.token&&!S.busy)refreshPortfolio(false)},60000)}
-function lockToken(){const input=$('token');input.readOnly=true;input.classList.add('token-locked');input.setAttribute('aria-readonly','true');$('connect').textContent='Подключено';$('connect').classList.add('secondary');$('tokenCard').classList.add('connected');$('tokenNote').textContent='Токен зарегистрирован · ••••'+String(S.token||'').slice(-4);$('tokenNote').classList.remove('hidden');const badge=$('tokenBadge');if(badge){badge.classList.add('registered');const label=badge.querySelector('span');if(label)label.textContent='Токен зарегистрирован';}$('status').textContent='';}
+function lockToken(){const input=$('token');input.readOnly=true;input.classList.add('token-locked');input.setAttribute('aria-readonly','true');$('connect').textContent='Подключено';$('connect').classList.add('secondary');$('tokenCard').classList.add('connected');$('tokenNote').textContent='Токен зарегистрирован · ••••'+String(S.token||'').slice(-4);$('tokenNote').classList.remove('hidden');const badge=$('tokenBadge');if(badge){badge.classList.add('registered');const label=badge.querySelector('span');if(label)label.textContent='Токен зарегистрирован';}$('status').textContent='';document.body.classList.remove('pre-token');}
 function unlockToken(){if(S.timer)clearInterval(S.timer);try{localStorage.clear();sessionStorage.clear()}catch{}const go=()=>location.replace(location.pathname+'?reset='+Date.now());if('caches' in window){caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).finally(go)}else go();}
 const themeButton=$('themeToggle');
 function setTheme(dark){document.body.classList.toggle('dark',dark);document.documentElement.style.backgroundColor=dark?'#20211e':'#f4f1e8';document.querySelector('meta[name="theme-color"]').setAttribute('content',dark?'#20211e':'#f4f1e8');themeButton.setAttribute('aria-label',dark?'Включить светлую тему':'Включить тёмную тему');themeButton.title=dark?'Светлая тема':'Тёмная тема';themeButton.innerHTML=dark?'<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>':'<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"/></svg>';try{localStorage.setItem('mzbox-theme',dark?'dark':'light')}catch{}S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,r.model,r.price)})}
@@ -1420,7 +1513,7 @@ function markFooterDataUpdated(label='Данные обновлены',timestamp
 const bootStartedAt=Date.now();let bootHideTimer=0;
 function hideBootScreen(){const remaining=2000-(Date.now()-bootStartedAt);if(remaining>0){if(!bootHideTimer)bootHideTimer=setTimeout(()=>{bootHideTimer=0;hideBootScreen()},remaining);return}const el=$('bootScreen');if(el)el.classList.add('done')}
 function toggleWelcome(){const el=$('welcomeStrip');const collapsed=el.classList.toggle('collapsed');el.setAttribute('aria-expanded',String(!collapsed));try{localStorage.setItem('mzbox-welcome-hidden',collapsed?'1':'0')}catch{}}
-try{if(localStorage.getItem('mzbox-welcome-hidden')==='1'){$('welcomeStrip').classList.add('collapsed');$('welcomeStrip').setAttribute('aria-expanded','false')}}catch{}
+try{localStorage.removeItem('mzbox-welcome-hidden');$('welcomeStrip').classList.remove('collapsed');$('welcomeStrip').setAttribute('aria-expanded','true')}catch{}
 $('welcomeStrip').addEventListener('click',toggleWelcome);$('welcomeStrip').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleWelcome()}});
 updateWelcomeClock();chooseWelcomeQuote();if($('lastUpdated'))$('lastUpdated').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');markFooterDataUpdated('Обновлено',Date.now());setInterval(updateWelcomeClock,15000);window.addEventListener('load',()=>setTimeout(()=>{if(!S.busy)hideBootScreen()},700));setTimeout(hideBootScreen,12000);
 
@@ -1490,18 +1583,28 @@ function pinWatch(uid){
 const MZ_DRAW={};
 function drawState(i){return MZ_DRAW[i]||(MZ_DRAW[i]={tool:null,items:[],draft:null})}
 function redrawDrawings(canvas,i){
- if(!canvas)return;const st=drawState(i);const ctx=canvas.getContext('2d');if(!ctx||!st.items.length&&!st.draft)return;
+ if(!canvas)return;const st=drawState(i);const ctx=canvas.getContext('2d');if(!ctx||(!st.items.length&&!st.draft))return;
  const dpr=Math.max(1,window.devicePixelRatio||1);
  const W=canvas.width/dpr,H=canvas.height/dpr;
- const dark=document.body.classList.contains('dark');
- const color=dark?'#e0c96f':'#8a7020';
+ // White lines for visibility on both themes
+ const color='#ffffff';
  ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0);
- ctx.lineWidth=1.6;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineJoin='round';ctx.lineCap='round';
+ ctx.lineWidth=1.8;ctx.strokeStyle=color;ctx.fillStyle='rgba(255,255,255,.08)';ctx.lineJoin='round';ctx.lineCap='round';
+ ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=2;
  const paint=item=>{
   if(!item)return;
-  if(item.type==='hline'&&item.y!=null){ctx.beginPath();ctx.setLineDash([4,3]);ctx.moveTo(0,item.y);ctx.lineTo(W,item.y);ctx.stroke();ctx.setLineDash([]);}
-  else if(item.type==='line'&&item.x1!=null){ctx.beginPath();ctx.setLineDash([]);ctx.moveTo(item.x1,item.y1);ctx.lineTo(item.x2,item.y2);ctx.stroke();}
-  else if(item.type==='pen'&&item.pts&&item.pts.length){ctx.beginPath();ctx.setLineDash([]);item.pts.forEach((p,k)=>{if(k===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y)});ctx.stroke();}
+  if(item.type==='hline'&&item.y!=null){ctx.beginPath();ctx.setLineDash([5,4]);ctx.moveTo(0,item.y);ctx.lineTo(W,item.y);ctx.stroke();ctx.setLineDash([]);}
+  else if((item.type==='line'||item.type==='ray')&&item.x1!=null){
+   ctx.beginPath();ctx.setLineDash([]);
+   if(item.type==='ray'){
+    const dx=item.x2-item.x1,dy=item.y2-item.y1;const len=Math.hypot(dx,dy)||1;
+    const scale=Math.max(W,H)*2/len;ctx.moveTo(item.x1,item.y1);ctx.lineTo(item.x1+dx*scale,item.y1+dy*scale);
+   }else{ctx.moveTo(item.x1,item.y1);ctx.lineTo(item.x2,item.y2);}
+   ctx.stroke();
+  }else if(item.type==='rect'&&item.x1!=null){
+   const x=Math.min(item.x1,item.x2),y=Math.min(item.y1,item.y2),w=Math.abs(item.x2-item.x1),h=Math.abs(item.y2-item.y1);
+   ctx.setLineDash([]);ctx.strokeRect(x,y,w,h);ctx.fillRect(x,y,w,h);
+  }else if(item.type==='pen'&&item.pts&&item.pts.length){ctx.beginPath();ctx.setLineDash([]);item.pts.forEach((p,k)=>{if(k===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y)});ctx.stroke();}
  };
  st.items.forEach(paint);if(st.draft)paint(st.draft);
  ctx.restore();
@@ -1512,13 +1615,14 @@ function bindChartDrawing(canvas,i){
  let drawing=false;
  const start=e=>{const st=drawState(i);if(!st.tool||st.tool==='clear')return;e.preventDefault();drawing=true;const p=pos(e);
   if(st.tool==='hline'){st.draft={type:'hline',y:p.y};}
-  else if(st.tool==='line'){st.draft={type:'line',x1:p.x,y1:p.y,x2:p.x,y2:p.y};}
+  else if(st.tool==='line'||st.tool==='ray'){st.draft={type:st.tool,x1:p.x,y1:p.y,x2:p.x,y2:p.y};}
+  else if(st.tool==='rect'){st.draft={type:'rect',x1:p.x,y1:p.y,x2:p.x,y2:p.y};}
   else if(st.tool==='pen'){st.draft={type:'pen',pts:[p]};}
   const r=S.rows[i];if(r)drawChart(canvas,r.chartCandles,r.model,r.price);redrawDrawings(canvas,i);
  };
  const move=e=>{if(!drawing)return;const st=drawState(i);if(!st.draft)return;e.preventDefault();const p=pos(e);
   if(st.draft.type==='hline')st.draft.y=p.y;
-  else if(st.draft.type==='line'){st.draft.x2=p.x;st.draft.y2=p.y;}
+  else if(st.draft.type==='line'||st.draft.type==='ray'||st.draft.type==='rect'){st.draft.x2=p.x;st.draft.y2=p.y;}
   else if(st.draft.type==='pen')st.draft.pts.push(p);
   const r=S.rows[i];if(r)drawChart(canvas,r.chartCandles,r.model,r.price);redrawDrawings(canvas,i);
  };
@@ -1567,25 +1671,30 @@ function updateWelcomeRecs(){
  if(!picks.length){box.hidden=true;list.innerHTML='';return}
  box.hidden=false;
  list.innerHTML=picks.map(p=>{
-  const pctTxt=(Number.isFinite(Number(p.pct))?((p.pct>0?'+':'')+Number(p.pct).toLocaleString('ru-RU',{maximumFractionDigits:1})+'%'):'');
-  return `<span class="welcome-rec-chip ${p.kind==='look'?'look':'watch'}" data-rec-uid="${esc(p.uid)}" title="${esc(p.name||p.ticker)}" role="button" tabindex="0"><span class="rec-ticker">${esc(p.ticker)}</span>${pctTxt?`<span class="rec-pct">${pctTxt}</span>`:''}<button type="button" class="welcome-rec-add" data-rec-add="${esc(p.uid)}" title="Добавить в список" aria-label="Добавить">+</button></span>`;
+  const pctNum=Number(p.pct), hasPct=Number.isFinite(pctNum);
+  const pctTxt=hasPct?((pctNum>0?'+':'')+pctNum.toLocaleString('ru-RU',{maximumFractionDigits:1})+'%'):'—';
+  const hint=p.kind==='look'?'к рассмотрению':'наблюдение';
+  const cls=hasPct?(pctNum>=0?'up':'down'):'';
+  return `<button type="button" class="rec-mini" data-rec-uid="${esc(p.uid)}" title="${esc(p.name||p.ticker)}"><span class="rec-mini-main"><span class="rec-mini-ticker">${esc(p.ticker)}</span><span class="rec-mini-name">${esc(p.name||p.ticker)}</span></span><span class="rec-mini-side"><span class="rec-mini-pct ${cls}">${pctTxt}</span><span class="rec-mini-hint">${hint}</span></span></button>`;
  }).join('');
 }
 document.addEventListener('click',e=>{
- const addBtn=e.target.closest('[data-rec-add]');
- if(addBtn){e.preventDefault();e.stopPropagation();const uid=addBtn.dataset.recAdd;const item=(marketCache||[]).find(x=>x.uid===uid)||S.rows.find(x=>x.uid===uid);if(!item)return;
-  if(S.portfolioRows.some(p=>p.uid===uid)||S.watchRows.some(w=>w.uid===uid)){openInstrumentFull(item);return;}
-  S.watchRows.push({uid:item.uid,ticker:item.ticker,name:item.name||item.ticker,currency:item.currency||'rub',qty:0,avg:0,pnl:0,price:Number(item.price)||0,value:0,watch:true});
-  // drop temp copy if any
-  S.rows=S.rows.filter(r=>!(r.temp&&r.uid===uid));
-  persistWatchlist();rebuildRows();renderRows(S.rows);
-  openInstrumentFull(S.rows.find(r=>r.uid===uid)||item);
-  return;}
  const chip=e.target.closest('[data-rec-uid]');if(!chip)return;
  e.preventDefault();e.stopPropagation();
  const uid=chip.dataset.recUid;
  const item=(marketCache||[]).find(x=>x.uid===uid)||S.rows.find(x=>x.uid===uid);
  if(item)openInstrumentFull(item);
+});
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('[data-copy-ticker]');if(!b)return;
+ e.preventDefault();e.stopPropagation();
+ const text=(b.dataset.copyName||b.dataset.copyTicker||'').trim();
+ if(!text)return;
+ try{
+  if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);
+  else{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
+  b.classList.add('copied');b.textContent='Скопировано';setTimeout(()=>{b.classList.remove('copied');b.textContent='Скопировать название';},1200);
+ }catch{b.textContent='Не удалось';setTimeout(()=>{b.textContent='Скопировать название';},1200);}
 });
 
 window.__mzboxAddMarketWatch=(item)=>{if(!item||!item.uid||S.portfolioRows.some(x=>x.uid===item.uid)||S.watchRows.some(x=>x.uid===item.uid))return false;S.watchRows.push({uid:item.uid,ticker:item.ticker,name:item.name,currency:item.currency||'rub',qty:0,avg:0,pnl:0,price:Number(item.price)||0,value:0,watch:true,liquidity:item.liquidity!==false});S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];try{localStorage.setItem('mzbox-watchlist',JSON.stringify(S.watchRows.map(({uid,ticker,name,currency})=>({uid,ticker,name,currency}))))}catch{}renderRows(S.rows);return true};
