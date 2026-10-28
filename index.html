@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.8.2</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.8.3</title>
 
 
 
@@ -1155,6 +1155,159 @@ body.dark .path-point.turning,body.dark .trade-scenario.accent,body.dark .trade-
 }
 </style>
 
+
+<style id="v22-8-3-fix">
+:root{
+  --bg:#f4f4f5;
+  --card:#ffffff;
+  --ink:#111111;
+  --muted:#6b6b6b;
+  --line:#e4e4e7;
+  --green:#0f9f6e;
+  --green-soft:#e8f8f1;
+  --scarlet:#e11d48;
+  --scarlet-soft:#fff1f2;
+  --radius:14px;
+  --font:15px;
+}
+body.dark{
+  --bg:#121212;
+  --card:#1e1e1e;
+  --ink:#f3f3f3;
+  --muted:#a1a1a1;
+  --line:#2e2e2e;
+  --green:#34d399;
+  --green-soft:#0f2a1f;
+  --scarlet:#fb7185;
+  --scarlet-soft:#2a1216;
+}
+html,body{
+  background:var(--bg)!important;color:var(--ink)!important;
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif!important;
+  font-size:var(--font)!important;line-height:1.45!important;
+  -webkit-font-smoothing:antialiased;
+}
+main.app-main{max-width:720px!important;margin:0 auto!important;padding:16px 14px 40px!important}
+
+/* White / solid cards */
+.card,.asset,.welcome-strip,.portfolio-line,.tools-workspace,.connection-card,
+.analysis,.trade-calc,.chart-wrap,.market-row,.rec-card,.path-wrap,.path-title,
+.needed,.calc-output>div,.best-levels>div,.market-actions{
+  background:var(--card)!important;background-image:none!important;
+  border:1px solid var(--line)!important;border-radius:var(--radius)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.04)!important;color:var(--ink)!important;
+}
+body.dark .card,body.dark .asset,body.dark .welcome-strip,body.dark .portfolio-line,
+body.dark .tools-workspace,body.dark .connection-card,body.dark .analysis,body.dark .trade-calc,
+body.dark .chart-wrap,body.dark .market-row,body.dark .path-title,body.dark .needed,
+body.dark .calc-output>div,body.dark .best-levels>div,body.dark .market-actions{
+  background:#1e1e1e!important;border-color:#2e2e2e!important;color:#f3f3f3!important;
+  box-shadow:none!important;background-image:none!important;
+}
+
+/* Typography — readable */
+h1{font-size:1.35rem!important;font-weight:700!important;line-height:1.25!important;margin:0!important}
+h2,h3{font-size:1.05rem!important;font-weight:700!important;margin:0 0 8px!important}
+.asset-name,.asset-name-sub,.rec-card-name{font-size:15px!important;font-weight:650!important}
+.asset-price,.rec-card-price{font-size:16px!important;font-weight:700!important}
+.asset-sub,.muted,.status,.small,.footer,.calc-note,label,.level-time{font-size:13px!important;color:var(--muted)!important;line-height:1.4!important}
+.analysis-block p,.analysis-block li,.path-list,.market-stock{font-size:14px!important;line-height:1.5!important}
+.qty-chip,.watch-chip{font-size:12px!important;padding:4px 8px!important}
+
+/* Tools bar */
+.tools-workspace{padding:12px!important;margin:14px 0!important}
+.tools-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tools-open-btn{
+  min-height:44px;border-radius:12px;border:1px solid var(--line);
+  background:var(--bg);color:var(--ink);font-size:14px;font-weight:650;cursor:pointer;
+}
+.tools-open-btn.active{background:var(--ink);color:var(--card);border-color:var(--ink)}
+body.dark .tools-open-btn{background:#121212;border-color:#2e2e2e;color:#f3f3f3}
+body.dark .tools-open-btn.active{background:#f3f3f3;color:#121212;border-color:#f3f3f3}
+.tools-panel{margin-top:12px;padding-top:4px}
+.tools-panel.hidden{display:none!important}
+.tools-panel.tools-in{animation:toolsIn .2s ease both}
+@keyframes toolsIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.tools-panel-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  font-size:15px;font-weight:700;padding:8px 2px 12px;cursor:pointer;user-select:none;
+}
+.tools-close{font-size:13px;font-weight:600;color:var(--muted)}
+.market-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.market-tab{
+  min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);
+  color:var(--muted);font-size:13px;font-weight:650;cursor:pointer;
+}
+.market-tab.active{background:var(--ink);color:var(--card);border-color:var(--ink)}
+body.dark .market-tab.active{background:#f3f3f3;color:#121212}
+.market-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;margin-bottom:10px}
+.search-row{display:grid;grid-template-columns:1fr auto;gap:8px}
+.search-row input, .token-input, .field input{
+  min-height:44px!important;font-size:15px!important;border-radius:12px!important;
+  border:1px solid var(--line)!important;background:var(--bg)!important;color:var(--ink)!important;
+  padding:10px 12px!important;
+}
+body.dark .search-row input,body.dark .token-input,body.dark .field input{
+  background:#121212!important;border-color:#2e2e2e!important;color:#f3f3f3!important;
+}
+
+/* Buttons */
+.btn,.search-btn,.market-study,.pin-open{
+  min-height:44px!important;padding:10px 16px!important;border-radius:12px!important;
+  background:var(--ink)!important;color:var(--card)!important;border:0!important;
+  font-size:14px!important;font-weight:650!important;background-image:none!important;box-shadow:none!important;
+}
+body.dark .btn,body.dark .search-btn,body.dark .market-study{
+  background:#f3f3f3!important;color:#121212!important;
+}
+.btn.secondary{background:transparent!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+
+/* Chart tools larger */
+.chart-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.chart-periods,.chart-draw-tools{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
+.chart-tool,.draw-tool{
+  min-width:40px;height:40px;border:0;border-right:1px solid var(--line);
+  background:transparent;color:var(--muted);font-size:14px;font-weight:700;cursor:pointer;
+}
+.chart-tool:last-child,.draw-tool:last-child{border-right:0}
+.chart-tool.active,.draw-tool.active{background:var(--ink);color:var(--card)}
+body.dark .chart-tool.active,body.dark .draw-tool.active{background:#f3f3f3;color:#121212}
+
+/* Calculator */
+.trade-calc{padding:14px!important;margin-top:10px}
+.trade-calc h3{font-size:16px!important;margin-bottom:12px!important}
+.trade-calc .income-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.trade-calc label{font-size:13px!important;margin-bottom:6px!important;display:block}
+.calc-horizons{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.calc-horizons button{flex:1;min-height:40px;border:0;border-right:1px solid var(--line);background:var(--bg);color:var(--muted);font-size:13px;font-weight:700}
+.calc-horizons button:last-child{border-right:0}
+.calc-horizons button.active{background:var(--green-soft);color:var(--green)}
+.calc-output{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.calc-output span{font-size:12px!important;color:var(--muted)!important}
+.calc-output b{font-size:16px!important;margin-top:4px;display:block}
+.calc-note{font-size:13px!important;margin-top:10px!important;line-height:1.45!important}
+.best-levels{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.best-levels span{font-size:12px!important;color:var(--muted)!important}
+.best-levels b{font-size:15px!important}
+
+/* Signals */
+.positive,.market-change.up{color:var(--green)!important}
+.negative,.market-change.down{color:var(--scarlet)!important}
+.asset-help.sig-buy{background:var(--green-soft)!important;color:var(--green)!important;border-color:var(--line)!important}
+.asset-help.sig-hold{background:var(--bg)!important;color:var(--muted)!important;border-color:var(--line)!important}
+.asset-help.sig-sell{background:var(--scarlet-soft)!important;color:var(--scarlet)!important;border-color:var(--line)!important}
+
+/* Hide remnants */
+.welcome-recs,#welcomeRecs,#searchReopen,#marketOpen,.search-reopen{display:none!important}
+.footer{font-size:12px!important;color:var(--muted)!important;text-align:center;margin-top:20px}
+.boot-screen{background:var(--bg)!important;color:var(--ink)!important}
+body.dark .boot-spinner{border-color:#2e2e2e!important;border-top-color:#f3f3f3!important}
+body.dark{background:#121212!important}
+body.dark .brand,body.dark .brand em{color:#f3f3f3!important;-webkit-text-fill-color:#f3f3f3!important;background:none!important}
+.icon-square,.theme-toggle{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:12px!important;background-image:none!important;color:var(--ink)!important}
+body.dark .icon-square,body.dark .theme-toggle{background:#1e1e1e!important;border-color:#2e2e2e!important;color:#f3f3f3!important}
+</style>
+
 </head>
 <body>
 <div id="bootScreen" class="boot-screen" role="status" aria-live="polite"><div class="boot-brand">MZBOX <span>AI</span></div><div class="boot-spinner" aria-hidden="true"></div></div><div id="analysisModal" class="analysis-modal" aria-hidden="true"><div class="analysis-modal-backdrop" data-analysis-close></div><section class="analysis-modal-panel" role="dialog" aria-modal="true" aria-labelledby="analysisModalTitle"><div class="analysis-modal-head"><div><span class="analysis-modal-kicker">MZBOX AI · РАЗБОР</span><h2 id="analysisModalTitle">Инвестиционный анализ</h2><p id="analysisModalTicker">Подготовка данных…</p></div><button type="button" class="analysis-modal-x" data-analysis-close aria-label="Закрыть">×</button></div><div id="analysisModalContent" class="analysis-modal-content"><div class="analysis-modal-loading"><span class="spin"></span> Загружаю историю и формирую итог…</div></div></section></div><main class="app-main">
@@ -1163,10 +1316,6 @@ body.dark .path-point.turning,body.dark .trade-scenario.accent,body.dark .trade-
 <section class="welcome-strip card" id="welcomeStrip" aria-label="Информация дня" role="button" tabindex="0" aria-expanded="true" title="Нажми, чтобы свернуть или развернуть">
  <div class="welcome-top"><div class="welcome-greeting"><div class="welcome-kicker" id="welcomeDate">MZBOX · СЕГОДНЯ</div><h1 id="welcomeGreeting">Доброе утро, Дмитрий.</h1></div><div class="welcome-clock"><strong id="welcomeClock">--:--</strong><span id="welcomeWeather">Москва</span></div></div>
  <div class="welcome-bottom"><div class="welcome-quote"><span class="welcome-quote-mark">“</span><div><p id="welcomeQuote">Порядок в мыслях помогает наводить порядок в действиях.</p><small id="welcomeAuthor">MZBOX AI</small></div></div></div>
- <div class="welcome-recs" id="welcomeRecs" hidden>
-  <div class="welcome-recs-label">Рекомендуем ознакомиться с акциями:</div>
-  <div class="welcome-recs-list" id="welcomeRecsList"></div>
- </div>
 </section>
 <section class="card connection-card" id="tokenCard"><div class="row"><div id="tokenHeading"></div><span id="busyIcon"></span></div><div class="tokenrow" id="tokenRow"><input id="token" class="token-input" type="password" autocomplete="off" spellcheck="false" placeholder="Вставь T‑Invest API-токен"><button id="connect" class="btn" type="button">Подключить</button></div><div class="token-note hidden" id="tokenNote"></div><div class="status" id="status"></div><div id="loadProgress" class="load-progress hidden" aria-live="polite"><div class="load-progress-track"><span id="loadProgressFill"></span></div><div class="load-progress-label"><span id="loadProgressText">Загрузка портфеля…</span><b id="loadProgressPct">0%</b></div></div></section>
 <section class="card portfolio-line hidden" id="portfolioSummary"><div class="portfolio-metric"><strong id="invested">—</strong></div><div class="portfolio-divider"></div><div class="portfolio-metric result-metric"><div class="result-value-line"><strong id="pnl">—</strong><small id="returnPct">—</small></div></div><span id="marketValue" class="hidden"></span></section>
@@ -1175,24 +1324,39 @@ body.dark .path-point.turning,body.dark .trade-scenario.accent,body.dark .trade-
 <!-- Access is provided by the registered T-Invest token; no startup PIN. -->
 <div id="assets" class="asset-list"></div>
 
+
 <section class="card tools-workspace" id="toolsWorkspace">
-  <div class="tools-tabs" role="tablist">
-    <button type="button" class="tools-tab active" data-tools-tab="market" role="tab" aria-selected="true">Анализ</button>
-    <button type="button" class="tools-tab" data-tools-tab="search" role="tab" aria-selected="false">Поиск</button>
+  <div class="tools-bar">
+    <button type="button" class="tools-open-btn" id="openMarket" aria-expanded="false">Анализ акций</button>
+    <button type="button" class="tools-open-btn" id="openSearch" aria-expanded="false">Поиск акций</button>
   </div>
-  <div class="tools-panes">
-    <div class="tools-pane" id="toolsMarket" data-pane="market" role="tabpanel"></div><div class="market-tabs" role="tablist"><button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button><button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button><button type="button" class="market-tab" data-market-tab="popular">Популярные</button></div><div class="market-actions"><span id="marketStatus" class="small muted">Подключи T‑Invest, чтобы сканировать рынок.</span><button id="marketScan" class="btn" type="button">Сканировать</button></div><div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div></div>
-    <div class="tools-pane hidden" id="toolsSearch" data-pane="search" role="tabpanel">
-  
-  <form class="search-row" id="stockSearchForm"><input id="stockSearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="Тикер или название" aria-label="Тикер или название"><button class="search-btn" id="stockSearchBtn" type="submit">Поиск</button></form>
-  <div class="status" id="stockSearchStatus" aria-live="polite"></div>
-  <div class="search-results" id="stockSearchResults"></div>
-</div>
+  <div class="tools-panel hidden" id="panelMarket">
+    <div class="tools-panel-head" id="closeMarket" role="button" tabindex="0">Анализ акций <span class="tools-close">Скрыть</span></div>
+    <div class="market-tabs" role="tablist">
+      <button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button>
+      <button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button>
+      <button type="button" class="market-tab" data-market-tab="popular">Популярные</button>
+    </div>
+    <div class="market-actions">
+      <span id="marketStatus" class="small muted">Подключи T‑Invest, чтобы сканировать рынок.</span>
+      <button id="marketScan" class="btn" type="button">Сканировать</button>
+    </div>
+    <div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div>
+  </div>
+  <div class="tools-panel hidden" id="panelSearch">
+    <div class="tools-panel-head" id="closeSearch" role="button" tabindex="0">Поиск акций <span class="tools-close">Скрыть</span></div>
+    <form class="search-row" id="stockSearchForm">
+      <input id="stockSearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="Тикер или название" aria-label="Тикер или название">
+      <button class="search-btn" id="stockSearchBtn" type="submit">Поиск</button>
+    </form>
+    <div class="status" id="stockSearchStatus" aria-live="polite"></div>
+    <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
 
 
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.8.2 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.8.3 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -1532,29 +1696,42 @@ async function addWatch(uid){
   const idx=S.rows.findIndex(x=>x.uid===uid);const el=document.querySelector(`details.asset[data-index="${idx}"]`);if(el){el.open=true;loadDetail(idx);el.scrollIntoView({behavior:'smooth',block:'start'});}
  }catch(e){$('stockSearchStatus').textContent=explainError(e); }
 }
-function setToolsTab(tab){
-  const market=$('toolsMarket'),search=$('toolsSearch');
+
+function showToolsPanel(which){
+  const market=$('panelMarket'), search=$('panelSearch');
   if(!market||!search)return;
-  document.querySelectorAll('.tools-tab').forEach(b=>{
-    const on=b.dataset.toolsTab===tab;
-    b.classList.toggle('active',on);
-    b.setAttribute('aria-selected',String(on));
-  });
-  const showMarket=tab==='market';
-  market.classList.toggle('hidden',!showMarket);
-  search.classList.toggle('hidden',showMarket);
-  // unified pane animation
-  const pane=showMarket?market:search;
-  pane.classList.remove('pane-in');
-  void pane.offsetWidth;
-  pane.classList.add('pane-in');
-  if(!showMarket)setTimeout(()=>{const i=$('stockSearchInput');if(i)i.focus()},60);
-  if(showMarket&&typeof marketCache!=='undefined'&&marketCache.length&&typeof renderMarketResults==='function')renderMarketResults();
+  const openMarket=which==='market';
+  const openSearch=which==='search';
+  market.classList.toggle('hidden', !openMarket);
+  search.classList.toggle('hidden', !openSearch);
+  $('openMarket')?.setAttribute('aria-expanded', String(openMarket));
+  $('openSearch')?.setAttribute('aria-expanded', String(openSearch));
+  $('openMarket')?.classList.toggle('active', openMarket);
+  $('openSearch')?.classList.toggle('active', openSearch);
+  if(openMarket || openSearch){
+    const pane=openMarket?market:search;
+    pane.classList.remove('tools-in');
+    void pane.offsetWidth;
+    pane.classList.add('tools-in');
+  }
+  if(openSearch) setTimeout(()=>$('stockSearchInput')?.focus(), 50);
+  if(openMarket && typeof marketCache!=='undefined' && marketCache.length && typeof renderMarketResults==='function') renderMarketResults();
 }
-document.querySelectorAll('.tools-tab').forEach(b=>b.addEventListener('click',()=>setToolsTab(b.dataset.toolsTab)));
-// compatibility stubs (old code may call these)
-function toggleSearchPanel(open){if(open)setToolsTab('search');}
-function setMarketPanel(open){if(open)setToolsTab('market');}
+function hideToolsPanels(){showToolsPanel(null)}
+function toggleSearchPanel(open){if(open)showToolsPanel('search'); else hideToolsPanels()}
+function setMarketPanel(open){if(open)showToolsPanel('market'); else hideToolsPanels()}
+$('openMarket')?.addEventListener('click',()=>{
+  const open=$('openMarket').getAttribute('aria-expanded')==='true';
+  showToolsPanel(open?null:'market');
+});
+$('openSearch')?.addEventListener('click',()=>{
+  const open=$('openSearch').getAttribute('aria-expanded')==='true';
+  showToolsPanel(open?null:'search');
+});
+$('closeMarket')?.addEventListener('click', hideToolsPanels);
+$('closeSearch')?.addEventListener('click', hideToolsPanels);
+$('closeMarket')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();hideToolsPanels()}});
+$('closeSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();hideToolsPanels()}});
 
 $('stockSearchForm').addEventListener('submit',async e=>{
  e.preventDefault();if(!S.token){$('stockSearchStatus').textContent='Сначала подключи T‑Invest токен.';return}
@@ -1667,9 +1844,7 @@ function refreshForecastForCurrentPrice(i){
 }
 // Market scanner: a bounded sample to avoid flooding the broker API.
 let marketMode='losers',marketCache=[];
-const marketPanel=$('marketPanel');
-function setMarketPanel(open){if(open)setToolsTab('market');}
-
+// market panel now: panelMarket via showToolsPanel
 
 document.querySelectorAll('[data-market-tab]').forEach(b=>b.addEventListener('click',()=>{marketMode=b.dataset.marketTab;document.querySelectorAll('[data-market-tab]').forEach(x=>x.classList.toggle('active',x===b));renderMarketResults();}));
 function marketPlan(x){
@@ -1735,7 +1910,7 @@ function onAssetToggleRefresh(){
 function lockToken(){const input=$('token');input.readOnly=true;input.classList.add('token-locked');input.setAttribute('aria-readonly','true');$('connect').textContent='Подключено';$('connect').classList.add('secondary');$('tokenCard').classList.add('connected');$('tokenNote').textContent='Токен зарегистрирован · ••••'+String(S.token||'').slice(-4);$('tokenNote').classList.remove('hidden');const badge=$('tokenBadge');if(badge){badge.classList.add('registered');const label=badge.querySelector('span');if(label)label.textContent='Токен зарегистрирован';}$('status').textContent='';document.body.classList.remove('pre-token');}
 function unlockToken(){if(S.timer)clearInterval(S.timer);try{localStorage.clear();sessionStorage.clear()}catch{}const go=()=>location.replace(location.pathname+'?reset='+Date.now());if('caches' in window){caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).finally(go)}else go();}
 const themeButton=$('themeToggle');
-function setTheme(dark){document.body.classList.toggle('dark',dark);document.documentElement.style.backgroundColor=dark?'#212121':'#f7f7f8';const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',dark?'#212121':'#f7f7f8');themeButton.setAttribute('aria-label',dark?'Включить светлую тему':'Включить тёмную тему');themeButton.title=dark?'Светлая тема':'Тёмная тема';themeButton.innerHTML=dark?'<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>':'<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"/></svg>';try{localStorage.setItem('mzbox-theme',dark?'dark':'light')}catch{}S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,r.model,r.price)})}
+function setTheme(dark){document.body.classList.toggle('dark',dark);document.documentElement.style.backgroundColor=dark?'#121212':'#f4f4f5';const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',dark?'#121212':'#f4f4f5');themeButton.setAttribute('aria-label',dark?'Включить светлую тему':'Включить тёмную тему');themeButton.title=dark?'Светлая тема':'Тёмная тема';themeButton.innerHTML=dark?'<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>':'<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z"/></svg>';try{localStorage.setItem('mzbox-theme',dark?'dark':'light')}catch{}S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,r.model,r.price)})}
 try{setTheme(localStorage.getItem('mzbox-theme')!=='light')}catch{setTheme(true)}
 themeButton.addEventListener('click',()=>setTheme(!document.body.classList.contains('dark')));
 const tokenInput=$('token');
@@ -1902,43 +2077,7 @@ function bindChartDrawing(canvas,i){
  canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);
 }
 
-function updateWelcomeRecs(){
- const box=$('welcomeRecs'),list=$('welcomeRecsList');if(!box||!list)return;
- const picks=[];
- // Strictly green only: market "look" or portfolio signalKey buy
- if(Array.isArray(marketCache)&&marketCache.length){
-  const scored=marketCache.map(x=>{const p=marketPlan(x);return {...x,plan:p}}).filter(x=>x.plan&&x.plan.kind==='look');
-  scored.sort((a,b)=>(Number(b.plan.potential)||0)-(Number(a.plan.potential)||0));
-  for(const x of scored){
-   if(picks.some(p=>p.uid===x.uid))continue;
-   picks.push({uid:x.uid,ticker:x.ticker,name:x.name,pct:x.plan.potential,price:x.price,change:x.change});
-   if(picks.length>=3)break;
-  }
- }
- if(picks.length<3&&Array.isArray(S.rows)){
-  const ranked=[...S.rows].filter(r=>Number(r.price)>0).map(r=>{
-   const sig=r.signalKey||(r.model&&r.model.ok?signalFromModel(r.model).key:'');
-   if(sig!=='buy')return null;
-   const pot=r.model&&r.model.p7&&r.price?((r.model.p7.mid/r.price)-1)*100:0;
-   return {uid:r.uid,ticker:r.ticker,name:r.name,pct:pot,price:r.price,change:null};
-  }).filter(Boolean).sort((a,b)=>(Number(b.pct)||0)-(Number(a.pct)||0));
-  for(const x of ranked){
-   if(picks.some(p=>p.uid===x.uid))continue;
-   picks.push(x);
-   if(picks.length>=3)break;
-  }
- }
- if(!picks.length){box.hidden=true;list.innerHTML='';return}
- box.hidden=false;
- list.innerHTML=picks.map(p=>{
-  const pctNum=Number(p.pct), hasPct=Number.isFinite(pctNum);
-  const pctTxt=hasPct?((pctNum>0?'+':'')+pctNum.toLocaleString('ru-RU',{maximumFractionDigits:1})+'%'):'';
-  const priceTxt=Number(p.price)>0?fmtPrice(p.price):'';
-  const title=esc((p.name&&String(p.name).toUpperCase()!==String(p.ticker||'').toUpperCase())?p.name:p.ticker);
-  const sub=(p.name&&String(p.name).toUpperCase()!==String(p.ticker||'').toUpperCase())?esc(p.ticker):'';
-  return `<button type="button" class="rec-card" data-rec-uid="${esc(p.uid)}"><div class="rec-card-top"><div style="min-width:0"><div class="rec-card-name">${title}</div>${sub?`<div class="rec-card-sub">${sub}</div>`:''}</div><div class="rec-card-price">${priceTxt}</div></div><div class="rec-card-bottom"><span class="rec-card-pct">${pctTxt||'·'}</span><span class="asset-help sig-buy" title="Покупать">?</span></div></button>`;
- }).join('');
-}
+function updateWelcomeRecs(){const box=$("welcomeRecs");if(box)box.hidden=true;}
 document.addEventListener('click',e=>{
  const chip=e.target.closest('[data-rec-uid]');if(!chip)return;
  e.preventDefault();e.stopPropagation();
