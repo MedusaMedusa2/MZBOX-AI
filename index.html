@@ -990,6 +990,45 @@ body.dark .chart-wrap{background:#000!important;box-shadow:none!important}
 body.dark .chart{background:#000!important}
 body.dark .trade-recommendation{background:#090909!important;border-color:#303030!important}
 body.dark .analysis{box-shadow:none!important}
+
+/* V22.10.3 chart + search/analysis black-surface correction */
+body.dark,
+body.dark .search-panel,
+body.dark .search-panel-head,
+body.dark .search-panel-body,
+body.dark .market-panel,
+body.dark .market-panel-head,
+body.dark .market-panel-body,
+body.dark .search-result,
+body.dark .analysis,
+body.dark .analysis-block,
+body.dark .chart-wrap,
+body.dark .chart-bar,
+body.dark [data-chart-tools] {
+  background-color:#000 !important;
+  background-image:none !important;
+}
+body.dark .search-result,
+body.dark .search-panel,
+body.dark .market-panel,
+body.dark .analysis-block,
+body.dark .chart-wrap {
+  border-color:#242424 !important;
+}
+
+
+body.dark #panelSearch,
+body.dark #panelMarket,
+body.dark #stockSearchResults,
+body.dark #stockSearchPanel,
+body.dark .quick-info,
+body.dark .quick-info-modal,
+body.dark .modal-content,
+body.dark [id^="analysis-"] {
+  background-color:#000 !important;
+  background-image:none !important;
+}
+
 </style>
 
 </head>
@@ -1361,119 +1400,139 @@ function paintChart(i){
 }
 function chartSettings(i){const k=chartKey(i);return MZ_CHART_SETTINGS[k]||(MZ_CHART_SETTINGS[k]={period:1})}
 function drawChart(canvas,cs,model,currentPrice){
-  if(!canvas)return;
-  const ctx=canvas.getContext('2d');
-  if(!ctx)return;
-  const wrap=canvas.closest('.chart-wrap')||canvas.parentElement;
-  const dpr=Math.max(1, window.devicePixelRatio||1);
-  let W=Math.floor((wrap && wrap.clientWidth) || canvas.clientWidth || 300);
-  if(W<100)W=Math.floor(canvas.parentElement?.parentElement?.clientWidth||300);
-  if(W<100)W=300;
-  const H=220;
-  canvas.width=Math.round(W*dpr);
-  canvas.height=Math.round(H*dpr);
-  canvas.style.width=W+'px';
-  canvas.style.height=H+'px';
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.clearRect(0,0,W,H);
-  const dark=document.body.classList.contains('dark');
-  ctx.fillStyle=dark?'#141414':'#f3f3f3';
-  ctx.fillRect(0,0,W,H);
-
-  const idParts=String(canvas.id||'').split('-');
-  const idx=Number(idParts[idParts.length-1]);
-  const row=S.rows[idx]||{};
-  const set=(typeof chartSettings==='function'?chartSettings(idx):{period:1});
-  const period=[1,7,30].includes(Number(set.period))?Number(set.period):1;
-
-  const arr=v=>Array.isArray(v)&&v.length?v:null;
-  let raw=null;
-  if(period===1) raw=arr(row.hourly)||arr(row.shortCandles)||arr(cs)||arr(row.daily)||arr(row.chartCandles);
-  else raw=arr(row.daily)||arr(cs)||arr(row.chartCandles)||arr(row.hourly);
-  if(!raw) raw=arr(cs)||[];
-
-  const points=raw.map(c=>{
-    const close=Number(c.c??c.close??c.price)||0;
-    const open=Number(c.o??c.open??close)||close;
-    const high=Number(c.h??c.high??Math.max(open,close))||close;
-    const low=Number(c.l??c.low??Math.min(open,close))||close;
-    return {o:open,h:high,l:low,c:close,future:!!c.future};
-  }).filter(p=>p.c>0);
-
-  const n=period===1?Math.min(48,points.length):(period===7?Math.min(7,points.length):Math.min(30,points.length));
-  let hist=points.slice(-Math.max(n,1));
-
-  // future from model
-  const price=Number(currentPrice)>0?Number(currentPrice):(Number(row.price)>0?Number(row.price):(hist.length?hist[hist.length-1].c:0));
-  const m=(row.model&&row.model.ok)?row.model:(model&&model.ok?model:null);
-  let fut=[];
-  if(m&&price>0){
-    if(period===1&&Array.isArray(m.intraday)){
-      let prev=price;
-      fut=m.intraday.filter(p=>Number(p.price)>0).slice(0,10).map(p=>{
-        const pr=Number(p.price);const o=prev;prev=pr;return {o,h:Math.max(o,pr)*1.002,l:Math.min(o,pr)*0.998,c:pr,future:true};
-      });
-    }else if(period!==1&&Array.isArray(m.points)){
-      let prev=price;const need=period===7?7:30;
-      fut=m.points.slice(0,need).map(p=>{
-        const pr=Number(p.mid||p.price||prev);const o=prev;prev=pr;return {o,h:Number(p.high||pr*1.01),l:Number(p.low||pr*0.99),c:pr,future:true};
-      });
-    }
-  }
-  const all=hist.concat(fut);
-  if(!all.length){
-    ctx.fillStyle=dark?'#aaa':'#555';
-    ctx.font='13px system-ui,sans-serif';
-    ctx.fillText('Загрузка графика…', 14, 32);
-    return;
-  }
-
-  let minP=Math.min(...all.map(p=>p.l)), maxP=Math.max(...all.map(p=>p.h));
-  if(!(maxP>minP)){minP=price*0.99;maxP=price*1.01}
-  const pad=(maxP-minP)*0.1||1;
-  minP-=pad;maxP+=pad;
-  const L=6,R=6,T=10,B=16;
-  const pW=W-L-R, pH=H-T-B;
-  const xAt=i=>L+((i+0.5)/all.length)*pW;
-  const yAt=v=>T+((maxP-v)/(maxP-minP))*pH;
-
-  // grid
-  ctx.strokeStyle=dark?'#2a2a2a':'#e0e0e0';
-  ctx.lineWidth=1;
-  for(let g=0;g<4;g++){const y=T+pH*g/3;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(W-R,y);ctx.stroke()}
-
-  const bw=Math.max(2,Math.min(12,pW/all.length*0.6));
-  all.forEach((p,i)=>{
-    const x=xAt(i);
-    const col=p.future?(dark?'#60a5fa':'#2563eb'):(p.c>=p.o?'#22c55e':'#ef4444');
-    ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(x,yAt(p.h));ctx.lineTo(x,yAt(p.l));ctx.stroke();
-    const top=Math.min(yAt(p.o),yAt(p.c)), h=Math.max(2,Math.abs(yAt(p.c)-yAt(p.o)));
-    if(p.future)ctx.globalAlpha=0.5;
-    ctx.fillRect(x-bw/2,top,bw,h);
-    ctx.globalAlpha=1;
-  });
-
-  if(fut.length&&hist.length){
-    const sx=xAt(hist.length-0.5);
-    ctx.setLineDash([4,3]);ctx.strokeStyle=dark?'#666':'#999';ctx.globalAlpha=0.6;
-    ctx.beginPath();ctx.moveTo(sx,T);ctx.lineTo(sx,H-B);ctx.stroke();
-    ctx.setLineDash([]);ctx.globalAlpha=1;
-  }
-
-  if(price>0){
-    const y=yAt(price);
-    ctx.setLineDash([3,3]);ctx.strokeStyle=dark?'#ccc':'#333';ctx.globalAlpha=0.35;
-    ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(W-R,y);ctx.stroke();
-    ctx.setLineDash([]);ctx.globalAlpha=1;
-    ctx.fillStyle=dark?'#ddd':'#333';ctx.font='11px system-ui,sans-serif';
-    ctx.fillText(price.toLocaleString('ru-RU',{maximumFractionDigits:2}), L+2, Math.max(T+12,y-4));
-  }
-  ctx.fillStyle=dark?'#888':'#777';ctx.font='11px system-ui,sans-serif';
-  ctx.fillText(period===1?'1д':period===7?'7д':'30д', W-R-28, T+12);
+ if(!canvas)return;
+ const ctx=canvas.getContext('2d');if(!ctx)return;
+ const rect=canvas.getBoundingClientRect(),parentRect=canvas.parentElement?.getBoundingClientRect();
+ const dpr=Math.max(1,window.devicePixelRatio||1),W=Math.max(300,rect.width||canvas.clientWidth||parentRect?.width||600),H=Math.max(220,rect.height||canvas.clientHeight||280);
+ const dark=document.body.classList.contains('dark');
+ if(rect.width===0&&canvas.closest('.locked-content')&&!canvas.closest('.locked-content').classList.contains('unlocked'))return;
+ canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width='100%';
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+ const text=dark?'#d8d8d8':'#555',grid=dark?'#292929':'#e6e6e6',muted=dark?'#888':'#888';
+ const idx=Number((canvas.id||'').replace('chart-',''));
+ const period=typeof chartSettings==='function' ? Number(chartSettings(idx).period||1) : 1;
+ const p=[1,7,30].includes(period)?period:1;
+ const live=Math.max(0,Number(currentPrice)||0);
+ let hist=(Array.isArray(cs)?cs:[]).filter(c=>c&&Number.isFinite(Number(c.time))&&Number(c.o)>0&&Number(c.c)>0&&Number(c.h)>0&&Number(c.l)>0&&Number(c.h)>=Math.max(Number(c.o),Number(c.c))&&Number(c.l)<=Math.min(Number(c.o),Number(c.c))).sort((a,b)=>Number(a.time)-Number(b.time));
+ if(!hist.length&&live>0)hist=[{time:Date.now()-3600000,o:live,c:live,h:live*1.002,l:live*.998}];
+ // Use a quarter of the horizontal plot for actual history and three quarters for the forecast.
+ const histCount=p===1?Math.max(3,Math.min(6,hist.length)):Math.max(3,Math.min(p===7?5:6,hist.length));
+ hist=hist.slice(-histCount);
+ const current=live||Number(hist.at(-1)?.c)||1;
+ const modelOK=!!(model&&model.ok);
+ const vol=Math.max(.002,Math.min(.12,Math.abs(Number(model?.vol)||.015)));
+ const drift=Number(model?.drift)||0;
+ let future=[];
+ if(p===1){
+   const steps=18, points=Array.isArray(model?.intraday)?model.intraday:[];
+   let prev=current;
+   for(let k=0;k<steps;k++){
+     const q=points[Math.min(points.length-1,Math.floor(k*Math.max(1,points.length)/steps))]||null;
+     const close=q&&Number(q.price)>0?Number(q.price):current*Math.exp((drift/18)+(Math.sin((k+1)*1.71)*vol*.10));
+     const rawHigh=q&&Number(q.high)>0?Number(q.high):Math.max(prev,close)*(1+vol*.10);
+     const rawLow=q&&Number(q.low)>0?Number(q.low):Math.min(prev,close)*(1-vol*.10);
+     const hi=Math.max(prev,close,rawHigh),lo=Math.min(prev,close,rawLow);
+     future.push({time:Date.now()+(k+1)*3600000,o:prev,c:close,h:hi,l:lo,forecast:true,step:k+1});
+     prev=close;
+   }
+ } else {
+   const steps=p===7?7:30;
+   let prev=current;
+   const horizonMove=p===7?(Number(model?.p7)||drift*0.35):(Number(model?.p30)||drift);
+   for(let k=0;k<steps;k++){
+     const progress=(k+1)/steps;
+     const wave=Math.sin((k+1)*1.37)*vol*.20;
+     const move=horizonMove/steps + wave;
+     const close=Math.max(.000001,prev*Math.exp(move));
+     const wick=vol*(p===7?.28:.22)/Math.sqrt(Math.max(1,steps/7));
+     const hi=Math.max(prev,close)*(1+wick*(.45+((k%3)*.15)));
+     const lo=Math.min(prev,close)*(1-wick*(.45+(((k+1)%3)*.15)));
+     future.push({time:Date.now()+(k+1)*86400000,o:prev,c:close,h:Math.max(hi,prev,close),l:Math.min(lo,prev,close),forecast:true,step:k+1});
+     prev=close;
+   }
+ }
+ const data=[...hist,...future];
+ if(!data.length){ctx.fillStyle=text;ctx.font='11px sans-serif';ctx.fillText('Нет данных для графика',12,24);return}
+ const pad={l:10,r:78,t:16,b:30},plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
+ const histW=plotW*.25,futureW=plotW*.75;
+ const histSlot=histW/Math.max(hist.length,1),futureSlot=futureW/Math.max(future.length,1);
+ const total=hist.length+future.length;
+ const histCenter=i=>pad.l+(i+.5)*histSlot;
+ const futureCenter=i=>pad.l+histW+(i+.5)*futureSlot;
+ const histBody=Math.max(1.5,Math.min(8,histSlot*.58));
+ const futureBody=Math.max(1.5,Math.min(8,futureSlot*.58));
+ let vals=data.flatMap(c=>[Number(c.l),Number(c.h),Number(c.o),Number(c.c)]).filter(Number.isFinite);
+ if(p===1&&future.length){
+   const fLow=Math.min(...future.map(c=>c.l)),fHigh=Math.max(...future.map(c=>c.h));
+   vals.push(fLow,fHigh);
+ }
+ let min=Math.min(...vals),max=Math.max(...vals);
+ if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min){min=current*.99;max=current*1.01}
+ const rangePad=Math.max((max-min)*.09,current*.001);min-=rangePad;max+=rangePad;
+ const y=v=>pad.t+(max-v)/(max-min)*plotH;
+ ctx.font='9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.lineWidth=1;ctx.strokeStyle=grid;ctx.fillStyle=text;
+ for(let g=0;g<=4;g++){
+   const yy=pad.t+plotH*g/4,val=max-(max-min)*g/4;
+   ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(W-pad.r+1,yy);ctx.stroke();
+   ctx.textAlign='left';ctx.fillText(val.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+6,yy+3);
+ }
+ // Boundary between actual history (25%) and forecast (75%).
+ const futureX=pad.l+hist.length*slot;
+ ctx.strokeStyle=dark?'#555':'#b8b8b8';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(futureX,pad.t);ctx.lineTo(futureX,pad.t+plotH);ctx.stroke();ctx.setLineDash([]);
+ function candle(c,i,isForecast){
+   const x=pad.l+i*slot+slot/2,up=c.c>=c.o,color=up?'#2c9b70':'#d45b5b';
+   const top=y(Math.max(c.o,c.c)),bottom=y(Math.min(c.o,c.c)),wickTop=y(c.h),wickBottom=y(c.l);
+   ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.15;
+   if(isForecast){ctx.globalAlpha=.9}
+   ctx.beginPath();ctx.moveTo(x,wickTop);ctx.lineTo(x,wickBottom);ctx.stroke();
+   const bh=Math.max(1.5,bottom-top);
+   if(isForecast){
+     ctx.fillStyle=up?'rgba(44,155,112,.72)':'rgba(212,91,91,.72)';
+     ctx.fillRect(x-bodyW/2,top,bodyW,bh);ctx.strokeStyle=color;ctx.strokeRect(x-bodyW/2,top,bodyW,bh);
+   } else ctx.fillRect(x-bodyW/2,top,bodyW,bh);
+   ctx.restore();
+ }
+ hist.forEach((c,i)=>candle(c,histCenter(i),histBody,false));
+ future.forEach((c,i)=>candle(c,futureCenter(i),futureBody,true));
+ // Current price guide.
+ ctx.strokeStyle=dark?'#aaa':'#777';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(pad.l,y(current));ctx.lineTo(W-pad.r,y(current));ctx.stroke();ctx.setLineDash([]);
+ // For 1-day view show calculated minimum and maximum of the forecast interval.
+ if(p===1&&future.length){
+   const fLow=Math.min(...future.map(c=>c.l)),fHigh=Math.max(...future.map(c=>c.h));
+   ctx.font='bold 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='left';
+   ctx.fillStyle='#2c9b70';ctx.fillText('Макс. '+fHigh.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,Math.max(12,y(fHigh)-3));
+   ctx.fillStyle='#d45b5b';ctx.fillText('Мин. '+fLow.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,Math.min(H-33,y(fLow)+11));
+ }
+ if(modelOK){
+   [[Number(model.support),'#2c9b70'],[Number(model.resistance),'#d4a72c']].forEach(([level,color])=>{
+     if(Number.isFinite(level)&&level>=min&&level<=max){ctx.strokeStyle=color;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(pad.l,y(level));ctx.lineTo(W-pad.r,y(level));ctx.stroke();ctx.setLineDash([])}
+   });
+ }
+ ctx.fillStyle=muted;ctx.font='8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='center';
+ if(p===1){
+   const histEvery=Math.max(1,Math.ceil(hist.length/2));
+   for(let k=0;k<hist.length;k+=histEvery){
+     const x=histCenter(k),label=new Date(hist[k].time).toLocaleTimeString('ru-RU',{hour:'2-digit'});
+     ctx.fillText(label,Math.max(pad.l+8,Math.min(W-pad.r-8,x)),H-8);
+   }
+   const futureEvery=Math.max(1,Math.ceil(future.length/5));
+   for(let k=0;k<future.length;k+=futureEvery){
+     const x=futureCenter(k);ctx.fillText(String(k+1)+'ч',Math.max(pad.l+8,Math.min(W-pad.r-8,x)),H-8);
+   }
+ } else {
+   // Day horizon labels are day numbers, not timestamps.
+   const every=p===7?1:5;
+   for(let d=1;d<=future.length;d+=every){
+     const x=futureCenter(d-1);
+     ctx.fillText(String(d),Math.max(pad.l+8,Math.min(W-pad.r-8,x)),H-8);
+   }
+   if(future.length&&!((future.length-1)%every===0)){
+     const x=futureCenter(future.length-1);
+     ctx.fillText(String(future.length),Math.max(pad.l+8,Math.min(W-pad.r-8,x)),H-8);
+   }
+ }
+ ctx.textAlign='left';
 }
-
-
 function renderPath(i,model){
  const root=$('path-'+i);if(!root||!model||!model.intraday)return;
  root.innerHTML=model.intraday.map((p,k)=>{
@@ -1607,7 +1666,7 @@ function renderRows(rows){
 </div></div>
 </details>`;
     }catch(e){console.error('row',i,e);return `<div class="card">Ошибка карточки ${i}</div>`}
-  }).join('');root.querySelectorAll('[data-chart-period]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const i=Number(b.dataset.chartIndex);const set=chartSettings(i);set.period=[1,7,30].includes(Number(b.dataset.chartPeriod))?Number(b.dataset.chartPeriod):1;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-chart-period]').forEach(x=>x.classList.toggle('active',Number(x.dataset.chartPeriod)===set.period));requestAnimationFrame(()=>paintChart(i));}));
+  }).join('');
 root.querySelectorAll('[data-draw]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();e.stopPropagation();const i=Number(b.dataset.chartIndex);const st=drawState(i);const tool=b.dataset.draw;if(tool==='clear'){st.items=[];st.draft=null;st.tool=null;root.querySelectorAll(`[data-draw][data-chart-index="${i}"]`).forEach(x=>x.classList.remove('active'));const r=S.rows[i];if(r)drawChart($('chart-'+i),r.chartCandles,r.model,r.price);return;}st.tool=st.tool===tool?null:tool;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-draw]').forEach(x=>x.classList.toggle('active',x.dataset.draw===st.tool));const canvas=$('chart-'+i);if(canvas){bindChartDrawing(canvas,i);canvas.style.cursor=st.tool?'crosshair':'default';}}));
 root.querySelectorAll('details.asset').forEach(d=>d.addEventListener('toggle',()=>{
   if(d.open){
