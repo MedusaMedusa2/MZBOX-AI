@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.9.8</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.0</title>
 
 
 
@@ -2067,6 +2067,76 @@ body:not(.dark) #aboutOverlay .about-card{
 }
 </style>
 
+
+<style id="v22-9-9-ui">
+#assets details.asset > summary.asset-head{
+  min-height:72px!important;
+  align-items:center!important;
+}
+#assets details.asset[open] > summary.asset-head{
+  min-height:72px!important;
+}
+#assets details.asset .asset-detail{
+  overflow:hidden;
+}
+#assets details.asset .asset-meta{
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  flex-wrap:nowrap!important;
+}
+#assets details.asset .watch-remove{
+  position:static!important;
+  width:28px!important;height:28px!important;
+  border-radius:8px!important;
+  flex:0 0 auto!important;
+  margin:0!important;
+  line-height:1!important;
+}
+#assets details.asset .chart-wrap{
+  min-height:240px!important;
+  width:100%!important;
+}
+#assets details.asset canvas.chart{
+  width:100%!important;
+  height:240px!important;
+  display:block!important;
+}
+</style>
+
+
+<style id="v22-10-0-chart">
+#assets details.asset[open] .chart-wrap{
+  display:block!important;
+  width:100%!important;
+  min-height:240px!important;
+  height:240px!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:1!important;
+}
+#assets details.asset[open] canvas.chart{
+  display:block!important;
+  width:100%!important;
+  height:240px!important;
+  min-height:240px!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+#assets details.asset[open] .chart-tools,
+#assets details.asset[open] .chart-bar{
+  display:flex!important;
+  visibility:visible!important;
+  width:100%!important;
+}
+#assets details.asset[open] .chart-tool,
+#assets details.asset[open] .draw-tool{
+  pointer-events:auto!important;
+  cursor:pointer!important;
+}
+</style>
+
 </head>
 <body>
 <div id="aboutOverlay" class="about-overlay hidden" aria-hidden="true" hidden role="dialog" aria-label="О проекте">
@@ -2132,7 +2202,7 @@ body:not(.dark) #aboutOverlay .about-card{
 
 
 
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.9.8 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.0 · 27.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2364,6 +2434,34 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
 
 
 function chartKey(i){try{const r=(S&&S.rows&&S.rows[i])||null;if(r&&r.uid)return String(r.uid)}catch{}return 'idx:'+i}
+
+function paintChart(i){
+ try{
+  const r=S.rows[i];const c=$('chart-'+i);if(!r||!c)return;
+  const wrap=c.closest('.chart-wrap')||c.parentElement;
+  const set=chartSettings(i);
+  const period=[1,7,30].includes(Number(set.period))?Number(set.period):1;
+  let src=[];
+  if(period===1){
+   if(Array.isArray(r.hourly)&&r.hourly.length)src=r.hourly;
+   else if(Array.isArray(r.shortCandles)&&r.shortCandles.length)src=r.shortCandles;
+   else if(Array.isArray(r.daily)&&r.daily.length)src=r.daily;
+  }else{
+   if(Array.isArray(r.daily)&&r.daily.length)src=r.daily;
+   else if(Array.isArray(r.hourly)&&r.hourly.length)src=r.hourly;
+  }
+  if(!src.length&&Array.isArray(r.chartCandles))src=r.chartCandles;
+  const w=Math.max(wrap?.clientWidth||0,c.parentElement?.clientWidth||0,280);
+  c.style.display='block';
+  c.style.width=w+'px';
+  c.style.height='240px';
+  c.dataset.instrumentUid=String(r.uid||'');
+  drawChart(c,src,r.model,r.price);
+  try{bindChartDrawing(c,i)}catch(e){}
+  try{redrawDrawings(c,i)}catch(e){}
+ }catch(e){console.warn('paintChart',i,e)}
+}
+
 function chartSettings(i){const k=chartKey(i);return MZ_CHART_SETTINGS[k]||(MZ_CHART_SETTINGS[k]={period:1})}
 function drawChart(canvas,cs,model,currentPrice){
  if(!canvas)return;const ctx=canvas.getContext('2d');if(!ctx)return;
@@ -2384,7 +2482,7 @@ function drawChart(canvas,cs,model,currentPrice){
  // Never reuse another instrument's forecast model on this canvas
  if(row&&row.model&&row.modelUid&&row.uid&&String(row.modelUid)!==String(row.uid)){row.model=null}
  const norm=c=>({time:Number(c.time)||0,o:Number(c.o??c.open??c.c??c.close),h:Number(c.h??c.high??c.c??c.close),l:Number(c.l??c.low??c.c??c.close),c:Number(c.c??c.close)});
- const source=period===1?(Array.isArray(row.hourly)&&row.hourly.length?row.hourly:[]):(Array.isArray(row.daily)&&row.daily.length?row.daily:[]);
+ const source=period===1?(Array.isArray(row.hourly)&&row.hourly.length?row.hourly:(Array.isArray(row.shortCandles)&&row.shortCandles.length?row.shortCandles:(Array.isArray(row.daily)&&row.daily.length?row.daily:(Array.isArray(cs)?cs:[])))):(Array.isArray(row.daily)&&row.daily.length?row.daily:(Array.isArray(row.hourly)&&row.hourly.length?row.hourly:(Array.isArray(cs)?cs:[])));
  const history=(Array.isArray(source)?source:[]).map(norm).filter(c=>c.time&&c.c>0&&c.h>0&&c.l>0&&c.o>0).sort((a,b)=>a.time-b.time);
  const hist=history.slice(-(period===1?12:period===7?7:30));
  if(!hist.length){ctx.fillStyle=text;ctx.font='11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillText(period===1?'Нет часовых свечей этой акции':'Нет дневных свечей этой акции',14,26);return}
@@ -2575,9 +2673,9 @@ function renderRows(rows){
 <div class="asset-main">
 <div class="asset-title-line"><span class="qty-chip">${qtyHtml} шт.</span></div>
 <div class="asset-sub asset-subline"><span class="asset-name-sub">${name}</span>${ticker&&ticker!==name?`<span> · ${ticker}</span>`:''}</div>
-<div class="asset-meta">${pnlHtml}<button type="button" class="asset-help ${sig}" data-asset-help="${i}" aria-label="Анализ">?</button></div>
+<div class="asset-meta">${pnlHtml}<button type="button" class="asset-help ${sig}" data-asset-help="${i}" aria-label="Анализ">?</button>${removeBtn}</div>
 </div>
-<div class="asset-price-wrap">${removeBtn}<div class="asset-price">${priceHtml}<div class="asset-sub">цена акции</div>${valueHtml}</div></div>
+<div class="asset-price-wrap"><div class="asset-price">${priceHtml}<div class="asset-sub">стоимость</div>${valueHtml}</div></div>
 </summary>
 <div class="asset-detail">
 <div class="locked-content unlocked" id="locked-${i}">
@@ -2610,9 +2708,9 @@ function renderRows(rows){
 </div></div>
 </details>`;
     }catch(e){console.error('row',i,e);return `<div class="card">Ошибка карточки ${i}</div>`}
-  }).join('');root.querySelectorAll('[data-chart-period]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();const i=Number(b.dataset.chartIndex);const set=chartSettings(i);set.period=[1,7,30].includes(Number(b.dataset.chartPeriod))?Number(b.dataset.chartPeriod):1;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-chart-period]').forEach(x=>x.classList.toggle('active',x===b));const r=S.rows[i];if(r){drawChart($('chart-'+i),r.chartCandles,r.model,r.price);redrawDrawings($('chart-'+i),i);}}));
-root.querySelectorAll('[data-draw]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const i=Number(b.dataset.chartIndex);const st=drawState(i);const tool=b.dataset.draw;if(tool==='clear'){st.items=[];st.draft=null;st.tool=null;root.querySelectorAll(`[data-draw][data-chart-index="${i}"]`).forEach(x=>x.classList.remove('active'));const r=S.rows[i];if(r)drawChart($('chart-'+i),r.chartCandles,r.model,r.price);return;}st.tool=st.tool===tool?null:tool;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-draw]').forEach(x=>x.classList.toggle('active',x.dataset.draw===st.tool));const canvas=$('chart-'+i);if(canvas){bindChartDrawing(canvas,i);canvas.style.cursor=st.tool?'crosshair':'default';}}));
-root.querySelectorAll('details.asset').forEach(d=>d.addEventListener('toggle',()=>{if(d.open){const i=Number(d.dataset.index);const lock=$('locked-'+i);if(lock)lock.classList.add('unlocked');loadDetail(i).then(()=>{const c=$('chart-'+i);const r=S.rows[i];if(c&&r){requestAnimationFrame(()=>{drawChart(c,r.chartCandles||r.daily||[],r.model,r.price);bindChartDrawing(c,i);redrawDrawings(c,i);});}}).catch(()=>{});}onAssetToggleRefresh();}));
+  }).join('');root.querySelectorAll('[data-chart-period]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const i=Number(b.dataset.chartIndex);const set=chartSettings(i);set.period=[1,7,30].includes(Number(b.dataset.chartPeriod))?Number(b.dataset.chartPeriod):1;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-chart-period]').forEach(x=>x.classList.toggle('active',Number(x.dataset.chartPeriod)===set.period));requestAnimationFrame(()=>paintChart(i));}));
+root.querySelectorAll('[data-draw]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();e.stopPropagation();const i=Number(b.dataset.chartIndex);const st=drawState(i);const tool=b.dataset.draw;if(tool==='clear'){st.items=[];st.draft=null;st.tool=null;root.querySelectorAll(`[data-draw][data-chart-index="${i}"]`).forEach(x=>x.classList.remove('active'));const r=S.rows[i];if(r)drawChart($('chart-'+i),r.chartCandles,r.model,r.price);return;}st.tool=st.tool===tool?null:tool;const wrap=b.closest('[data-chart-tools]');wrap?.querySelectorAll('[data-draw]').forEach(x=>x.classList.toggle('active',x.dataset.draw===st.tool));const canvas=$('chart-'+i);if(canvas){bindChartDrawing(canvas,i);canvas.style.cursor=st.tool?'crosshair':'default';}}));
+root.querySelectorAll('details.asset').forEach(d=>d.addEventListener('toggle',()=>{if(d.open){const i=Number(d.dataset.index);const lock=$('locked-'+i);if(lock)lock.classList.add('unlocked');loadDetail(i).then(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>paintChart(i)))).catch(()=>requestAnimationFrame(()=>paintChart(i)));}onAssetToggleRefresh();}));
 setTimeout(()=>warmSignals().catch(()=>{}),60);
  try{root.querySelectorAll('details.asset').forEach(el=>{el.style.display='block';el.style.visibility='visible'})}catch{}root.querySelectorAll('[data-remove-watch]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const uid=b.dataset.removeWatch;S.watchRows=S.watchRows.filter(x=>x.uid!==uid);S.rows=S.rows.filter(x=>!(x.temp&&x.uid===uid));persistWatchlist();rebuildRows();renderRows(S.rows)}));root.querySelectorAll('[data-asset-help]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const r=S.rows[Number(b.dataset.assetHelp)]||null;if(r)openQuickInfo(r);}));}
 
@@ -2767,17 +2865,23 @@ document.addEventListener('click',e=>{
  updateTradeCalculator(i);
 });
 async function loadDetail(i){
- const r=S.rows[i];if(!r||r.detailLoading||r.detailLoaded)return;r.detailLoading=true;
+ const r=S.rows[i];if(!r)return;
+ if(r.detailLoaded){requestAnimationFrame(()=>requestAnimationFrame(()=>paintChart(i)));return}
+ if(r.detailLoading){
+  // wait briefly for warmSignals / parallel load then paint
+  for(let n=0;n<40;n++){await new Promise(res=>setTimeout(res,50));if(!r.detailLoading)break}
+  if(r.detailLoaded){requestAnimationFrame(()=>requestAnimationFrame(()=>paintChart(i)));return}
+ }
+ r.detailLoading=true;
  try{
-  if(!(Number(r.price)>0)){ $('time-'+i).textContent='Нет актуальной котировки';const a=$('analysis-'+i);if(a)a.innerHTML='<div class="analysis-block"><p>Нет актуальной котировки от T‑Invest.</p></div>';const c=$('chart-'+i);if(c){try{drawChart(c,[],null,0)}catch{}}r.detailLoading=false;return; }
   const [daily,hourly,shortCandles]=await Promise.all([candles(r.uid,'CANDLE_INTERVAL_DAY',400),candles(r.uid,'CANDLE_INTERVAL_HOUR',60).catch(()=>[]),candles(r.uid,'CANDLE_INTERVAL_5_MIN',100).catch(()=>[])]);
-  const cs=daily.length?daily:hourly;r.candles=cs;r.daily=daily;r.hourly=hourly;r.shortCandles=shortCandles;r.chartCandles=(hourly.length?hourly:daily).slice(-(hourly.length?18:24));r.detailLoaded=true;
+  const cs=daily.length?daily:hourly;r.candles=cs;r.daily=daily;r.hourly=hourly;r.shortCandles=shortCandles;r.chartCandles=(hourly.length?hourly:daily).slice(-(hourly.length?18:24));r.detailLoaded=true;r.detailLoading=false;
   $('time-'+i).textContent='';
   const model=forecastModel(daily,hourly,r.price,shortCandles,r.uid);
-  if(!model.ok){$('analysis-'+i).innerHTML=`<div class="analysis-block"><h3>Данных пока недостаточно</h3><p>${esc(model.reason)}</p></div>`;requestAnimationFrame(()=>requestAnimationFrame(()=>drawChart($('chart-'+i),r.chartCandles,null,r.price)));return}
+  if(!model.ok){$('analysis-'+i).innerHTML=`<div class="analysis-block"><h3>Данных пока недостаточно</h3><p>${esc(model.reason)}</p></div>`;requestAnimationFrame(()=>requestAnimationFrame(()=>paintChart(i)));return}
   r.model=model;r.modelUid=r.uid;calcTrade(i);const sig=signalFromModel(model);r.signalKey=sig.key;r.signalName=sig.name;const signalEl=$('signal-'+i);if(signalEl){signalEl.textContent=sig.name;signalEl.className='pill '+sig.key;}applyHelpSignal(i,sig.key);try{updateWelcomeRecs()}catch{}
   const direction=model.drift>0?'Рост':model.drift<0?'Снижение':'Без направления';const info=$('analysis-'+i);if(info){info.innerHTML='';info.parentElement.classList.add('hidden')}
-  renderPath(i,model);updateTradeCalculator(i);requestAnimationFrame(()=>requestAnimationFrame(()=>{const lock=$('locked-'+i);if(lock)lock.classList.add('unlocked');const c=$('chart-'+i);if(c){c.dataset.instrumentUid=String(r.uid||'');drawChart(c,r.chartCandles,model,r.price);bindChartDrawing(c,i);redrawDrawings(c,i);}}));
+  renderPath(i,model);updateTradeCalculator(i);requestAnimationFrame(()=>requestAnimationFrame(()=>{const lock=$('locked-'+i);if(lock)lock.classList.add('unlocked');paintChart(i);}));
  }catch(e){r.detailLoaded=false;$('time-'+i).textContent='';$('analysis-'+i).innerHTML=`<div class="analysis-block"><h3>Не удалось построить прогноз</h3><p>${esc(explainError(e))}</p></div>`;setStatus('Не удалось получить данные для прогноза: '+explainError(e),true)}
  finally{r.detailLoading=false}
 }
@@ -2824,6 +2928,7 @@ $('marketResults').addEventListener('click',async e=>{const info=e.target.closes
 function explainError(e){const m=String(e&&e.message||e);if(/Failed to fetch|NetworkError|CORS|Load failed/i.test(m))return 'Браузер не смог обратиться к API. GitHub Pages — статический хостинг; если запрос блокируется политикой CORS T‑Invest, понадобится небольшой защищённый серверный прокси. Не вставляй токен в опубликованный код.';return m}
 function setLoadProgress(percent,label){const wrap=$('loadProgress');if(!wrap)return;wrap.classList.remove('hidden');const p=Math.max(0,Math.min(100,Math.round(percent)));$('loadProgressFill').style.width=p+'%';$('loadProgressPct').textContent=p+'%';$('loadProgressText').textContent=label||'Загрузка портфеля…';}
 async function refreshPortfolio(initial=false){
+ if(!initial&&anyAssetOpen())return;
  if(S.busy)return;const refreshId=++S.activeRequest;S.busy=true;$('refresh').disabled=true;$('connect').disabled=true;$('busyIcon').innerHTML='<span class="spin"></span>';setLoadProgress(5,initial?'Подключение к T‑Invest…':'Обновление портфеля…');if(initial)setStatus('Подключаюсь к T‑Invest…');else setStatus('Обновляю цены и портфель…');
  try{
   const a=await api(USERS,'GetAccounts',{status:'ACCOUNT_STATUS_OPEN'},12000);S.accounts=a.accounts||[];
@@ -2875,7 +2980,7 @@ async function refreshPortfolio(initial=false){
   const savePortfolioCache=()=>{try{localStorage.setItem('mzbox-portfolio-cache',JSON.stringify({at:Date.now(),portfolioRows:S.portfolioRows.map(({uid,ticker,name,qty,price,avg,pnl,value})=>({uid,ticker,name,qty,price,avg,pnl,value})),watchRows:S.watchRows.map(({uid,ticker,name,currency,qty,avg,pnl,price,value,watch})=>({uid,ticker,name,currency,qty,avg,pnl,price,value,watch}))}))}catch{}};savePortfolioCache();
   const watchIds=S.watchRows.filter(w=>!unique.some(p=>p.uid===w.uid)).map(w=>w.uid),ids=[...unique.map(r=>r.uid),...watchIds];
   $('lastUpdated').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');markFooterDataUpdated('Обновлено');S.lastRefresh=Date.now();setLoadProgress(100,'Портфель загружен');setStatus('Подключение активно.');$('refresh').disabled=false;
-  if(ids.length){lastPrices(ids).then(prices=>{if(refreshId!==S.activeRequest)return;for(const r of S.portfolioRows){const latest=prices[r.uid];if(latest>0)r.price=latest;r.pricePending=false;r.value=(Number(r.price)||0)*(Number(r.qty)||0);if(!r.pnl&&r.avg>0)r.pnl=(r.price-r.avg)*r.qty;r.pnl=Number.isFinite(r.pnl)?r.pnl:0}for(const w of S.watchRows){if(S.portfolioRows.some(p=>p.uid===w.uid))continue;if(prices[w.uid]>0)w.price=prices[w.uid];w.pricePending=false}S.watchRows=S.watchRows.filter(w=>S.portfolioRows.some(p=>p.uid===w.uid)||Number(w.price)>0);S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];calcSummary(S.portfolioRows);renderRows(S.rows);S.rows.forEach((r,i)=>{const card=document.querySelector(`details.asset[data-index="${i}"]`),priceEl=card&&card.querySelector('.asset-price');if(priceEl){priceEl.innerHTML=`${Number(r.price)>0?fmtPrice(r.price):'Нет котировки'}<div class="asset-sub">цена акции</div>${!r.watch&&Number(r.value)>0?`<div class="asset-position-value">${fmt(r.value)}</div>`:''}`}const chart=document.getElementById('chart-'+i);if(r.detailLoaded)refreshForecastForCurrentPrice(i);else{if(chart&&r.chartCandles)drawChart(chart,r.chartCandles,r.model,r.price);updateTradeCalculator(i)}});savePortfolioCache();$('lastUpdated').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');markFooterDataUpdated('Обновлено');}).catch(()=>{});}
+  if(ids.length){lastPrices(ids).then(prices=>{if(refreshId!==S.activeRequest)return;for(const r of S.portfolioRows){const latest=prices[r.uid];if(latest>0)r.price=latest;r.pricePending=false;r.value=(Number(r.price)||0)*(Number(r.qty)||0);if(!r.pnl&&r.avg>0)r.pnl=(r.price-r.avg)*r.qty;r.pnl=Number.isFinite(r.pnl)?r.pnl:0}for(const w of S.watchRows){if(S.portfolioRows.some(p=>p.uid===w.uid))continue;if(prices[w.uid]>0)w.price=prices[w.uid];w.pricePending=false}S.watchRows=S.watchRows.filter(w=>S.portfolioRows.some(p=>p.uid===w.uid)||Number(w.price)>0);S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];calcSummary(S.portfolioRows);if(!anyAssetOpen())renderRows(S.rows);S.rows.forEach((r,i)=>{const card=document.querySelector(`details.asset[data-index="${i}"]`),priceEl=card&&card.querySelector('.asset-price');if(priceEl){priceEl.innerHTML=`${Number(r.price)>0?fmtPrice(r.price):'Нет котировки'}<div class="asset-sub">цена акции</div>${!r.watch&&Number(r.value)>0?`<div class="asset-position-value">${fmt(r.value)}</div>`:''}`}const chart=document.getElementById('chart-'+i);if(r.detailLoaded)refreshForecastForCurrentPrice(i);else{if(chart&&r.chartCandles)drawChart(chart,r.chartCandles,r.model,r.price);updateTradeCalculator(i)}});savePortfolioCache();$('lastUpdated').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');markFooterDataUpdated('Обновлено');}).catch(()=>{});}
   document.querySelectorAll('details.asset[open]').forEach(d=>{const i=Number(d.dataset.index);if(S.rows[i]){S.rows[i].detailLoaded=false;loadDetail(i)}})
  }catch(e){const msg=explainError(e);setStatus(msg,true);S.rows.forEach(r=>{r.pricePending=false});if(!S.rows.length)$('assets').innerHTML=`<section class="card empty">${esc(msg)}<br><br>Если сообщение содержит CORS или Failed to fetch, проблема в ограничениях браузера, а не в токене.</section>`;else renderRows(S.rows)}
  finally{S.busy=false;$('connect').disabled=false;$('refresh').disabled=!S.token;$('busyIcon').textContent='';setTimeout(()=>{const lp=$('loadProgress');if(lp)lp.classList.add('hidden')},900);hideBootScreen()}
@@ -2966,7 +3071,57 @@ const quoteBank=[
 ['Контролируйте риск, а прибыль позаботится о себе.','Ларри Хайт']
 ];
 function updateWelcomeClock(){const d=new Date(),h=d.getHours();$('welcomeGreeting').textContent=(h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', Дмитрий.';$('welcomeClock').textContent=d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});$('welcomeDate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toLocaleUpperCase('ru-RU');}
-function chooseWelcomeQuote(){let index=Math.floor(Math.random()*quoteBank.length);try{const old=Number(sessionStorage.getItem('mzbox-quote-index'));if(quoteBank.length>1&&index===old)index=(index+1+Math.floor(Math.random()*(quoteBank.length-1)))%quoteBank.length;sessionStorage.setItem('mzbox-quote-index',String(index))}catch{}const q=quoteBank[index];$('welcomeQuote').textContent=q[0];$('welcomeAuthor').textContent='— '+q[1];}
+
+const MZ_WORDS=[
+ {w:'Асимметрия',d:'Ситуация, когда возможный выигрыш и проигрыш неравны по величине.'},
+ {w:'Диверсификация',d:'Распределение капитала между разными активами, чтобы снизить риск одного события.'},
+ {w:'Ликвидность',d:'Способность быстро купить или продать актив без сильного сдвига цены.'},
+ {w:'Волатильность',d:'Мера того, насколько сильно цена колеблется за период.'},
+ {w:'Просадка',d:'Падение стоимости портфеля от локального максимума до минимума.'},
+ {w:'Маржа',d:'Разница или запас; в торговле — залог под заёмные средства.'},
+ {w:'Ребалансировка',d:'Возврат долей активов в портфеле к целевым пропорциям.'},
+ {w:'Хеджирование',d:'Снижение риска противоположной позицией или инструментом.'},
+ {w:'Консенсус',d:'Усреднённое ожидание рынка или аналитиков по бумаге.'},
+ {w:'Оферта',d:'Публичное предложение купить бумаги на определённых условиях.'},
+ {w:'Дисконт',d:'Торговля ниже «справедливой» или номинальной оценки.'},
+ {w:'Премия',d:'Надбавка к цене — рынок платит больше за ожидания или дефицит.'},
+ {w:'Бенчмарк',d:'Эталон для сравнения доходности, например индекс.'},
+ {w:'Альфа',d:'Доходность сверх той, что объясняет рынок.'},
+ {w:'Бета',d:'Чувствительность бумаги к движению рынка.'},
+ {w:'Проскальзывание',d:'Разница между ожидаемой и фактической ценой сделки.'},
+ {w:'Корреляция',d:'Насколько согласованно движутся два актива.'},
+ {w:'Капитализация',d:'Рыночная стоимость компании: цена акции на число бумаг.'},
+ {w:'Фундаментал',d:'Оценка по бизнесу: прибыль, долг, денежный поток, а не только график.'},
+ {w:'Технический анализ',d:'Чтение цены и объёма через графики и повторяющиеся формы.'},
+ {w:'Стоп-убыток',d:'Заранее выбранный уровень, на котором фиксируют ошибку.'},
+ {w:'Тейк-профит',d:'Уровень, на котором заранее решают зафиксировать прибыль.'},
+ {w:'Плечо',d:'Увеличение позиции за счёт заёмных средств — усиливает и прибыль, и убыток.'},
+ {w:'Спред',d:'Разрыв между ценой покупки и продажи.'},
+ {w:'Купон',d:'Периодический платёж по облигации.'},
+ {w:'Дюрация',d:'Чувствительность облигации к изменению ставок.'},
+ {w:'Эмиссия',d:'Выпуск новых ценных бумаг.'},
+ {w:'Инфляция',d:'Обесценивание денег: на ту же сумму со временем покупается меньше.'},
+ {w:'Офер',d:'Сторона продавцов в стакане — по какой цене готовы продать.'},
+ {w:'Бид',d:'Сторона покупателей — по какой цене готовы купить.'}
+];
+
+function chooseWelcomeQuote(){
+ // 50/50: classical quote or smart term + definition
+ const useWord=Math.random()<0.55 && typeof MZ_WORDS!=='undefined' && MZ_WORDS.length;
+ if(useWord){
+  let index=Math.floor(Math.random()*MZ_WORDS.length);
+  try{const old=Number(sessionStorage.getItem('mzbox-word-index'));if(MZ_WORDS.length>1&&index===old)index=(index+1)%MZ_WORDS.length;sessionStorage.setItem('mzbox-word-index',String(index))}catch{}
+  const x=MZ_WORDS[index];
+  const qe=$('welcomeQuote');const ae=$('welcomeAuthor');
+  if(qe)qe.textContent=x.w+' — '+x.d;
+  if(ae)ae.textContent='словарь MZBOX';
+  return;
+ }
+ let index=Math.floor(Math.random()*quoteBank.length);
+ try{const old=Number(sessionStorage.getItem('mzbox-quote-index'));if(quoteBank.length>1&&index===old)index=(index+1+Math.floor(Math.random()*(quoteBank.length-1)))%quoteBank.length;sessionStorage.setItem('mzbox-quote-index',String(index))}catch{}
+ const q=quoteBank[index];const qe=$('welcomeQuote');const ae=$('welcomeAuthor');
+ if(qe)qe.textContent=q[0];if(ae)ae.textContent='— '+q[1];
+}
 function markFooterDataUpdated(label='Данные обновлены',timestamp=Date.now()){const el=$('footerUpdated');if(!el)return;const d=new Date(Number(timestamp)||Date.now());el.textContent='Обновлено: '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 const bootStartedAt=Date.now();let bootHideTimer=0;
 function hideBootScreen(){const remaining=2000-(Date.now()-bootStartedAt);if(remaining>0){if(!bootHideTimer)bootHideTimer=setTimeout(()=>{bootHideTimer=0;hideBootScreen()},remaining);return}const el=$('bootScreen');if(el)el.classList.add('done')}
@@ -3135,3 +3290,4 @@ document.addEventListener('click',async e=>{
 })();
 
 </script></body></html>
+
