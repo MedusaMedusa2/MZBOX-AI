@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.7</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.12</title>
 
 
 
@@ -1112,6 +1112,524 @@ body.dark .theme-toggle{
   border-color:var(--line)!important;
 }
 
+
+/* === V22.10.8 readability / layout === */
+
+/* Light theme (no .dark): dark text on light cards */
+body:not(.dark){
+  --bg:#212121 !important;
+  --card:#ffffff !important;
+  --ink:#171717 !important;
+  --muted:#5c5c56 !important;
+  --line:#d8d6ce !important;
+  color:#171717 !important;
+}
+body:not(.dark) .card,
+body:not(.dark) .asset,
+body:not(.dark) details.asset,
+body:not(.dark) .welcome-strip,
+body:not(.dark) .portfolio-line,
+body:not(.dark) .connection-card,
+body:not(.dark) .analysis,
+body:not(.dark) .analysis-block,
+body:not(.dark) .trade-calc,
+body:not(.dark) .path-wrap,
+body:not(.dark) .market-row,
+body:not(.dark) .search-result{
+  background:#fff !important;
+  color:#171717 !important;
+  border-color:#e2e0d8 !important;
+}
+body:not(.dark) .muted,
+body:not(.dark) .asset-sub,
+body:not(.dark) .section,
+body:not(.dark) .status,
+body:not(.dark) .token-note,
+body:not(.dark) .welcome-term,
+body:not(.dark) .welcome-quote small,
+body:not(.dark) .footer,
+body:not(.dark) .footer-legal,
+body:not(.dark) .build-version,
+body:not(.dark) .analysis p,
+body:not(.dark) .analysis-block p,
+body:not(.dark) .field label,
+body:not(.dark) .calc-note,
+body:not(.dark) .level-time,
+body:not(.dark) .asset-name-sub{
+  color:#5c5c56 !important;
+}
+body:not(.dark) .brand,
+body:not(.dark) .brand em{
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  background:none !important;
+}
+body:not(.dark) .icon-square{
+  background:#2a2a2a !important;
+  color:#f0f0ec !important;
+  border-color:#555 !important;
+}
+body:not(.dark) .theme-toggle{
+  background:linear-gradient(135deg,#171717 0 49%,#3a3a3a 51% 100%) !important;
+  border-color:#9aa4b5 !important;
+}
+
+/* Dark theme: light text on dark surfaces */
+body.dark{
+  --bg:#0f0f0f !important;
+  --card:#1a1a1a !important;
+  --ink:#f0f0ec !important;
+  --muted:#a8a89e !important;
+  --line:#333 !important;
+  color:#f0f0ec !important;
+  background:#0f0f0f !important;
+}
+body.dark .card,
+body.dark .asset,
+body.dark details.asset,
+body.dark .welcome-strip,
+body.dark .portfolio-line,
+body.dark .connection-card,
+body.dark .analysis,
+body.dark .analysis-block,
+body.dark .trade-calc,
+body.dark .path-wrap,
+body.dark .market-row,
+body.dark .search-result,
+body.dark .chart-wrap{
+  background:#1a1a1a !important;
+  color:#f0f0ec !important;
+  border-color:#333 !important;
+}
+body.dark .muted,
+body.dark .asset-sub,
+body.dark .section,
+body.dark .status,
+body.dark .token-note,
+body.dark .welcome-term,
+body.dark .welcome-quote small,
+body.dark .footer,
+body.dark .footer-legal,
+body.dark .build-version,
+body.dark .analysis p,
+body.dark .analysis-block p,
+body.dark .field label,
+body.dark .calc-note,
+body.dark .level-time,
+body.dark .asset-name-sub,
+body.dark .path-point .time{
+  color:#a8a89e !important;
+}
+body.dark .brand,
+body.dark .brand em{
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  background:none !important;
+}
+body.dark .icon-square{
+  background:#1a1a1a !important;
+  color:#f0f0ec !important;
+  border-color:#444 !important;
+}
+body.dark .theme-toggle{
+  background:linear-gradient(135deg,#3a3a3a 0 49%,#171717 51% 100%) !important;
+  border-color:#69768b !important;
+}
+body.dark .path-title{background:#222 !important;color:#f0f0ec !important;}
+body.dark .path-point.turning{background:#222 !important;}
+
+/* Brand square: white only */
+.brand-mark-sq{
+  background:#fff !important;
+  border:1px solid rgba(255,255,255,.35) !important;
+}
+
+/* Restore button = exact same size as other header icons */
+#welcomeRestore,
+#welcomeRestore:not(.hidden),
+.welcome-restore-btn{
+  box-sizing:border-box !important;
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  min-height:38px !important;
+  max-width:38px !important;
+  max-height:38px !important;
+  flex:0 0 38px !important;
+  padding:0 !important;
+  margin:0 !important;
+  border-radius:9px !important;
+  font-size:16px !important;
+  line-height:1 !important;
+  display:grid !important;
+  place-items:center !important;
+}
+#welcomeRestore.hidden{
+  display:none !important;
+}
+body:not(.dark) #welcomeRestore:not(.hidden){
+  background:#2a2a2a !important;
+  color:#f0f0ec !important;
+  border:1px solid #555 !important;
+}
+body.dark #welcomeRestore:not(.hidden){
+  background:#1a1a1a !important;
+  color:#f0f0ec !important;
+  border:1px solid #444 !important;
+}
+.icon-square,.theme-toggle{
+  width:38px !important;
+  height:38px !important;
+  flex:0 0 38px !important;
+  box-sizing:border-box !important;
+}
+
+/* Footer lower on the page */
+html{height:100%;}
+body{
+  min-height:100%;
+  min-height:100dvh;
+  display:flex !important;
+  flex-direction:column !important;
+}
+main.app-main{
+  flex:1 0 auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  min-height:calc(100dvh - 24px) !important;
+  padding-bottom:8px !important;
+}
+main.app-main > .footer,
+.footer{
+  margin-top:auto !important;
+  transform:none !important;
+  position:relative !important;
+  padding-top:36px !important;
+  padding-bottom:max(48px, calc(env(safe-area-inset-bottom) + 28px)) !important;
+  text-align:center !important;
+  width:100% !important;
+  flex-shrink:0 !important;
+}
+
+
+/* === V22.10.9 UI polish === */
+
+/* Analysis + forecast text ALWAYS white on dark panel */
+.analysis,
+.analysis-block,
+#analysisModalContent,
+.analysis-modal-content,
+.forecast-head,
+.forecast-stat,
+.path-wrap,
+.path-title{
+  background:#1a1a1a !important;
+  color:#ffffff !important;
+  border-color:#333 !important;
+}
+.analysis h3,
+.analysis-block h3,
+.analysis p,
+.analysis-block p,
+.analysis .muted,
+.analysis-block .muted,
+.forecast-title,
+.forecast-sub,
+.forecast-stat span,
+.forecast-stat b,
+.path-point .time,
+.path-point .price,
+.path-point .move,
+.path-note{
+  color:#ffffff !important;
+}
+body:not(.dark) .analysis,
+body:not(.dark) .analysis-block,
+body.dark .analysis,
+body.dark .analysis-block{
+  background:#1a1a1a !important;
+  color:#ffffff !important;
+}
+body:not(.dark) .analysis h3,
+body:not(.dark) .analysis-block h3,
+body:not(.dark) .analysis p,
+body:not(.dark) .analysis-block p,
+body.dark .analysis h3,
+body.dark .analysis-block h3,
+body.dark .analysis p,
+body.dark .analysis-block p{
+  color:#ffffff !important;
+}
+
+/* Chart period + editor buttons: always white text */
+.chart-bar,
+.chart-tools .chart-bar{
+  background:#1a1a1a !important;
+  border-color:#333 !important;
+}
+.chart-tool,
+.draw-tool,
+button.chart-tool,
+button.draw-tool{
+  color:#ffffff !important;
+  background:transparent !important;
+  border:0 !important;
+  opacity:1 !important;
+}
+.chart-tool.active,
+.draw-tool.active,
+button.chart-tool.active,
+button.draw-tool.active{
+  background:#333 !important;
+  color:#ffffff !important;
+}
+body:not(.dark) .chart-tool,
+body:not(.dark) .draw-tool,
+body.dark .chart-tool,
+body.dark .draw-tool{
+  color:#ffffff !important;
+}
+
+/* Theme toggle: no outline / border */
+.theme-toggle,
+body.dark .theme-toggle,
+body:not(.dark) .theme-toggle,
+#themeToggle{
+  border:none !important;
+  border-width:0 !important;
+  box-shadow:none !important;
+  outline:none !important;
+}
+
+/* Footer even lower + stable font in landscape */
+main.app-main > .footer,
+.footer{
+  margin-top:auto !important;
+  padding-top:48px !important;
+  padding-bottom:max(64px, calc(env(safe-area-inset-bottom) + 40px)) !important;
+  transform:none !important;
+  font-size:10px !important;
+  line-height:1.65 !important;
+}
+.footer .footer-legal,
+.footer .build-version,
+.footer .footer-update{
+  font-size:10px !important;
+  line-height:1.65 !important;
+  font-weight:500 !important;
+}
+@media (orientation:landscape){
+  .footer,
+  main.app-main > .footer,
+  .footer .footer-legal,
+  .footer .build-version,
+  .footer .footer-update{
+    font-size:10px !important;
+    line-height:1.65 !important;
+    transform:none !important;
+  }
+}
+
+
+/* === V22.10.11 clean UI === */
+
+/* Top buttons Анализ / Поиск — always white text on dark chips */
+.tools-open-btn,
+#openMarket,
+#openSearch{
+  background:#1a1a1a !important;
+  color:#ffffff !important;
+  border:1px solid #444 !important;
+  font-weight:700 !important;
+}
+.tools-open-btn.active,
+#openMarket[aria-expanded="true"],
+#openSearch[aria-expanded="true"]{
+  background:#2a2a2a !important;
+  color:#ffffff !important;
+  border-color:#666 !important;
+}
+
+/* Panels — dark surface, white text (no universal * selector) */
+#panelMarket,
+#panelSearch{
+  background:#1a1a1a !important;
+  border:1px solid #333 !important;
+  border-radius:14px !important;
+  padding:12px !important;
+  margin-top:10px !important;
+  color:#ffffff !important;
+}
+#panelMarket .small,
+#panelMarket .muted,
+#panelMarket .status,
+#panelSearch .status,
+#marketStatus,
+#stockSearchStatus,
+.market-empty,
+.market-footnote,
+.market-stock,
+.market-stock strong,
+.market-stock small,
+.market-price,
+.market-change,
+.search-result,
+.search-result strong{
+  color:#ffffff !important;
+}
+#stockSearchInput{
+  background:#111 !important;
+  color:#ffffff !important;
+  border:1px solid #444 !important;
+}
+#stockSearchInput::placeholder{color:rgba(255,255,255,.45)!important}
+.market-tab{
+  color:#fff !important;
+  background:transparent !important;
+  border:1px solid #444 !important;
+}
+.market-tab.active{
+  background:#333 !important;
+  color:#fff !important;
+}
+.market-row,
+.search-result{
+  background:#111 !important;
+  border:1px solid #333 !important;
+  color:#fff !important;
+}
+#marketScan,
+#stockSearchBtn,
+.market-study,
+.search-btn{
+  background:#f0f0ec !important;
+  color:#111 !important;
+  border:0 !important;
+}
+.tools-panel-head{display:none!important}
+
+/* Asset analysis text white */
+.analysis,
+.analysis-block{
+  background:#1a1a1a !important;
+  color:#fff !important;
+}
+.analysis h3,
+.analysis p,
+.analysis-block h3,
+.analysis-block p{color:#fff !important}
+
+/* Footer lower */
+main.app-main{min-height:calc(100dvh - 8px)!important}
+main.app-main > .footer,
+.footer{
+  padding-top:64px !important;
+  padding-bottom:max(96px, calc(env(safe-area-inset-bottom) + 64px)) !important;
+  margin-top:auto !important;
+  transform:none !important;
+  font-size:10px !important;
+}
+
+
+/* === V22.10.12 === */
+html, body, body.dark, body:not(.dark){
+  background:#000 !important;
+  background-image:none !important;
+  --bg:#000 !important;
+}
+html::before, body::before{
+  content:"" !important;
+  position:fixed !important;
+  inset:-50vmax !important;
+  background:#000 !important;
+  z-index:-1 !important;
+  pointer-events:none !important;
+}
+main.app-main, main{
+  background:transparent !important;
+}
+
+/* Brand square — can rotate */
+.brand-mark-sq{
+  display:inline-block !important;
+  transform-origin:center center !important;
+  will-change:transform;
+  background:#fff !important;
+  border:1px solid rgba(255,255,255,.35) !important;
+}
+
+/* No yellow anywhere in analysis/search */
+.tools-open-btn,
+#openMarket,
+#openSearch,
+.tools-open-btn.active,
+#openMarket[aria-expanded="true"],
+#openSearch[aria-expanded="true"]{
+  background:#1a1a1a !important;
+  color:#fff !important;
+  border:1px solid #333 !important;
+  box-shadow:none !important;
+}
+#panelMarket,
+#panelSearch{
+  background:#1a1a1a !important;
+  border:1px solid #333 !important;
+  color:#fff !important;
+}
+.market-tab,
+.market-tab.active{
+  background:#111 !important;
+  color:#fff !important;
+  border:1px solid #333 !important;
+}
+.market-tab.active{
+  background:#2a2a2a !important;
+}
+.market-row,
+.search-result{
+  background:#141414 !important;
+  border:1px solid #2a2a2a !important;
+  color:#fff !important;
+  padding:8px 10px !important;
+  min-height:0 !important;
+  gap:8px !important;
+}
+.market-stock strong{font-size:12px !important;line-height:1.25 !important}
+.market-stock small{font-size:10px !important;margin-top:2px !important;color:#aaa !important}
+.market-price,.market-change{font-size:11px !important}
+.market-study, .search-btn, #marketScan, #stockSearchBtn{
+  background:#2a2a2a !important;
+  color:#fff !important;
+  border:1px solid #444 !important;
+  min-height:32px !important;
+  padding:6px 10px !important;
+  font-size:11px !important;
+}
+.market-results{gap:6px !important}
+.market-tabs{margin:10px 0 8px !important;gap:6px !important}
+.market-tab{min-height:34px !important;padding:6px 8px !important;font-size:11px !important}
+.market-actions{margin-bottom:8px !important}
+.search-result{padding:8px 10px !important}
+.search-row{gap:8px !important;margin-top:4px !important}
+.search-row input{padding:10px 12px !important;min-height:38px !important}
+
+/* kill residual gold/yellow accents on tools */
+.tools-workspace,
+.tools-workspace *{
+  --green:#888 !important;
+}
+.market-kicker, .plan-calc-btn, .plan-open{
+  background:#2a2a2a !important;
+  color:#fff !important;
+  border-color:#444 !important;
+}
+
+/* Footer lower */
+.footer, main.app-main > .footer{
+  padding-top:72px !important;
+  padding-bottom:max(110px, calc(env(safe-area-inset-bottom) + 72px)) !important;
+}
+
 </style>
 
 </head>
@@ -1154,7 +1672,6 @@ body.dark .theme-toggle{
     <button type="button" class="tools-open-btn" id="openSearch" aria-expanded="false">Поиск</button>
   </div>
   <div class="tools-panel hidden" id="panelMarket">
-    <div class="tools-panel-head" id="closeMarket" role="button" tabindex="0">Анализ <span class="tools-close">Скрыть</span></div>
     <div class="market-tabs" role="tablist">
       <button type="button" class="market-tab active" data-market-tab="losers">Топ падений</button>
       <button type="button" class="market-tab" data-market-tab="gainers">Топ роста</button>
@@ -1167,7 +1684,6 @@ body.dark .theme-toggle{
     <div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div>
   </div>
   <div class="tools-panel hidden" id="panelSearch">
-    <div class="tools-panel-head" id="closeSearch" role="button" tabindex="0">Поиск <span class="tools-close">Скрыть</span></div>
     <form class="search-row" id="stockSearchForm">
       <input id="stockSearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="Тикер или название" aria-label="Тикер или название">
       <button class="search-btn" id="stockSearchBtn" type="submit">Поиск</button>
@@ -1179,7 +1695,7 @@ body.dark .theme-toggle{
 
 
 
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.7 · 29.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.12 · 30.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -1379,69 +1895,93 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  // autocorrelation of returns (needed before path)
  const ac1=logR.length>2?(()=>{const a=logR.slice(0,-1),b=logR.slice(1);const ma=mean(a),mb=mean(b);let n=0,d1=0,d2=0;for(let i=0;i<a.length;i++){const x=a[i]-ma,y=b[i]-mb;n+=x*y;d1+=x*x;d2+=y*y;}return (d1*d2)>0?n/Math.sqrt(d1*d2):0;})():0;
 
- // High-quality path: GBM + mean-reversion to structural target + realistic OHLC envelopes
- const dayDrift=Math.max(-0.01,Math.min(0.01,drift));
- const dailyVol=Math.max(0.007,Math.min(0.05,vol*0.95+atrPct*0.4));
- let t30=price*Math.exp(dayDrift*16);
- if(resistance>price) t30=Math.min(t30, price+(resistance-price)*(0.55+Math.min(0.35,Math.abs(dayDrift)*40)));
- if(support>0&&support<price) t30=Math.max(t30, price-(price-support)*(0.55+Math.min(0.35,Math.abs(dayDrift)*40)));
- const stretch=Math.abs(distEma||0);
- if(stretch>0.06) t30=price+(t30-price)*0.7;
- const t7=price+(t30-price)*(6.5/20);
- const t10=price+(t30-price)*(9.5/20);
- const points=[]; let px=price; let mom=dayDrift*0.8; let ar1=0;
- const persist=Math.max(-0.3,Math.min(0.3,ac1));
+ // Trend-anchored forecast grounded in recent realized moves
+ const ret3=closes.length>3?(closes.at(-1)/closes.at(-4)-1)/3:0;
+ const ret5=closes.length>5?(closes.at(-1)/closes.at(-6)-1)/5:0;
+ const ret10=closes.length>10?(closes.at(-1)/closes.at(-11)-1)/10:0;
+ const ret20=closes.length>20?(closes.at(-1)/closes.at(-21)-1)/20:0;
+ // weight recent price action heaviest so path "looks like continuation"
+ let dayDrift=ret3*0.30+ret5*0.30+ret10*0.20+ret20*0.10+(Number(drift)||0)*0.05+shortSlope*0.25;
+ // structure / EMA bias
+ if(emaBull) dayDrift=Math.max(dayDrift, Math.abs(dayDrift)*0.15);
+ if(emaBear) dayDrift=Math.min(dayDrift,-Math.abs(dayDrift)*0.15);
+ if((structure||0)>0) dayDrift+=0.0008;
+ if((structure||0)<0) dayDrift-=0.0008;
+ dayDrift=Math.max(-0.015,Math.min(0.015,dayDrift));
+ // daily vol from ATR and recent realized vol
+ const realVol=Math.max(vol20||0, vol10||0, atrPct||0);
+ const dailyVol=Math.max(0.005,Math.min(0.045, realVol*0.9+ (vol||0.01)*0.2));
+ // Horizon targets from drift, soft-capped by S/R (not forced to hit them)
+ let t30=price*Math.exp(dayDrift*18);
+ if(resistance>price && t30>resistance) t30=price+(resistance-price)*0.75;
+ if(support>0 && support<price && t30<support) t30=price-(price-support)*0.75;
+ // fade extreme stretch from EMA
+ if(Math.abs(distEma||0)>0.08) t30=price+(t30-price)*0.65;
+ const t7=price*Math.exp(dayDrift*5.5);
+ const t10=price*Math.exp(dayDrift*8);
+ // Build path: mostly smooth toward target + occasional real pullback
+ // Replay recent volatility profile into the future (more "real chart" look)
+ const recentR=[];
+ for(let i=Math.max(1,closes.length-20);i<closes.length;i++){
+  const a=closes[i-1],b=closes[i];
+  if(a>0&&b>0) recentR.push(Math.log(b/a));
+ }
+ const avgAbs=recentR.length?recentR.reduce((s,x)=>s+Math.abs(x),0)/recentR.length:dailyVol;
+ const points=[]; let px=price;
+ let ar=0;
+ // shuffle index into recent returns so path is not a repeating copy of last 20 days
+ let ri=Math.floor(rnd()*Math.max(1,recentR.length));
  for(let d=1;d<=30;d++){
-  const remain=Math.max(1,30-d+1);
-  const toward=Math.log(Math.max(t30,0.01)/Math.max(px,0.01))/remain;
-  // correlated shock (AR1) — real markets don't flip independently each day
-  const eps=(rnd()-0.5)*2;
-  ar1=persist*0.5*ar1+Math.sqrt(Math.max(0.15,1-persist*persist))*eps;
-  const shock=ar1*dailyVol;
-  // pullback clustering: more likely after 2+ moves in same direction
-  const against=(rnd()<0.22+Math.min(0.15,Math.abs(mom)/dailyVol*0.08))?-Math.sign(mom||dayDrift||1)*dailyVol*(0.4+rnd()*0.7):0;
-  const quiet=(rnd()<0.1)?0.25:1;
-  mom=Math.max(-dailyVol*1.6,Math.min(dailyVol*1.6, mom*0.55+toward*0.45+shock*0.5));
-  let step=(mom*0.85+against)*quiet;
-  // soft S/R walls
-  if(resistance>0&&px>resistance*0.995) step-=dailyVol*0.45;
-  if(support>0&&px<support*1.005) step+=dailyVol*0.45;
-  const open=px;
-  px=Math.max(0.01,px*Math.exp(step));
-  // OHLC envelope for the day from vol and direction
-  const range=px*dailyVol*(0.7+rnd()*0.6);
-  const up=px>=open;
-  const high=Math.max(open,px)+range*(up?0.25+rnd()*0.35:0.45+rnd()*0.4);
-  const low=Math.min(open,px)-range*(up?0.45+rnd()*0.4:0.25+rnd()*0.35);
-  const band=px*dailyVol*Math.sqrt(Math.min(d,14))*0.85;
-  points.push({d,mid:px,open,high:Math.max(high,px,open),low:Math.max(0.01,Math.min(low,px,open)),lowBand:Math.max(0.01,px-band),highBand:px+band});
+  const prev=px;
+  const histShock=recentR.length?recentR[ri%recentR.length]:((rnd()-0.5)*2*avgAbs);
+  ri++;
+  ar=0.3*ar+(rnd()-0.5);
+  // Main driver = historical daily return magnitude/sign mix + mild drift
+  // NOT a smooth line to target
+  let step=histShock*0.75 + dayDrift*0.55 + ar*avgAbs*0.35;
+  // soft gravity toward horizon target (weak — keeps overall direction without a ruler-line)
+  const remain=Math.max(1,31-d);
+  const pull=Math.log(Math.max(t30,0.01)/Math.max(prev,0.01))/remain;
+  step+=pull*0.18;
+  // consolidation days
+  if(rnd()<0.12) step*=0.2;
+  // mean-revert extreme spikes
+  if(Math.abs(step)>avgAbs*2.5) step*=0.5;
+  if(resistance>0 && prev>resistance) step-=avgAbs*0.4;
+  if(support>0 && prev<support) step+=avgAbs*0.4;
+  px=Math.max(0.01,prev*Math.exp(step));
+  const body=Math.abs(px-prev);
+  const wick=Math.max(body*0.55, px*avgAbs*0.75, px*0.002);
+  const up=px>=prev;
+  const high=Math.max(prev,px)+(up?wick*0.3:wick*0.7);
+  const low=Math.min(prev,px)-(up?wick*0.7:wick*0.3);
+  points.push({d,mid:px,open:prev,high,low:Math.max(0.01,low)});
  }
  const p7=Object.assign({},points[6]||points.at(-1));
  const p10=Object.assign({},points[9]||points.at(-1));
  const p30=Object.assign({},points[29]||points.at(-1));
- p7.mid=p7.mid*0.6+t7*0.4; p10.mid=p10.mid*0.6+t10*0.4; p30.mid=p30.mid*0.65+t30*0.35;
- const bandOf=(arr,keyLo='low',keyHi='high')=>({lo:Math.min(...arr.map(x=>Number(x[keyLo])||x.mid)),hi:Math.max(...arr.map(x=>Number(x[keyHi])||x.mid))});
+ // keep anchors near structural targets without wiping path shape
+ p7.mid=p7.mid*0.55+t7*0.45;
+ p10.mid=p10.mid*0.55+t10*0.45;
+ p30.mid=p30.mid*0.55+t30*0.45;
+ const bandOf=arr=>({lo:Math.min(...arr.map(x=>x.low)),hi:Math.max(...arr.map(x=>x.high))});
  Object.assign(p7,{low:bandOf(points.slice(0,7)).lo,high:bandOf(points.slice(0,7)).hi});
  Object.assign(p10,{low:bandOf(points.slice(0,10)).lo,high:bandOf(points.slice(0,10)).hi});
  Object.assign(p30,{low:bandOf(points).lo,high:bandOf(points).hi});
- // also store low/high as path envelope for chart
- points.forEach(pt=>{pt.low=pt.low||pt.lowBand;pt.high=pt.high||pt.highBand;});
- // Intraday: several legs matching daily vol microstructure
- const intraday=[]; let ip=price; let leg=dayDrift;
- const dayTarget=price*Math.exp(dayDrift*0.7+(structure||0)*0.001);
- const steps=18; let iar=0;
+ // Intraday: gentle continuation of dayDrift with micro-structure from avgAbs
+ const intraday=[]; let ip=price;
+ const dayTarget=price*Math.exp(dayDrift*0.9);
+ const steps=16; let iar=0;
  for(let k=0;k<steps;k++){
-  const toward=Math.log(Math.max(dayTarget,0.01)/Math.max(ip,0.01))/Math.max(steps-k,1);
-  const eps=(rnd()-0.5)*2;
-  iar=0.35*iar+0.9*eps;
-  if(rnd()<0.18) leg*=-0.4;
-  leg=Math.max(-dailyVol,Math.min(dailyVol,leg*0.6+toward*0.4+iar*dailyVol*0.45));
+  const u=(k+1)/steps;
+  const ease=u*u*(3-2*u);
+  const base=price+(dayTarget-price)*ease;
+  const echo=recentR.length?recentR[k%recentR.length]*0.25:0;
+  iar=0.35*iar+(rnd()-0.5)*0.4;
   const o=ip;
-  ip=Math.max(0.01,ip*Math.exp(leg*0.5));
-  const rng=ip*dailyVol*0.35*(0.6+rnd()*0.8);
-  const hi=Math.max(o,ip)+rng*(0.2+rnd()*0.5);
-  const lo=Math.min(o,ip)-rng*(0.2+rnd()*0.5);
-  intraday.push({time:Date.now()+(k+1)*2400000,price:ip,high:hi,low:Math.max(0.01,lo),open:o});
+  ip=Math.max(0.01, o*Math.exp(Math.log(Math.max(base,0.01)/Math.max(o,0.01))*0.5 + echo + iar*avgAbs*0.15));
+  const rng=Math.max(Math.abs(ip-o)*0.45, price*avgAbs*0.25, price*0.001);
+  intraday.push({time:Date.now()+(k+1)*2700000,price:ip,high:Math.max(o,ip)+rng*0.35,low:Math.max(0.01,Math.min(o,ip)-rng*0.35),open:o});
  }
 
  const summary=`Тренд: ${trend}. Импульс: ${momentum}. Волатильность: ${risk}.`;
@@ -1470,7 +2010,7 @@ if(!window.__mzChartDelegated){
    const p=Number(periodBtn.dataset.chartPeriod);
    if(!Number.isFinite(i))return;
    const set=chartSettings(i);
-   set.period=[1,7,10].includes(p)?p:1;
+   set.period=[1,7,30].includes(p)?p:1;
    const bar=periodBtn.closest('.chart-bar, [data-chart-tools]');
    if(bar)bar.querySelectorAll('[data-chart-period]').forEach(x=>x.classList.toggle('active',Number(x.dataset.chartPeriod)===set.period));
    paintChart(i);
@@ -1513,7 +2053,7 @@ function paintChart(i){
     c.style.height='220px';
     c.dataset.instrumentUid=String(r.uid||'');
     const set=chartSettings(i);
-    const period=[1,7,10].includes(Number(set.period))?Number(set.period):1;
+    const period=[1,7,30].includes(Number(set.period))?Number(set.period):1;
     let src=[];
     if(period===1) src=(r.hourly&&r.hourly.length>=8)?r.hourly:(r.shortCandles&&r.shortCandles.length?r.shortCandles:(r.chartCandles||r.daily||[]));
     else src=(r.daily&&r.daily.length)?r.daily:(r.chartCandles||r.hourly||[]);
@@ -1540,7 +2080,7 @@ function drawChart(canvas,cs,model,currentPrice){
  const text=dark?'#d8d8d8':'#555',grid=dark?'#292929':'#e6e6e6',muted=dark?'#888':'#888';
  const idx=Number((canvas.id||'').replace('chart-',''));
  const period=typeof chartSettings==='function' ? Number(chartSettings(idx).period||1) : 1;
- const p=[1,7,10].includes(period)?period:1;
+ const p=[1,7,30].includes(period)?period:1;
  const live=Math.max(0,Number(currentPrice)||0);
  let hist=(Array.isArray(cs)?cs:[]).map(c=>{
    if(!c)return null;
@@ -1549,7 +2089,7 @@ function drawChart(canvas,cs,model,currentPrice){
    return {time:t,o,c:cl,h:Math.max(h,o,cl),l:Math.min(l,o,cl),v:Number(c.v||c.volume)||0};
  }).filter(Boolean).sort((a,b)=>a.time-b.time);
  if(!hist.length&&live>0)hist=[{time:Date.now()-3600000,o:live,c:live,h:live*1.002,l:live*.998}];
- const histCount=p===1?Math.max(10,Math.min(28,hist.length)):p===7?Math.max(10,Math.min(18,hist.length)):Math.max(12,Math.min(20,hist.length));
+ const histCount=p===1?Math.max(12,Math.min(32,hist.length)):p===7?Math.max(12,Math.min(20,hist.length)):Math.max(16,Math.min(30,hist.length));
  hist=hist.slice(-histCount);
  const current=live||Number(hist.at(-1)?.c)||1;
  const modelOK=!!(model&&model.ok);
@@ -1576,7 +2116,7 @@ function drawChart(canvas,cs,model,currentPrice){
      prev=close;
    }
  } else {
-   const steps=p===7?7:10;
+   const steps=p===7?7:30;
    const pts=Array.isArray(model?.points)?model.points:[];
    let prev=current;
    const endMid=p===7?(Number(model?.p7?.mid)||current*Math.exp(drift*5)):(Number(model?.p10?.mid)||Number(model?.p30?.mid)||current*Math.exp(drift*8));
@@ -1600,7 +2140,7 @@ function drawChart(canvas,cs,model,currentPrice){
  const data=[...hist,...future];
  if(!data.length){ctx.fillStyle=text;ctx.font='11px sans-serif';ctx.fillText('Нет данных для графика',12,24);return}
  const pad={l:10,r:78,t:16,b:30},plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
- const histW=plotW*.38,futureW=plotW*.62;
+ const histW=plotW*.42,futureW=plotW*.58;
  const histSlot=histW/Math.max(hist.length,1),futureSlot=futureW/Math.max(future.length,1);
  const total=hist.length+future.length;
  const histCenter=i=>pad.l+(i+.5)*histSlot;
@@ -1608,13 +2148,13 @@ function drawChart(canvas,cs,model,currentPrice){
  const histBody=Math.max(1.5,Math.min(8,histSlot*.58));
  const futureBody=Math.max(1.5,Math.min(8,futureSlot*.58));
  let vals=data.flatMap(c=>[Number(c.l),Number(c.h),Number(c.o),Number(c.c)]).filter(Number.isFinite);
- if(p===1&&future.length){
-   const fLow=Math.min(...future.map(c=>c.l)),fHigh=Math.max(...future.map(c=>c.h));
-   vals.push(fLow,fHigh);
+ if(future.length){
+   vals.push(...future.flatMap(c=>[Number(c.l),Number(c.h),Number(c.c)]).filter(Number.isFinite));
  }
  let min=Math.min(...vals),max=Math.max(...vals);
  if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min){min=current*.99;max=current*1.01}
- const rangePad=Math.max((max-min)*.09,current*.001);min-=rangePad;max+=rangePad;
+ // fit entire series into view with modest padding
+ const rangePad=Math.max((max-min)*.06,current*.0008);min-=rangePad;max+=rangePad;
  const y=v=>pad.t+(max-v)/(max-min)*plotH;
  ctx.font='9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.lineWidth=1;ctx.strokeStyle=grid;ctx.fillStyle=text;
  for(let g=0;g<=4;g++){
@@ -1639,14 +2179,20 @@ function drawChart(canvas,cs,model,currentPrice){
    const o=Number(c.o||c.open||0),cl=Number(c.c||c.close||0);
    const hi=Number(c.h||c.high||Math.max(o,cl)),lo=Number(c.l||c.low||Math.min(o,cl));
    const up=cl>=o;
-   // identical candle geometry; forecast uses same greens/reds
    const color=up?'#2c9b70':'#d45b5b';
    const top=y(Math.max(o,cl)),bottom=y(Math.min(o,cl)),wickTop=y(hi),wickBottom=y(lo);
    ctx.save();
-   ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.15;
+   ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.25;
    ctx.beginPath();ctx.moveTo(x,wickTop);ctx.lineTo(x,wickBottom);ctx.stroke();
-   const bh=Math.max(1.6,bottom-top);
-   ctx.fillRect(x-bodyW/2,top,bodyW,bh);
+   const bh=Math.max(2,bottom-top);
+   const bw=Math.max(2,bodyW);
+   ctx.fillRect(x-bw/2,top,bw,bh);
+   // forecast: same fill, thin dashed top edge mark so zone is readable without different shape
+   if(isForecast){
+     ctx.setLineDash([2,2]);
+     ctx.strokeRect(x-bw/2+0.5,top+0.5,bw-1,Math.max(1,bh-1));
+     ctx.setLineDash([]);
+   }
    ctx.restore();
  }
  hist.forEach((c,i)=>candle(c,histCenter(i),histBody,false));
@@ -1661,7 +2207,7 @@ function drawChart(canvas,cs,model,currentPrice){
    ctx.fillStyle='#2c9b70';ctx.fillText('Макс '+fHigh.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,Math.max(12,y(fHigh)-3));
    ctx.fillStyle='#d45b5b';ctx.fillText('Мин '+fLow.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,Math.min(H-22,y(fLow)+11));
    ctx.fillStyle=muted;ctx.font='8px -apple-system,BlinkMacSystemFont,sans-serif';
-   ctx.fillText((p===1?'1д':p===7?'7д':'10д')+' → '+fEnd.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,H-8);
+   ctx.fillText((p===1?'1д':p===7?'7д':'30д')+' → '+fEnd.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,H-8);
  }
  if(modelOK){
    [[Number(model.support),'#2c9b70'],[Number(model.resistance),'#d4a72c']].forEach(([level,color])=>{
@@ -1802,7 +2348,7 @@ function renderRows(rows){
 <div class="chart-tools" data-chart-tools="${i}"><div class="chart-bar" role="group">
 <button type="button" class="chart-tool active" data-chart-period="1" data-chart-index="${i}">1</button>
 <button type="button" class="chart-tool" data-chart-period="7" data-chart-index="${i}">7</button>
-<button type="button" class="chart-tool" data-chart-period="10" data-chart-index="${i}">10</button>
+<button type="button" class="chart-tool" data-chart-period="30" data-chart-index="${i}">30</button>
 <span class="chart-sep"></span>
 <button type="button" class="draw-tool" data-draw="hline" data-chart-index="${i}">―</button>
 <button type="button" class="draw-tool" data-draw="pen" data-chart-index="${i}">✎</button>
@@ -1816,7 +2362,7 @@ function renderRows(rows){
 <div class="field"><label>Цена входа, ₽</label><input id="calcEntry-${i}" type="number" min="0" step="0.01" value="" data-calc-entry="${i}" placeholder="Текущая"></div>
 <div class="field"><label>Сумма вложения, ₽</label><input id="calcMoney-${i}" type="number" min="0" step="100" value="1000" data-calc-money="${i}"></div>
 <div class="field"><label>Количество акций</label><input id="calcQty-${i}" type="number" min="0" step="1" value="1" data-calc-qty="${i}"></div>
-<div class="field"><label>Горизонт</label><div class="calc-horizons" data-calc-horizons="${i}"><button type="button" class="active" data-calc-h="1" data-i="${i}">1д</button><button type="button" data-calc-h="7" data-i="${i}">7д</button><button type="button" data-calc-h="10" data-i="${i}">10д</button></div></div>
+<div class="field"><label>Горизонт</label><div class="calc-horizons" data-calc-horizons="${i}"><button type="button" class="active" data-calc-h="1" data-i="${i}">1д</button><button type="button" data-calc-h="7" data-i="${i}">7д</button><button type="button" data-calc-h="30" data-i="${i}">30д</button></div></div>
 </div>
 <div class="calc-output"><div><span>Стоимость входа</span><b id="calcCost-${i}">—</b></div><div><span>Ожидаемый результат</span><b id="calcProfit-${i}">—</b></div><div><span>Стоимость к горизонту</span><b id="calcValue7-${i}">—</b></div><div><span>Изменение, %</span><b id="calcProfit30-${i}">—</b></div></div>
 <div class="calc-note" id="calcHorizon-${i}">Укажите цену входа и горизонт.</div>
@@ -2206,7 +2752,25 @@ $('connect').addEventListener('click',async()=>{
  if(S.busy){setStatus('Подключение уже выполняется.',true);return}
  const t=$('token').value.trim();if(!t){setStatus('Введи T‑Invest API-токен.',true);return}
  S.token=t;try{localStorage.setItem('mzbox-token',t)}catch{}lockToken();await refreshPortfolio(true);await restoreWatchlist();if(S.rows.length)startAuto();try{if(S.token&&!S.marketBusy&&!(marketCache&&marketCache.length)){setTimeout(()=>{scanMarket().then(()=>updateWelcomeRecs()).catch(()=>{})},1200)}}catch{}
-});$('copyToken').addEventListener('click',async()=>{const t=S.token||localStorage.getItem('mzbox-token')||'';if(!t){setStatus('Сначала зарегистрируй токен.',true);return}try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(t)}else{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();if(!ok)throw new Error('Копирование запрещено браузером')}const b=$('copyToken');b.textContent='✓';setTimeout(()=>b.textContent='⧉',1200)}catch(e){setStatus('Не удалось скопировать автоматически. Откройте страницу через HTTPS и попробуйте снова.',true)}});$('resetToken').addEventListener('click',()=>{if(S.busy){setStatus('Дождись завершения текущего запроса перед сбросом.',true);return}if(confirm('Сбросить весь сайт? Токен, список акций, заметки, настройки и сохранённые данные будут удалены. Отменить это действие будет нельзя.'))unlockToken()});$('refresh').addEventListener('click',()=>{if(S.busy)return;if(S.token)refreshPortfolio(false);else setStatus('Сначала подключи T‑Invest API-токен.',true)});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(S.token&&Date.now()-S.lastRefresh>=60000&&!S.busy&&!anyAssetOpen())refreshPortfolio(false)}});window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,r.model,r.price)}));
+});$('copyToken').addEventListener('click',async()=>{const t=S.token||localStorage.getItem('mzbox-token')||'';if(!t){setStatus('Сначала зарегистрируй токен.',true);return}try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(t)}else{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();if(!ok)throw new Error('Копирование запрещено браузером')}const b=$('copyToken');b.textContent='✓';setTimeout(()=>b.textContent='⧉',1200)}catch(e){setStatus('Не удалось скопировать автоматически. Откройте страницу через HTTPS и попробуйте снова.',true)}});$('resetToken').addEventListener('click',()=>{if(S.busy){setStatus('Дождись завершения текущего запроса перед сбросом.',true);return}if(confirm('Сбросить весь сайт? Токен, список акций, заметки, настройки и сохранённые данные будут удалены. Отменить это действие будет нельзя.'))unlockToken()});function spinBrandMark(){
+  const mark=document.querySelector('.brand-mark-sq');
+  if(!mark)return;
+  const dir=Math.random()<0.5?1:-1;
+  const deg=dir*360;
+  mark.style.transition='none';
+  mark.style.transform='rotate(0deg)';
+  void mark.offsetWidth;
+  mark.style.transition='transform 1s ease-in-out';
+  mark.style.transform='rotate('+deg+'deg)';
+  clearTimeout(window.__brandSpinT);
+  window.__brandSpinT=setTimeout(()=>{mark.style.transition='';mark.style.transform='';},1050);
+}
+$('refresh').addEventListener('click',()=>{
+  spinBrandMark();
+  if(S.busy)return;
+  if(S.token)refreshPortfolio(false);
+  else setStatus('Сначала подключи T‑Invest API-токен.',true);
+});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(S.token&&Date.now()-S.lastRefresh>=60000&&!S.busy&&!anyAssetOpen())refreshPortfolio(false)}});window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,r.model,r.price)}));
 try{const cached=JSON.parse(localStorage.getItem('mzbox-portfolio-cache')||'null');if(cached&&Date.now()-Number(cached.at||0)<7*86400000){S.portfolioRows=Array.isArray(cached.portfolioRows)?cached.portfolioRows:[];S.watchRows=Array.isArray(cached.watchRows)?cached.watchRows:[];S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];if(S.rows.length){calcSummary(S.portfolioRows);renderRows(S.rows);hideBootScreen();$('lastUpdated').textContent='Сохранённые данные · обновляю…';markFooterDataUpdated('Обновлено',cached.at)}}}catch{}try{const saved=localStorage.getItem('mzbox-token');if(saved){S.token=saved;$('token').value=saved;lockToken();refreshPortfolio(true).then(async()=>{await restoreWatchlist();if(S.rows.length)startAuto();try{if(S.token&&!S.marketBusy&&!(marketCache&&marketCache.length)){setTimeout(()=>{scanMarket().then(()=>updateWelcomeRecs()).catch(()=>{})},1500)}}catch{}})}}catch{}
 
 // V21 welcome strip: live clock, local quote bank, weather and active order snapshot.
@@ -2297,7 +2861,28 @@ const MZ_WORDS=[
  {w:'Режим рынка',d:'Тренд, боковик, высокая/низкая волатильность — от режима зависит, что работает.'},
  {w:'Шарп',d:'Лишняя доходность на единицу волатильности.'},
  {w:'Проскальзывание',d:'Разница между ценой на экране и реальной ценой сделки.'},
- {w:'Эффект базы',d:'Рост с низкой базы выглядит огромным процентом, с высокой — скромным.'}
+ {w:'Эффект базы',d:'Рост с низкой базы выглядит огромным процентом, с высокой — скромным.'},
+ {w:'Гедонистическая адаптация',d:'Привыкание к уровню удовольствия: повышение дохода или комфорта быстро становится «нормой».'},
+ {w:'Эффект Даннинга — Крюгера',d:'Слабая компетентность часто сочетается с завышенной уверенностью в своих суждениях.'},
+ {w:'Когнитивный диссонанс',d:'Дискомфорт от противоречия между убеждениями и фактами; мозг стремится его «сгладить».'},
+ {w:'Оккамова бритва',d:'При равной объяснительной силе предпочтительнее более простая гипотеза.'},
+ {w:'Апофения',d:'Склонность видеть смысл и связи там, где есть только случайность.'},
+ {w:'Байесовское обновление',d:'Пересмотр вероятностей по мере поступления новых данных, а не «с нуля».'},
+ {w:'Эвристика доступности',d:'Оценка частоты события по тому, насколько легко оно вспоминается, а не по статистике.'},
+ {w:'Черный лебедь',d:'Редкое, плохо предсказуемое событие с огромным влиянием, которое задним числом кажется очевидным.'},
+ {w:'Метакогниция',d:'Способность наблюдать и оценивать собственное мышление: «как я сейчас думаю?»'},
+ {w:'Иллюзия контроля',d:'Переоценка влияния своих действий на случайные или слабоуправляемые процессы.'},
+ {w:'Регрессия к среднему',d:'После крайних значений следующие чаще ближе к типичному уровню — не всегда «заслуга» вмешательства.'},
+ {w:'Стоимость упущенной возможности',d:'Цена выбора: что вы теряете, отказавшись от альтернативы.'},
+ {w:'Парадокс выбора',d:'Слишком много вариантов может снижать удовлетворённость и затруднять решение.'},
+ {w:'Эффект якоря',d:'Первое число или факт непропорционально сильно влияет на последующие оценки.'},
+ {w:'Системное 1 и 2',d:'Быстрое интуитивное мышление и медленное аналитическое; ошибки часто из путаницы режимов.'},
+ {w:'Фальсифицируемость',d:'Научная идея должна допускать проверку, которая теоретически может её опровергнуть.'},
+ {w:'Энтропия решения',d:'Мера неопределённости выбора: чем выше, тем полезнее дополнительная информация.'},
+ {w:'Слепое пятно предвзятости',d:'Легче замечать когнитивные искажения у других, чем у себя.'},
+ {w:'Принцип Парето',d:'Значимая доля результата часто связана с относительно малой долей причин или усилий.'},
+ {w:'Кайрос',d:'Удачный момент для действия — не хронометраж, а качественное «сейчас».'}
+
 ];
 
 function chooseWelcomeQuote(){
