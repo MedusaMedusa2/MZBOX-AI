@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.12</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.14</title>
 
 
 
@@ -1630,6 +1630,71 @@ main.app-main, main{
   padding-bottom:max(110px, calc(env(safe-area-inset-bottom) + 72px)) !important;
 }
 
+
+/* === V22.10.14 modal + footer === */
+.analysis-modal-kicker{display:none!important}
+.analysis-modal.open .analysis-modal-title-empty,
+#analysisModalTitle:empty,
+#analysisModalTicker:empty{display:none!important}
+
+.qi-head{margin:0 0 14px}
+.qi-ticker-row{display:flex;align-items:center;gap:8px}
+.qi-ticker{
+  font-size:22px;font-weight:800;letter-spacing:.4px;color:#fff!important;
+}
+.qi-copy{
+  width:28px;height:28px;flex:0 0 28px;padding:0;
+  display:grid;place-items:center;
+  border:1px solid #444;border-radius:8px;
+  background:#222;color:#eee;font-size:14px;cursor:pointer;
+}
+.qi-name{font-size:12px;color:#aaa!important;margin-top:4px;line-height:1.35}
+.qi-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.qi-grid>div{
+  padding:10px 11px;border:1px solid #333;border-radius:12px;background:#141414;
+}
+.qi-grid span{display:block;font-size:10px;color:#999!important;margin-bottom:4px;letter-spacing:.3px}
+.qi-grid b{display:block;font-size:14px;color:#fff!important;font-weight:750}
+.qi-support{color:#7dcea0!important}
+.qi-resist{color:#e8a0a0!important}
+
+/* Footer pinned to bottom of viewport/page */
+html{height:100%}
+body{
+  min-height:100%;
+  min-height:100dvh;
+  display:flex!important;
+  flex-direction:column!important;
+}
+main.app-main{
+  flex:1 0 auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:100dvh!important;
+}
+main.app-main > .footer,
+.footer{
+  margin-top:auto!important;
+  position:relative!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  flex-shrink:0!important;
+  width:100%!important;
+  text-align:center!important;
+  padding-top:40px!important;
+  padding-bottom:max(28px, calc(env(safe-area-inset-bottom) + 16px))!important;
+  color:#888!important;
+  font-size:10px!important;
+}
+
+/* Ticker on asset cards */
+.asset-subline .asset-ticker{
+  font-weight:700;letter-spacing:.3px;color:#ccc!important;
+}
+
 </style>
 
 </head>
@@ -1695,11 +1760,26 @@ main.app-main, main{
 
 
 
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.12 · 30.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.14 · 30.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
 try{if(!localStorage.getItem('mzbox-token'))document.body.classList.add('pre-token');else document.body.classList.remove('pre-token')}catch{document.body.classList.add('pre-token')}
+try{
+  const wl=JSON.parse(localStorage.getItem('mzbox-watchlist')||'[]');
+  if(Array.isArray(wl)&&wl.length){
+    const seen=new Set(); const clean=[];
+    for(const x of wl){const id=x&&x.uid!=null?String(x.uid):'';if(!id||seen.has(id))continue;seen.add(id);clean.push({uid:x.uid,ticker:x.ticker,name:x.name,currency:x.currency});}
+    localStorage.setItem('mzbox-watchlist',JSON.stringify(clean));
+  }
+  const pc=JSON.parse(localStorage.getItem('mzbox-portfolio-cache')||'null');
+  if(pc&&Array.isArray(pc.watchRows)){
+    const seen=new Set(); const clean=[];
+    for(const x of pc.watchRows){const id=x&&x.uid!=null?String(x.uid):'';if(!id||seen.has(id))continue;seen.add(id);clean.push(x);}
+    pc.watchRows=clean;
+    localStorage.setItem('mzbox-portfolio-cache',JSON.stringify(pc));
+  }
+}catch{}
 const API='https://invest-public-api.tinkoff.ru/rest/';
 const S={token:'',accounts:[],rows:[],portfolioRows:[],watchRows:[],timer:null,busy:false,lastRefresh:0,activeRequest:0,lifetimeAt:0,lifetimeValue:null,searchBusy:false,analysisUnlocked:true};
 const $=id=>document.getElementById(id);
@@ -2337,7 +2417,7 @@ function renderRows(rows){
 <summary class="asset-head">
 <div class="asset-main">
 <div class="asset-title-line"><span class="qty-chip">${qtyHtml} шт.</span></div>
-<div class="asset-sub asset-subline"><span class="asset-name-sub">${name}</span>${ticker&&ticker!==name?`<span> · ${ticker}</span>`:''}</div>
+<div class="asset-sub asset-subline"><span class="asset-ticker">${esc(String(ticker||'').toUpperCase())}</span>${name&&name!==ticker?`<span class="asset-name-sub"> · ${esc(name)}</span>`:''}</div>
 <div class="asset-meta">${pnlHtml}<button type="button" class="asset-help ${sig}" data-asset-help="${i}" aria-label="${sigTitle}" title="${sigTitle}">?</button>${removeBtn}</div>
 </div>
 <div class="asset-price-wrap"><div class="asset-price">${priceHtml}<div class="asset-sub">стоимость</div>${valueHtml}</div></div>
@@ -2388,7 +2468,7 @@ root.querySelectorAll('details.asset').forEach(d=>d.addEventListener('toggle',()
   onAssetToggleRefresh();
 }));
 setTimeout(()=>warmSignals().catch(()=>{}),60);
- try{root.querySelectorAll('details.asset').forEach(el=>{el.style.display='block';el.style.visibility='visible'})}catch{}root.querySelectorAll('[data-remove-watch]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const uid=b.dataset.removeWatch;S.watchRows=S.watchRows.filter(x=>x.uid!==uid);S.rows=S.rows.filter(x=>!(x.temp&&x.uid===uid));persistWatchlist();rebuildRows();renderRows(S.rows)}));root.querySelectorAll('[data-asset-help]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const r=S.rows[Number(b.dataset.assetHelp)]||null;if(r)openQuickInfo(r);}));}
+ try{root.querySelectorAll('details.asset').forEach(el=>{el.style.display='block';el.style.visibility='visible'})}catch{}root.querySelectorAll('[data-remove-watch]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const uid=b.dataset.removeWatch;S.watchRows=S.watchRows.filter(x=>x.uid!==uid);S.rows=S.rows.filter(x=>x.uid!==uid);persistWatchlist();rebuildRows();renderRows(S.rows);try{const c=JSON.parse(localStorage.getItem('mzbox-portfolio-cache')||'null');if(c){c.watchRows=(c.watchRows||[]).filter(w=>w.uid!==uid);localStorage.setItem('mzbox-portfolio-cache',JSON.stringify(c));}}catch{}}));root.querySelectorAll('[data-asset-help]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const r=S.rows[Number(b.dataset.assetHelp)]||null;if(r)openQuickInfo(r);}));}
 
 async function searchShares(query){
  const d=await api(INS,'FindInstrument',{query, instrumentKind:'INSTRUMENT_TYPE_SHARE'});
@@ -2405,7 +2485,7 @@ async function searchShares(query){
  return candidates.slice(0,8).map(x=>({uid:get(x,'uid','instrumentUid','instrumentUID'),ticker:get(x,'ticker')||get(x,'classCode')||'—',name:get(x,'name')||get(x,'ticker')||'Акция',currency:get(x,'currency')||'rub'}));
 }
 async function addWatch(uid){
- if(S.watchRows.some(x=>x.uid===uid)||S.portfolioRows.some(x=>x.uid===uid)){ $('stockSearchStatus').textContent='Эта акция уже есть в списке.';return; }
+ if(S.watchRows.some(x=>x.uid===uid)||S.portfolioRows.some(x=>x.uid===uid)||S.rows.some(x=>x.uid===uid)){ $('stockSearchStatus').textContent='Эта акция уже есть в списке.';return; }
  const item=(window.__mzboxSearchCache||[]).find(x=>x.uid===uid);if(!item)return;
  $('stockSearchStatus').textContent='Загружаю актуальную цену…';
  try{
@@ -2677,7 +2757,8 @@ hideBootScreen();const assetsEl=$('assets');if(assetsEl){assetsEl.style.display=
   const savePortfolioCache=()=>{try{localStorage.setItem('mzbox-portfolio-cache',JSON.stringify({at:Date.now(),portfolioRows:S.portfolioRows.map(({uid,ticker,name,qty,price,avg,pnl,value})=>({uid,ticker,name,qty,price,avg,pnl,value})),watchRows:S.watchRows.map(({uid,ticker,name,currency,qty,avg,pnl,price,value,watch})=>({uid,ticker,name,currency,qty,avg,pnl,price,value,watch}))}))}catch{}};savePortfolioCache();
   const watchIds=S.watchRows.filter(w=>!unique.some(p=>p.uid===w.uid)).map(w=>w.uid),ids=[...unique.map(r=>r.uid),...watchIds];
   $('lastUpdated').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');markFooterDataUpdated('Обновлено');S.lastRefresh=Date.now();setLoadProgress(100,'Портфель загружен');setStatus('Подключение активно.');$('refresh').disabled=false;
-  if(ids.length){lastPrices(ids).then(prices=>{if(refreshId!==S.activeRequest)return;for(const r of S.portfolioRows){const latest=prices[r.uid];if(latest>0)r.price=latest;r.pricePending=false;r.value=(Number(r.price)||0)*(Number(r.qty)||0);if(!r.pnl&&r.avg>0)r.pnl=(r.price-r.avg)*r.qty;r.pnl=Number.isFinite(r.pnl)?r.pnl:0}for(const w of S.watchRows){if(S.portfolioRows.some(p=>p.uid===w.uid))continue;if(prices[w.uid]>0)w.price=prices[w.uid];w.pricePending=false}S.watchRows=S.watchRows.filter(w=>S.portfolioRows.some(p=>p.uid===w.uid)||Number(w.price)>0);S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];calcSummary(S.portfolioRows);
+  if(ids.length){lastPrices(ids).then(prices=>{if(refreshId!==S.activeRequest)return;for(const r of S.portfolioRows){const latest=prices[r.uid];if(latest>0)r.price=latest;r.pricePending=false;r.value=(Number(r.price)||0)*(Number(r.qty)||0);if(!r.pnl&&r.avg>0)r.pnl=(r.price-r.avg)*r.qty;r.pnl=Number.isFinite(r.pnl)?r.pnl:0}for(const w of S.watchRows){if(S.portfolioRows.some(p=>p.uid===w.uid))continue;if(prices[w.uid]>0)w.price=prices[w.uid];w.pricePending=false}S.watchRows=dedupeByUid(S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid)&&(Number(w.price)>0||w.watch)));
+S.rows=dedupeByUid([...S.portfolioRows,...S.watchRows]);calcSummary(S.portfolioRows);
  if(!document.querySelector('#assets details.asset'))renderRows(S.rows);
  else S.rows.forEach((r,i)=>{
   const card=document.querySelector('details.asset[data-index="'+i+'"]');if(!card)return;
@@ -2697,7 +2778,48 @@ hideBootScreen();const assetsEl=$('assets');if(assetsEl){assetsEl.style.display=
  finally{S.busy=false;$('connect').disabled=false;$('refresh').disabled=!S.token;$('busyIcon').textContent='';setTimeout(()=>{const lp=$('loadProgress');if(lp)lp.classList.add('hidden')},900);hideBootScreen()}
 }
 
-async function restoreWatchlist(){let saved=[];try{saved=JSON.parse(localStorage.getItem('mzbox-watchlist')||'[]')}catch{}if(!Array.isArray(saved)||!saved.length)return;try{const prices=await lastPrices(saved.map(x=>x.uid));for(const x of saved){const price=prices[x.uid]||0;if(price>0&&!S.portfolioRows.some(p=>p.uid===x.uid))S.watchRows.push({...x,price,qty:0,avg:0,pnl:0,value:0,watch:true})}S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];renderRows(S.rows)}catch{}}
+function dedupeByUid(arr){
+  const seen=new Set();
+  const out=[];
+  for(const x of (arr||[])){
+    const id=x&&x.uid!=null?String(x.uid):'';
+    if(!id||seen.has(id))continue;
+    seen.add(id);
+    out.push(x);
+  }
+  return out;
+}
+function normalizeWatchAndRows(){
+  S.watchRows=dedupeByUid((S.watchRows||[]).filter(w=>w&&w.uid&&!S.portfolioRows.some(p=>p.uid===w.uid)));
+  S.rows=dedupeByUid([
+    ...(S.portfolioRows||[]),
+    ...S.watchRows,
+    ...(S.rows||[]).filter(r=>r&&r.temp&&!S.portfolioRows.some(p=>p.uid===r.uid)&&!S.watchRows.some(w=>w.uid===r.uid))
+  ]);
+}
+async function restoreWatchlist(){
+  let saved=[];
+  try{saved=JSON.parse(localStorage.getItem('mzbox-watchlist')||'[]')}catch{}
+  if(!Array.isArray(saved))saved=[];
+  // clean possible already-duplicated storage
+  saved=dedupeByUid(saved.filter(x=>x&&x.uid));
+  try{localStorage.setItem('mzbox-watchlist',JSON.stringify(saved.map(({uid,ticker,name,currency})=>({uid,ticker,name,currency}))))}catch{}
+  if(!saved.length){normalizeWatchAndRows();return;}
+  try{
+    const prices=await lastPrices(saved.map(x=>x.uid));
+    for(const x of saved){
+      if(S.portfolioRows.some(p=>p.uid===x.uid))continue;
+      if(S.watchRows.some(w=>w.uid===x.uid))continue; // prevent reload duplicates
+      const price=prices[x.uid]||0;
+      S.watchRows.push({...x,price,qty:0,avg:0,pnl:0,value:0,watch:true});
+    }
+    normalizeWatchAndRows();
+    persistWatchlist();
+    renderRows(S.rows);
+  }catch{
+    normalizeWatchAndRows();
+  }
+}
 function anyAssetOpen(){try{return !!document.querySelector('details.asset[open]')}catch{return false}}
 
 async function warmSignals(){
@@ -2771,7 +2893,10 @@ $('refresh').addEventListener('click',()=>{
   if(S.token)refreshPortfolio(false);
   else setStatus('Сначала подключи T‑Invest API-токен.',true);
 });document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(S.token&&Date.now()-S.lastRefresh>=60000&&!S.busy&&!anyAssetOpen())refreshPortfolio(false)}});window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,r.model,r.price)}));
-try{const cached=JSON.parse(localStorage.getItem('mzbox-portfolio-cache')||'null');if(cached&&Date.now()-Number(cached.at||0)<7*86400000){S.portfolioRows=Array.isArray(cached.portfolioRows)?cached.portfolioRows:[];S.watchRows=Array.isArray(cached.watchRows)?cached.watchRows:[];S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid))];if(S.rows.length){calcSummary(S.portfolioRows);renderRows(S.rows);hideBootScreen();$('lastUpdated').textContent='Сохранённые данные · обновляю…';markFooterDataUpdated('Обновлено',cached.at)}}}catch{}try{const saved=localStorage.getItem('mzbox-token');if(saved){S.token=saved;$('token').value=saved;lockToken();refreshPortfolio(true).then(async()=>{await restoreWatchlist();if(S.rows.length)startAuto();try{if(S.token&&!S.marketBusy&&!(marketCache&&marketCache.length)){setTimeout(()=>{scanMarket().then(()=>updateWelcomeRecs()).catch(()=>{})},1500)}}catch{}})}}catch{}
+try{const cached=JSON.parse(localStorage.getItem('mzbox-portfolio-cache')||'null');if(cached&&Date.now()-Number(cached.at||0)<7*86400000){S.portfolioRows=dedupeByUid(Array.isArray(cached.portfolioRows)?cached.portfolioRows:[]);
+S.watchRows=dedupeByUid((Array.isArray(cached.watchRows)?cached.watchRows:[]).filter(w=>w&&w.uid&&!S.portfolioRows.some(p=>p.uid===w.uid)));
+S.rows=dedupeByUid([...S.portfolioRows,...S.watchRows]);
+if(S.rows.length){calcSummary(S.portfolioRows);renderRows(S.rows);hideBootScreen();$('lastUpdated').textContent='Сохранённые данные · обновляю…';markFooterDataUpdated('Обновлено',cached.at)}}}catch{}try{const saved=localStorage.getItem('mzbox-token');if(saved){S.token=saved;$('token').value=saved;lockToken();refreshPortfolio(true).then(async()=>{await restoreWatchlist();if(S.rows.length)startAuto();try{if(S.token&&!S.marketBusy&&!(marketCache&&marketCache.length)){setTimeout(()=>{scanMarket().then(()=>updateWelcomeRecs()).catch(()=>{})},1500)}}catch{}})}}catch{}
 
 // V21 welcome strip: live clock, local quote bank, weather and active order snapshot.
 const quoteBank=[
@@ -2954,12 +3079,83 @@ window.addEventListener('wheel',e=>{const atTop=window.scrollY<2,atBottom=window
 // Quick information modal: opens without expanding a stock card or loading the full forecast.
 // Access remains explicit: no hard-coded token suffix or five-finger gesture bypass is embedded in the client.
 function closeAnalysisModal(){const m=$('analysisModal');m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open')}
-function openQuickInfo(item,context={}){if(!item)return;const m=$('analysisModal'),content=$('analysisModalContent');const r=item;const ticker=r.ticker||'—',name=r.name||ticker;const price=Number(r.price)||0;let label='Акция';let details='';
- if(context.market){label='Обзор рынка';const change=Number(r.change)||0;const p=marketPlan(r);details=`<div class="analysis-modal-verdict"><span>ИЗМЕНЕНИЕ ЗА ДЕНЬ</span><strong class="${change>=0?'positive':'negative'}">${change>0?'+':''}${change.toLocaleString('ru-RU',{maximumFractionDigits:2})}%</strong></div><div class="market-summary"><div><span>ТЕКУЩАЯ ЦЕНА</span><b>${price>0?fmtPrice(price):'Загрузка котировки'}</b></div><div><span>СЦЕНАРИЙ</span><b>${p.kind==='look'?'Рассмотреть':p.kind==='watch'?'Наблюдать':'Пропустить'}</b></div><div><span>РАСЧЁТНЫЙ ВХОД</span><b>${fmtPrice(p.entry)}</b></div><div><span>ЦЕЛЬ СЦЕНАРИЯ</span><b>${fmtPrice(p.target)}</b></div></div>`;
- }else if(context.search){label='Каталог T‑Invest';details=`<div class="analysis-modal-verdict"><span>ИНСТРУМЕНТ</span><strong>${esc(ticker)}</strong><small>${esc(name)}</small></div><div class="market-summary"><div><span>ТЕКУЩАЯ ЦЕНА</span><b id="quickInfoPrice">${price>0?fmtPrice(price):'Получаю котировку…'}</b></div><div><span>ВАЛЮТА</span><b>${esc(String(r.currency||'rub').toUpperCase())}</b></div></div>`;
- }else{const model=r.model;const dir=model?(model.drift>0?'Рост':model.drift<0?'Снижение':'Без выраженного направления'):'Прогноз ещё не рассчитан';details=`<div class="analysis-modal-verdict"><span>КРАТКАЯ ОЦЕНКА</span><strong>${dir}</strong><small>${model?'Риск: '+String(model.risk||'не определён'):'Открой карточку для расчёта.'}</small></div><div class="market-summary"><div><span>ЦЕНА</span><b>${price>0?fmtPrice(price):'Нет котировки'}</b></div>${model?`<div><span>ПОКУПКА</span><b>${fmtPrice(Number(r.buyTarget)||price)}</b></div><div><span>ПРОДАЖА</span><b>${fmtPrice(Number(r.sellTarget)||price)}</b></div>`:''}${r.watch?'':`<div><span>ПОЗИЦИЯ</span><b>${Number(r.value)>0?fmt(r.value):'—'}</b></div><div><span>ИТОГ</span><b class="${Number(r.pnl)>=0?'positive':'negative'}">${Number(r.pnl)>0?'+':''}${fmt(Number(r.pnl)||0)}</b></div>`}</div>`;}
- $('analysisModalTitle').textContent='Информация об акции';$('analysisModalTicker').textContent=name+' · '+ticker+' · '+label;content.innerHTML=`<div class="analysis-modal-actions" style="margin:0 0 12px"><button type="button" class="btn-copy-name" id="copyAssetNameBtn" data-copy-name="${esc(name)}" data-copy-ticker="${esc(ticker)}">Копировать название</button></div>`+details;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');
- if(context.search&&!price&&r.uid){lastPrices([r.uid]).then(prices=>{const el=$('quickInfoPrice');if(el&&m.classList.contains('open')&&$('analysisModalTicker').textContent.includes(ticker))el.textContent=prices[r.uid]?fmt(prices[r.uid]):'Котировка недоступна'}).catch(()=>{const el=$('quickInfoPrice');if(el)el.textContent='Котировка недоступна'});}
+function openQuickInfo(item,context={}){
+ if(!item)return;
+ const m=$('analysisModal'),content=$('analysisModalContent');
+ if(!m||!content)return;
+ const r=item;
+ const ticker=String(r.ticker||'—').toUpperCase();
+ const name=r.name||ticker;
+ const price=Number(r.price)||0;
+ const model=r.model&&r.model.ok?r.model:null;
+ const support=model&&Number(model.support)>0?Number(model.support):(Number(r.support)>0?Number(r.support):0);
+ const resistance=model&&Number(model.resistance)>0?Number(model.resistance):(Number(r.resistance)>0?Number(r.resistance):0);
+ const sig=r.signalName||(model?signalFromModel(model).name:'—');
+ const risk=model?String(model.risk||'—'):'—';
+ const dir=model?(Number(model.drift)>0.0005?'Рост':Number(model.drift)<-0.0005?'Снижение':'Боковик'):'—';
+
+ // hide redundant header titles
+ const kicker=m.querySelector('.analysis-modal-kicker');
+ if(kicker)kicker.style.display='none';
+ const title=$('analysisModalTitle'); if(title){title.textContent='';title.style.display='none';}
+ const sub=$('analysisModalTicker'); if(sub){sub.textContent='';sub.style.display='none';}
+
+ let extra='';
+ if(context.market){
+  const change=Number(r.change)||0;
+  const p=typeof marketPlan==='function'?marketPlan(r):null;
+  extra=`<div class="qi-grid">
+   <div><span>День</span><b class="${change>=0?'positive':'negative'}">${change>0?'+':''}${change.toLocaleString('ru-RU',{maximumFractionDigits:2})}%</b></div>
+   ${p?`<div><span>Сценарий</span><b>${p.kind==='look'?'Рассмотреть':p.kind==='watch'?'Наблюдать':'Пропустить'}</b></div>`:''}
+  </div>`;
+ } else if(context.search){
+  extra=`<div class="qi-grid"><div><span>Валюта</span><b>${esc(String(r.currency||'rub').toUpperCase())}</b></div></div>`;
+ } else if(!r.watch){
+  extra=`<div class="qi-grid">
+   <div><span>Позиция</span><b>${Number(r.value)>0?fmt(r.value):'—'}</b></div>
+   <div><span>PnL</span><b class="${Number(r.pnl)>=0?'positive':'negative'}">${Number(r.pnl)>0?'+':''}${fmt(Number(r.pnl)||0)}</b></div>
+  </div>`;
+ }
+
+ content.innerHTML=`
+ <div class="qi-head">
+  <div class="qi-ticker-row">
+   <span class="qi-ticker">${esc(ticker)}</span>
+   <button type="button" class="qi-copy" id="copyAssetNameBtn" data-copy-name="${esc(name)}" data-copy-ticker="${esc(ticker)}" title="Копировать тикер" aria-label="Копировать">⧉</button>
+  </div>
+  <div class="qi-name">${esc(name)}</div>
+ </div>
+ <div class="qi-grid">
+  <div><span>Стоимость</span><b id="quickInfoPrice">${price>0?fmtPrice(price):'—'}</b></div>
+  <div><span>Сигнал</span><b>${esc(sig)}</b></div>
+  <div><span>Тренд</span><b>${esc(dir)}</b></div>
+  <div><span>Риск</span><b>${esc(risk)}</b></div>
+  <div><span>Поддержка</span><b class="qi-support">${support>0?fmtPrice(support):'—'}</b></div>
+  <div><span>Сопротивление</span><b class="qi-resist">${resistance>0?fmtPrice(resistance):'—'}</b></div>
+ </div>
+ ${extra}`;
+
+ m.classList.add('open');
+ m.setAttribute('aria-hidden','false');
+ document.body.classList.add('modal-open');
+
+ if((context.search||!price)&&r.uid){
+  lastPrices([r.uid]).then(prices=>{
+   const el=$('quickInfoPrice');
+   if(el&&m.classList.contains('open')) el.textContent=prices[r.uid]?fmtPrice(prices[r.uid]):'—';
+  }).catch(()=>{});
+ }
+ // load support/resistance if missing
+ if(r.uid&&!(support>0&&resistance>0)&&S.token){
+  candles(r.uid,'CANDLE_INTERVAL_DAY',90).then(cs=>{
+   if(!m.classList.contains('open'))return;
+   const model2=forecastModel(cs,[],Number(r.price)||0,[],r.uid);
+   const s=Number(model2.support), res=Number(model2.resistance);
+   const sb=content.querySelector('.qi-support'), rb=content.querySelector('.qi-resist');
+   if(sb&&s>0)sb.textContent=fmtPrice(s);
+   if(rb&&res>0)rb.textContent=fmtPrice(res);
+  }).catch(()=>{});
+ }
 }
 document.querySelectorAll('[data-analysis-close]').forEach(b=>b.addEventListener('click',closeAnalysisModal));document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('analysisModal').classList.contains('open'))closeAnalysisModal()});
 
@@ -2972,12 +3168,13 @@ function tickerSiteUrl(ticker){
  return 'https://www.tinkoff.ru/invest/stocks/'+encodeURIComponent(t)+'/';
 }
 function persistWatchlist(){
- try{localStorage.setItem('mzbox-watchlist',JSON.stringify(S.watchRows.filter(w=>!w.temp).map(({uid,ticker,name,currency})=>({uid,ticker,name,currency}))))}catch{}
+ try{
+  S.watchRows=dedupeByUid((S.watchRows||[]).filter(w=>w&&w.uid&&!w.temp));
+  localStorage.setItem('mzbox-watchlist',JSON.stringify(S.watchRows.map(({uid,ticker,name,currency})=>({uid,ticker,name,currency}))));
+ }catch{}
 }
 function rebuildRows(){
- S.rows=[...S.portfolioRows,...S.watchRows.filter(w=>!S.portfolioRows.some(p=>p.uid===w.uid)),...S.rows.filter(r=>r.temp&&!S.portfolioRows.some(p=>p.uid===r.uid)&&!S.watchRows.some(w=>w.uid===r.uid))];
- // de-dupe by uid keeping first
- const seen=new Set();S.rows=S.rows.filter(r=>{if(seen.has(r.uid))return false;seen.add(r.uid);return true});
+ normalizeWatchAndRows();
 }
 async function openInstrumentFull(item){
  if(!item||!item.uid)return;
@@ -3074,14 +3271,14 @@ window.__mzboxAddMarketWatch=(item)=>{if(!item||!item.uid||S.portfolioRows.some(
 window.__mzboxStudyRow=async(uid)=>{const i=S.rows.findIndex(x=>x.uid===uid);if(i<0)return false;const el=document.querySelector(`details.asset[data-index="${i}"]`);if(el)el.open=true;await loadDetail(i);return Boolean(S.rows[i]?.model?.ok)};
 
 document.addEventListener('click',async e=>{
- const b=e.target.closest('#copyAssetNameBtn');if(!b)return;
+ const b=e.target.closest('#copyAssetNameBtn,.qi-copy');if(!b)return;
  e.preventDefault();
- const text=(b.dataset.copyName||b.dataset.copyTicker||'').trim();if(!text)return;
+ const val=(b.dataset.copyTicker||b.dataset.copyName||'').trim();if(!val)return;
  try{
-  if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);
-  else{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
-  b.textContent='Скопировано';setTimeout(()=>{b.textContent='Скопировать название';},1200);
- }catch{b.textContent='Не удалось';setTimeout(()=>{b.textContent='Скопировать название';},1200);}
+  if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(val);
+  else{const ta=document.createElement('textarea');ta.value=val;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
+  const prev=b.textContent;b.textContent='✓';setTimeout(()=>{b.textContent=prev||'⧉';},1000);
+ }catch{b.textContent='!';setTimeout(()=>{b.textContent='⧉';},1000);}
 });
 
 
