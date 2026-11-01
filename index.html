@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.14</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.18</title>
 
 
 
@@ -1695,6 +1695,281 @@ main.app-main > .footer,
   font-weight:700;letter-spacing:.3px;color:#ccc!important;
 }
 
+
+/* === V22.10.15 plaques + footer === */
+.mz-plaque{
+  display:block!important;
+  width:100%!important;
+  grid-column:1 / -1!important;
+  margin:10px 0!important;
+  background:#1a1a1a!important;
+  border:1px solid #333!important;
+  border-radius:16px!important;
+  overflow:hidden;
+  color:#f0f0ec!important;
+}
+.mz-plaque > summary.mz-plaque-head{
+  list-style:none;
+  cursor:pointer;
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px!important;
+  min-height:52px;
+  user-select:none;
+}
+.mz-plaque > summary::-webkit-details-marker{display:none}
+.mz-plaque-title{font-size:14px;font-weight:750;letter-spacing:-.2px;color:#fff!important}
+.mz-plaque-value{font-size:13px;font-weight:650;font-variant-numeric:tabular-nums;color:#ccc!important}
+.mz-plaque-body{padding:0 14px 14px;border-top:1px solid #2a2a2a}
+
+/* Tension plaque glow follows instrument color */
+#tensionPlaque{
+  border-color:color-mix(in srgb, hsl(var(--tension-hue,60),68%,43%) 55%, #333)!important;
+  box-shadow:0 0 0 1px color-mix(in srgb, hsl(var(--tension-hue,60),68%,43%) 25%, transparent),
+             0 0 24px color-mix(in srgb, hsl(var(--tension-hue,60),68%,43%) 18%, transparent);
+}
+#tensionPlaque .mz-plaque-value{color:hsl(var(--tension-hue,60),70%,62%)!important}
+
+.tension-wrap{padding-top:10px}
+.tension-instrument{
+  position:relative;
+  width:min(174px,42vw);
+  height:min(420px,58vh);
+  margin:0 auto;
+}
+.tension-frame{
+  position:absolute;inset:0;
+  border:1px solid #50564b;border-radius:9px;
+  background:#191c18;overflow:hidden;
+}
+.tension-frame::before{
+  content:"";position:absolute;inset:0;
+  border:3px solid rgba(255,255,255,.025);border-radius:8px;z-index:4;pointer-events:none;
+}
+.tension-fill{
+  position:absolute;left:0;bottom:0;width:100%;
+  height:50%;
+  background:hsl(var(--tension-hue,60),68%,43%);
+  transition:height 90ms linear,background-color 250ms linear;
+}
+.tension-fill::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;background:rgba(255,255,255,.65);
+}
+.tension-lines,.tension-numbers{position:absolute;inset:0;z-index:3;pointer-events:none}
+.tension-line{position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,.13)}
+.tension-line.major{background:rgba(255,255,255,.38)}
+.tension-line.medium{right:55%;background:rgba(255,255,255,.24)}
+.tension-num{
+  position:absolute;left:10px;transform:translateY(-50%);
+  font-size:9px;font-weight:500;letter-spacing:.4px;color:rgba(255,255,255,.65);
+  font-variant-numeric:tabular-nums;
+}
+.tension-reading{
+  position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex;align-items:flex-start;justify-content:center;white-space:nowrap;pointer-events:none;
+  font-variant-numeric:tabular-nums;
+}
+.tension-int{font-size:42px;font-weight:300;letter-spacing:-2px;line-height:1;color:#fff}
+.tension-dec,.tension-pct{margin-left:1px;margin-top:6px;font-size:12px;color:rgba(255,255,255,.88)}
+.tension-status{
+  position:absolute;z-index:6;left:50%;top:calc(50% + 36px);transform:translateX(-50%);
+  font-size:8px;font-weight:650;letter-spacing:1.4px;color:#fff;opacity:0;pointer-events:none;
+}
+.tension-status.on{opacity:.95}
+.tension-touch{position:absolute;left:0;width:100%;z-index:10}
+.tension-touch.top{top:0;height:50%}
+.tension-touch.bottom{bottom:0;height:50%}
+.tension-hint{font-size:11px;color:#888!important;text-align:center;margin:12px 4px 0;line-height:1.45}
+
+/* Sandbox text */
+.sandbox-text{
+  padding-top:12px;
+  font-size:13px;line-height:1.65;color:#e8e8e4!important;
+  white-space:pre-wrap;
+}
+.sandbox-text p{margin:0 0 12px}
+.sandbox-text strong{color:#fff!important;font-weight:700}
+
+/* Footer almost at bottom edge */
+main.app-main > .footer,
+.footer{
+  margin-top:auto!important;
+  padding-top:24px!important;
+  padding-bottom:max(10px, env(safe-area-inset-bottom))!important;
+  transform:none!important;
+  font-size:10px!important;
+  color:#777!important;
+}
+
+
+#sandboxPlaque.mz-plaque,
+#tensionPlaque.mz-plaque{
+  width:100%!important;
+  max-width:100%!important;
+  grid-column:1 / -1!important;
+  display:block!important;
+}
+.mz-plaque > summary.mz-plaque-head{
+  list-style:none!important;
+}
+.mz-plaque > summary.mz-plaque-head::-webkit-details-marker,
+.mz-plaque > summary.mz-plaque-head::marker{
+  display:none!important;
+  content:''!important;
+}
+.tension-hint{display:none!important}
+.sandbox-text{
+  padding-top:10px;
+  font-size:13px;
+  line-height:1.6;
+  color:#e8e8e4!important;
+  white-space:pre-wrap;
+}
+
+
+/* === V22.10.17 compact plaques === */
+.mz-plaque{
+  margin:8px 0!important;
+  border-radius:14px!important;
+  background:#1a1a1a!important;
+  border:1px solid #333!important;
+  overflow:hidden;
+}
+.mz-plaque > summary.mz-plaque-head{
+  list-style:none!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  padding:11px 14px!important;
+  min-height:0!important;
+  height:auto!important;
+  cursor:pointer;
+  user-select:none;
+}
+.mz-plaque > summary.mz-plaque-head::-webkit-details-marker,
+.mz-plaque > summary.mz-plaque-head::marker{
+  display:none!important;
+  content:none!important;
+}
+.mz-plaque-title{
+  font-size:13px!important;
+  font-weight:700!important;
+  color:#fff!important;
+  letter-spacing:-.15px;
+}
+/* sandbox: no right-side numbers/arrows on the closed bar */
+#sandboxPlaque .mz-plaque-value,
+#sandboxHint{
+  display:none!important;
+}
+#sandboxPlaque:not([open]) .mz-plaque-body{display:none}
+#sandboxPlaque .mz-plaque-body{
+  padding:8px 14px 12px!important;
+  border-top:1px solid #2a2a2a;
+}
+.sandbox-text{
+  padding:0!important;
+  font-size:12.5px!important;
+  line-height:1.55!important;
+  color:#e6e6e2!important;
+}
+
+/* tension closed bar same height; live color fill on background */
+#tensionPlaque{
+  position:relative;
+  border-color:#333!important;
+  box-shadow:none!important;
+  background:#1a1a1a!important;
+}
+#tensionPlaque::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:hsl(var(--tension-hue,60),68%,43%);
+  opacity:0.22;
+  pointer-events:none;
+  z-index:0;
+  transition:background-color 120ms linear,opacity 120ms linear;
+}
+#tensionPlaque > summary,
+#tensionPlaque > .mz-plaque-body{
+  position:relative;
+  z-index:1;
+}
+#tensionPlaque .mz-plaque-value{
+  display:inline!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  font-variant-numeric:tabular-nums;
+  color:#fff!important;
+  opacity:.95;
+}
+#tensionPlaque .mz-plaque-body{
+  padding:8px 10px 12px!important;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.tension-instrument{
+  height:min(360px,52vh)!important;
+}
+
+
+/* === V22.10.18 tension always-on + compact + pre-token hide === */
+body.pre-token #tensionPlaque,
+body.pre-token #sandboxPlaque{
+  display:none!important;
+}
+#tensionPlaque,
+#sandboxPlaque{
+  display:block!important;
+}
+
+.mz-plaque > summary.mz-plaque-head{
+  padding:9px 14px!important;
+  min-height:40px!important;
+}
+.mz-plaque-title{font-size:13px!important}
+
+/* Tension: restored colored outline + soft glow */
+#tensionPlaque{
+  position:relative;
+  background:#1a1a1a!important;
+  border:1px solid color-mix(in srgb, hsl(var(--tension-hue,60),68%,43%) 65%, #333)!important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, hsl(var(--tension-hue,60),68%,43%) 28%, transparent),
+    0 0 22px color-mix(in srgb, hsl(var(--tension-hue,60),68%,43%) 20%, transparent)!important;
+  transition:border-color 120ms linear, box-shadow 120ms linear;
+}
+#tensionPlaque::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:hsl(var(--tension-hue,60),68%,43%);
+  opacity:0.14;
+  pointer-events:none;
+  z-index:0;
+  transition:background-color 120ms linear, opacity 120ms linear;
+}
+#tensionPlaque > summary,
+#tensionPlaque > .mz-plaque-body{position:relative;z-index:1}
+#tensionPlaque .mz-plaque-value{
+  display:inline!important;
+  color:hsl(var(--tension-hue,60),75%,68%)!important;
+  font-variant-numeric:tabular-nums;
+  font-weight:700!important;
+  font-size:12px!important;
+}
+#sandboxPlaque{
+  border:1px solid #333!important;
+  box-shadow:none!important;
+}
+#sandboxPlaque .mz-plaque-value,
+#sandboxHint{display:none!important}
+
 </style>
 
 </head>
@@ -1725,6 +2000,32 @@ main.app-main > .footer,
   <div class="pf-right"><strong id="pnl">—</strong><small id="returnPct">—</small></div>
   <span id="marketValue" class="hidden"></span>
 </section>
+
+<details class="card mz-plaque" id="tensionPlaque">
+  <summary class="mz-plaque-head" id="tensionSummary">
+    <span class="mz-plaque-title">Напряженность</span>
+    <span class="mz-plaque-value" id="tensionValueLabel">50.00%</span>
+  </summary>
+  <div class="mz-plaque-body" id="tensionBody">
+    <div class="tension-wrap">
+      <div class="tension-instrument">
+        <div class="tension-frame">
+          <div class="tension-fill" id="tensionFill"></div>
+          <div class="tension-lines" id="tensionLines"></div>
+          <div class="tension-numbers" id="tensionNumbers"></div>
+          <div class="tension-reading">
+            <span class="tension-int" id="tensionInt">50</span>
+            <span class="tension-dec" id="tensionDec">.00</span>
+            <span class="tension-pct">%</span>
+          </div>
+          <div class="tension-status" id="tensionStatus"></div>
+        </div>
+        <div class="tension-touch top" id="tensionUp"></div>
+        <div class="tension-touch bottom" id="tensionDown"></div>
+      </div>
+    </div>
+  </div>
+</details>
 
 
 <!-- Access is provided by the registered T-Invest token; no startup PIN. -->
@@ -1758,9 +2059,19 @@ main.app-main > .footer,
   </div>
 </section>
 
+<details class="card mz-plaque" id="sandboxPlaque">
+  <summary class="mz-plaque-head">
+    <span class="mz-plaque-title">Интеллектуальная песочница</span>
+    <span class="mz-plaque-value" id="sandboxHint"></span>
+  </summary>
+  <div class="mz-plaque-body" id="sandboxBody">
+    <div class="sandbox-text" id="sandboxText">Загрузите портфель — здесь появится краткая сводка по купленным позициям.</div>
+  </div>
+</details>
 
 
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.14 · 30.10.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.18 · 01.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -3283,6 +3594,179 @@ document.addEventListener('click',async e=>{
 
 
 
+
+
+/* ---- Напряженность instrument ---- */
+(function initTension(){
+  const STORAGE_KEY='mzbox_tension_v1';
+  const plaque=$('tensionPlaque');
+  if(!plaque)return;
+  let target=50;
+  try{const s=localStorage.getItem(STORAGE_KEY);if(s!=null&&Number.isFinite(Number(s)))target=Math.max(0,Math.min(100,Number(s)));}catch{}
+  let current=target, offset=0, velocity=0, activity=0, lastIncrease=0, lastTime=performance.now();
+  let raf=0, running=false;
+
+  const lines=$('tensionLines'), numbers=$('tensionNumbers');
+  if(lines&&!lines.childElementCount){
+    for(let i=0;i<=100;i+=2){
+      const line=document.createElement('div');
+      line.className='tension-line '+(i%10===0?'major':i%5===0?'medium':'');
+      line.style.top=(100-i)+'%';
+      lines.appendChild(line);
+    }
+  }
+  if(numbers&&!numbers.childElementCount){
+    for(let i=0;i<=100;i+=10){
+      const n=document.createElement('div');
+      n.className='tension-num';
+      n.textContent=String(i);
+      n.style.top=(100-i)+'%';
+      numbers.appendChild(n);
+    }
+  }
+
+  function hue(v){return 120-Math.max(0,Math.min(100,v))*1.2}
+  function applyGlow(v){
+    const h=hue(v);
+    document.documentElement.style.setProperty('--tension-hue', String(h));
+    const lab=$('tensionValueLabel');
+    if(lab)lab.textContent=v.toFixed(2)+'%';
+    // live background wash on the plaque itself
+    const pl=$('tensionPlaque');
+    if(pl) pl.style.setProperty('--tension-hue', String(h));
+  }
+  function render(){
+    const parts=current.toFixed(2).split('.');
+    const ii=$('tensionInt'), dd=$('tensionDec'), fill=$('tensionFill'), st=$('tensionStatus');
+    if(ii)ii.textContent=parts[0];
+    if(dd)dd.textContent='.'+parts[1];
+    if(fill){
+      fill.style.height=current+'%';
+      fill.style.backgroundColor=`hsl(${hue(current)},68%,43%)`;
+    }
+    applyGlow(current);
+    if(st){
+      if(target===0){st.textContent='МИНИМАЛЬНО';st.classList.add('on');}
+      else if(target===100){st.textContent='МАКСИМАЛЬНО';st.classList.add('on');}
+      else st.classList.remove('on');
+    }
+  }
+  function change(dir){
+    const now=performance.now(), prev=target;
+    target=Math.max(0,Math.min(100,target+dir));
+    if(target===prev)return;
+    if(dir>0){
+      const speed=lastIncrease?Math.max(0,1-(now-lastIncrease)/1200):0;
+      activity+=0.8+speed*3.2; lastIncrease=now;
+    }else{activity*=0.8;lastIncrease=0;}
+    activity=Math.min(activity,18);
+    try{localStorage.setItem(STORAGE_KEY,String(target));}catch{}
+    try{if(navigator.vibrate)navigator.vibrate(5);}catch{}
+  }
+  function randomEvent(){
+    const intensity=Math.max(0.35,activity);
+    const chance=Math.random();
+    if(chance<0.15)return;
+    const impulse=(Math.random()-0.5)*(chance<0.72?(2.5+intensity*0.35):(5+intensity*0.75));
+    offset=Math.max(-15,Math.min(15,offset+impulse));
+  }
+  let eventTimer=0;
+  function scheduleEvent(){
+    clearTimeout(eventTimer);
+    if(!running)return;
+    const delay=Math.max(350,650+Math.random()*2600-Math.min(activity,12)*90);
+    eventTimer=setTimeout(()=>{randomEvent();scheduleEvent();},delay);
+  }
+  function animate(now){
+    if(!running){raf=0;return;}
+    const dt=Math.min((now-lastTime)/1000,0.05); lastTime=now;
+    const desired=target+offset, difference=desired-current;
+    velocity+=difference*19*dt;
+    velocity*=Math.pow(0.84,dt*60);
+    current+=velocity*dt;
+    offset*=Math.pow(0.985,dt*60);
+    activity*=Math.pow(0.997,dt*60);
+    current=Math.max(0,Math.min(100,current));
+    if(Math.abs(difference)<0.005&&Math.abs(velocity)<0.005&&Math.abs(offset)<0.005){
+      current=target;velocity=0;offset=0;
+    }
+    render();
+    raf=requestAnimationFrame(animate);
+  }
+  function start(){
+    if(running)return;
+    running=true; lastTime=performance.now();
+    scheduleEvent();
+    raf=requestAnimationFrame(animate);
+  }
+  function stop(){
+    running=false;
+    clearTimeout(eventTimer);
+    if(raf)cancelAnimationFrame(raf);
+    raf=0;
+    // snap label to saved target when closed
+    current=target; offset=0; velocity=0;
+    render();
+  }
+  $('tensionUp')?.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();change(1);});
+  $('tensionDown')?.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();change(-1);});
+  // Always run in background so closed plaque shows live % and color
+  plaque.addEventListener('toggle',()=>{
+    // instrument DOM only visible when open; engine keeps running either way
+  });
+  start();
+  render();
+})();
+
+/* ---- Интеллектуальная песочница ---- */
+async function buildSandboxEssay(){
+  const box=$('sandboxText'); if(!box)return;
+  const held=(S.portfolioRows||[]).filter(r=>r&&r.uid&&Number(r.qty)>0);
+  if(!held.length){
+    box.textContent='Нет купленных позиций — песочница смотрит только на то, что реально в портфеле.';
+    return;
+  }
+  box.textContent='Считаю…';
+  const lines=[];
+  let buy=0,hold=0,sell=0,sumValue=0,sumPnl=0;
+  for(const r of held){
+    sumValue+=Number(r.value)||(Number(r.price)||0)*(Number(r.qty)||0);
+    sumPnl+=Number(r.pnl)||0;
+    let model=r.model;
+    try{
+      if(!model||!model.ok){
+        const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',120);
+        model=forecastModel(daily,[],Number(r.price)||0,[],r.uid);
+        r.model=model;
+      }
+    }catch{}
+    const sig=signalFromModel(model);
+    r.signalKey=sig.key; r.signalName=sig.name;
+    if(sig.key==='buy')buy++; else if(sig.key==='sell')sell++; else hold++;
+    const price=Number(r.price)||0;
+    const qty=Number(r.qty)||0;
+    const support=model&&Number(model.support)>0?Number(model.support):0;
+    const resistance=model&&Number(model.resistance)>0?Number(model.resistance):0;
+    const ticker=String(r.ticker||'').toUpperCase();
+    let bit=ticker+': '+sig.name;
+    if(price>0) bit+=', '+price.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽ × '+qty;
+    if(sig.key==='buy'&&support>0) bit+=' — ближе к поддержке '+support.toLocaleString('ru-RU',{maximumFractionDigits:2});
+    else if(sig.key==='sell'&&resistance>0) bit+=' — у сопротивления '+resistance.toLocaleString('ru-RU',{maximumFractionDigits:2});
+    else if(support>0&&resistance>0) bit+=' — диапазон '+support.toLocaleString('ru-RU',{maximumFractionDigits:2})+'…'+resistance.toLocaleString('ru-RU',{maximumFractionDigits:2});
+    lines.push(bit);
+  }
+  let stance='держать и ждать более ясного края';
+  if(sell>buy&&sell>=hold) stance='осторожнее наращивать риск, слабые звенья скорее сокращать';
+  else if(buy>sell) stance='смещение к удержанию и точечному набору, где сигнал совпадает с вашей идеей';
+  const textOut='Портфель: '+held.length+' позици'+(held.length===1?'я':held.length<5?'и':'й')+', ≈ '+Math.round(sumValue).toLocaleString('ru-RU')+' ₽, результат '+(sumPnl>=0?'+':'')+Math.round(sumPnl).toLocaleString('ru-RU')+' ₽. Сигналы: ↑'+buy+' · →'+hold+' · ↓'+sell+' — '+stance+'. '+lines.join('. ')+'.';
+  box.textContent=textOut;
+  const hint=$('sandboxHint');
+  if(hint)hint.textContent='↑'+buy+' · →'+hold+' · ↓'+sell;
+}
+
+$('sandboxPlaque')?.addEventListener('toggle',()=>{
+  if($('sandboxPlaque').open) buildSandboxEssay();
+});
 
 (function(){
   const ov=$('aboutOverlay');
