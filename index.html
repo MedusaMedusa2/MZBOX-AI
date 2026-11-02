@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.19</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.21</title>
 
 
 
@@ -2090,6 +2090,29 @@ body.dark .sandbox-item{
 .sandbox-sig-sell{color:#c45b5b!important}
 .sandbox-sig-hold{color:#b8963a!important}
 
+
+.tools-bar{
+  display:grid!important;
+  grid-template-columns:1fr 1fr 1fr!important;
+  gap:8px!important;
+}
+.tools-open-btn{width:100%!important;min-height:42px!important;text-align:center!important}
+#panelSandbox{padding:12px!important}
+body:not(.dark) #panelSandbox,body:not(.dark) #panelSandbox .sandbox-lead,body:not(.dark) #panelSandbox .sandbox-item{color:#171717!important}
+body.dark #panelSandbox,body.dark #panelSandbox .sandbox-lead,body.dark #panelSandbox .sandbox-item{color:#ecece8!important}
+.trade-calc .calc-simple{grid-template-columns:1fr 1fr!important}
+.trade-calc .calc-output-simple{grid-template-columns:1fr!important;margin-top:10px}
+.trade-calc .calc-output-simple b{font-size:18px!important}
+
+
+main.app-main > .footer,
+.footer{
+  margin-top:auto!important;
+  padding-top:48px!important;
+  padding-bottom:max(6px, env(safe-area-inset-bottom))!important;
+  transform:none!important;
+}
+
 </style>
 
 </head>
@@ -2099,9 +2122,9 @@ body.dark .sandbox-item{
     <div class="about-logo-row"><span class="about-mark" aria-hidden="true"></span><div class="about-logo-name">MZBOX <em>AI</em></div></div>
     <h2 class="about-title">Тише, чем рынок</h2>
     <div class="about-divider"></div>
-    <p class="about-text">Здесь нет спешки и чужих советов. Только ваш портфель, ясные цифры и спокойное пространство, в котором можно подумать.</p>
-    <p class="about-text">MZBOX AI не подталкивает к сделке. Он собирает картину так, чтобы решение оставалось вашим — взвешенным, а не навязанным шумом.</p>
-    <p class="about-text">Хороший взгляд на деньги начинается с паузы. Этот экран для неё и создан.</p>
+    <p class="about-text">Между шумом котировок и решением есть пауза. Здесь она не пустая: портфель, цифры и ясная картина — без чужих советов и без спешки.</p>
+    <p class="about-text">MZBOX AI не ведёт за руку к сделке. Он собирает смысл так, чтобы выбор оставался вашим — спокойным и своим.</p>
+    <p class="about-text">Скоро этот проект переедет в <strong>INJECTUM</strong> — туда же, где мысль становится инструментом, а инструмент не кричит громче, чем нужно.</p>
     <p class="about-foot">нажмите на фон, чтобы закрыть</p>
   </div>
 </div>
@@ -2154,6 +2177,7 @@ body.dark .sandbox-item{
 
 <section class="card tools-workspace" id="toolsWorkspace">
   <div class="tools-bar">
+    <button type="button" class="tools-open-btn" id="openSandbox" aria-expanded="false">Песочница</button>
     <button type="button" class="tools-open-btn" id="openMarket" aria-expanded="false">Анализ</button>
     <button type="button" class="tools-open-btn" id="openSearch" aria-expanded="false">Поиск</button>
   </div>
@@ -2169,6 +2193,9 @@ body.dark .sandbox-item{
     </div>
     <div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div>
   </div>
+  <div class="tools-panel hidden" id="panelSandbox">
+    <div class="sandbox-text" id="sandboxText">Краткая сводка по портфелю появится здесь.</div>
+  </div>
   <div class="tools-panel hidden" id="panelSearch">
     <form class="search-row" id="stockSearchForm">
       <input id="stockSearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="Тикер или название" aria-label="Тикер или название">
@@ -2178,20 +2205,7 @@ body.dark .sandbox-item{
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-
-<details class="card mz-plaque" id="sandboxPlaque">
-  <summary class="mz-plaque-head">
-    <span class="mz-plaque-title">Интеллектуальная песочница</span>
-    <span class="mz-plaque-value" id="sandboxHint"></span>
-  </summary>
-  <div class="mz-plaque-body" id="sandboxBody">
-    <div class="sandbox-text" id="sandboxText">Загрузите портфель — здесь появится краткая сводка по купленным позициям.</div>
-  </div>
-</details>
-
-
-
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.19 · 01.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.21 · 02.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2868,16 +2882,12 @@ function renderRows(rows){
 <div class="chart-wrap"><canvas class="chart" id="chart-${i}" width="600" height="240" data-instrument-uid="${esc(r.uid)}"></canvas></div>
 <button type="button" class="calc-reveal" data-calc-toggle="${i}">Калькулятор сделки</button>
 <div class="trade-calc hidden" id="tradeCalc-${i}">
-<h3>Калькулятор сделки</h3>
-<div class="income-grid">
+<div class="income-grid calc-simple">
 <div class="field"><label>Цена входа, ₽</label><input id="calcEntry-${i}" type="number" min="0" step="0.01" value="" data-calc-entry="${i}" placeholder="Текущая"></div>
-<div class="field"><label>Сумма вложения, ₽</label><input id="calcMoney-${i}" type="number" min="0" step="100" value="1000" data-calc-money="${i}"></div>
+<div class="field"><label>Цена выхода, ₽</label><input id="calcExit-${i}" type="number" min="0" step="0.01" value="" data-calc-exit="${i}" placeholder="Цель"></div>
 <div class="field"><label>Количество акций</label><input id="calcQty-${i}" type="number" min="0" step="1" value="1" data-calc-qty="${i}"></div>
-<div class="field"><label>Горизонт</label><div class="calc-horizons" data-calc-horizons="${i}"><button type="button" class="active" data-calc-h="1" data-i="${i}">1д</button><button type="button" data-calc-h="7" data-i="${i}">7д</button><button type="button" data-calc-h="30" data-i="${i}">30д</button></div></div>
 </div>
-<div class="calc-output"><div><span>Стоимость входа</span><b id="calcCost-${i}">—</b></div><div><span>Ожидаемый результат</span><b id="calcProfit-${i}">—</b></div><div><span>Стоимость к горизонту</span><b id="calcValue7-${i}">—</b></div><div><span>Изменение, %</span><b id="calcProfit30-${i}">—</b></div></div>
-<div class="calc-note" id="calcHorizon-${i}">Укажите цену входа и горизонт.</div>
-<div class="best-levels"><div><span>Предполагаемая покупка</span><b id="bestBuy-${i}">—</b><small class="level-time" id="bestBuyTime-${i}"></small></div><div><span>Предполагаемая продажа</span><b id="bestSell-${i}">—</b><small class="level-time" id="bestSellTime-${i}"></small></div></div>
+<div class="calc-output calc-output-simple"><div><span>Ожидаемый доход</span><b id="calcProfit-${i}">—</b></div></div>
 </div>
 <div class="path-wrap hidden"><div class="path-title">Сценарий</div><div class="path-list" id="path-${i}"></div></div>
 <div class="analysis"><div id="analysis-${i}"><div class="analysis-block"><p>Загрузка…</p></div></div></div>
@@ -2931,31 +2941,39 @@ async function addWatch(uid){
 }
 
 function showToolsPanel(which){
-  const market=$('panelMarket'), search=$('panelSearch');
+  const market=$('panelMarket'), search=$('panelSearch'), sandbox=$('panelSandbox');
   if(!market||!search)return;
   const openMarket=which==='market';
   const openSearch=which==='search';
+  const openSandbox=which==='sandbox';
   market.classList.toggle('hidden', !openMarket);
   search.classList.toggle('hidden', !openSearch);
+  if(sandbox) sandbox.classList.toggle('hidden', !openSandbox);
   $('openMarket')?.setAttribute('aria-expanded', String(openMarket));
   $('openSearch')?.setAttribute('aria-expanded', String(openSearch));
+  $('openSandbox')?.setAttribute('aria-expanded', String(openSandbox));
   $('openMarket')?.classList.toggle('active', openMarket);
   $('openSearch')?.classList.toggle('active', openSearch);
-  if(openMarket || openSearch){
-    const pane=openMarket?market:search;
-    pane.classList.remove('tools-in');
-    void pane.offsetWidth;
-    pane.classList.add('tools-in');
+  $('openSandbox')?.classList.toggle('active', openSandbox);
+  if(openMarket || openSearch || openSandbox){
+    const pane=openMarket?market:openSearch?search:sandbox;
+    if(pane){ pane.classList.remove('tools-in'); void pane.offsetWidth; pane.classList.add('tools-in'); }
   }
   if(openSearch) setTimeout(()=>$('stockSearchInput')?.focus(), 50);
   if(openMarket && typeof marketCache!=='undefined' && marketCache.length && typeof renderMarketResults==='function') renderMarketResults();
+  if(openSandbox && typeof buildSandboxEssay==='function') buildSandboxEssay();
 }
+
 function hideToolsPanels(){showToolsPanel(null)}
 function toggleSearchPanel(open){if(open)showToolsPanel('search'); else hideToolsPanels()}
 function setMarketPanel(open){if(open)showToolsPanel('market'); else hideToolsPanels()}
 $('openMarket')?.addEventListener('click',()=>{
   const open=$('openMarket').getAttribute('aria-expanded')==='true';
   showToolsPanel(open?null:'market');
+});
+$('openSandbox')?.addEventListener('click',()=>{
+  const open=$('openSandbox').getAttribute('aria-expanded')==='true';
+  showToolsPanel(open?null:'sandbox');
 });
 $('openSearch')?.addEventListener('click',()=>{
   const open=$('openSearch').getAttribute('aria-expanded')==='true';
@@ -3003,83 +3021,28 @@ function calcTrade(i){
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-calc-toggle]');if(!b)return;e.preventDefault();e.stopPropagation();const panel=$('tradeCalc-'+b.dataset.calcToggle);if(!panel)return;const open=panel.classList.toggle('hidden')===false;b.setAttribute('aria-expanded',String(open));b.textContent=open?'Скрыть калькулятор сделки':'Калькулятор сделки'});
 function updateTradeCalculator(i){
- const r=S.rows[i],m=r&&r.model;if(!r||!m||!m.ok)return;
- const moneyEl=$('calcMoney-'+i),qtyEl=$('calcQty-'+i),entryEl=$('calcEntry-'+i);if(!moneyEl||!qtyEl)return;
- const market=Number(r.price)||0;if(!(market>0))return;
- let entry=Number(entryEl&&entryEl.value);if(!(entry>0))entry=market;
- if(entryEl&&document.activeElement!==entryEl&&!(Number(entryEl.value)>0))entryEl.placeholder=String(market);
- let qty=Math.max(0,Math.floor(Number(qtyEl.value)||0));
- let money=Math.max(0,Number(moneyEl.value)||0);
- if(document.activeElement===qtyEl){money=qty*entry;moneyEl.value=money?money.toFixed(2):'0'}
- else{qty=Math.floor(money/entry);if(qtyEl&&document.activeElement!==qtyEl)qtyEl.value=String(qty||0)}
- const horizon=Number((r.calcHorizon!=null)?r.calcHorizon:1)||1;
- let target=market;
- if(horizon<=1){
-  const path=Array.isArray(m.intraday)?m.intraday:[];
-  target=path.length?Number(path[path.length-1].price)||market:market;
- }else if(horizon<=7&&m.p7){target=Number(m.p7.mid)||market;}
- else if(horizon<=10&&m.p10){target=Number(m.p10.mid)||market;}
- else if(m.p30){target=Number(m.p30.mid)||market;}
- else if(Array.isArray(m.points)&&m.points.length){
-  const pt=m.points[Math.min(horizon,m.points.length-1)];
-  target=Number(pt&&pt.mid)||market;
+ const r=S.rows[i]; if(!r)return;
+ const entryEl=$('calcEntry-'+i), exitEl=$('calcExit-'+i), qtyEl=$('calcQty-'+i), profitEl=$('calcProfit-'+i);
+ if(!qtyEl||!profitEl)return;
+ const market=Number(r.price)||0;
+ let entry=Number(entryEl&&entryEl.value); if(!(entry>0)) entry=market;
+ let exit=Number(exitEl&&exitEl.value);
+ if(!(exit>0)){
+  const m=r.model;
+  if(m&&m.ok){
+   const pt=(m.p7&&m.p7.mid)||(Array.isArray(m.points)&&m.points[6]&&m.points[6].mid);
+   exit=Number(pt)||market;
+  } else exit=market;
  }
- // Scale scenario from entry vs model anchor so a custom entry stays consistent
- const anchor=Number(m.price)||market;
- const scale=anchor>0?(target/anchor):1;
- const exit=entry*scale;
- const cost=qty*entry,endVal=qty*exit,profit=endVal-cost,ret=cost>0?(endVal/cost-1):0;
- const set=(id,v)=>{const e=$(id+'-'+i);if(e)e.textContent=v};
- set('calcCost',fmt(cost));
- set('calcProfit',(profit>0?'+':'')+fmt(profit));
- set('calcValue7',fmt(endVal));
- set('calcProfit30',(ret>0?'+':'')+pct(ret));
- const low=m.points&&m.points[Math.min(horizon, (m.points||[]).length-1)]?m.points[Math.min(horizon,m.points.length-1)].low:null;
- const high=m.points&&m.points[Math.min(horizon, (m.points||[]).length-1)]?m.points[Math.min(horizon,m.points.length-1)].high:null;
- const band=(low&&high&&anchor)?` Диапазон сценария: ${fmtPrice(entry*(low/anchor))} – ${fmtPrice(entry*(high/anchor))}.`:'';
- set('calcHorizon',`Вход ${fmtPrice(entry)} · горизонт ${horizon}д · без комиссий и налогов.${band}`);
- set('bestBuy',fmtPrice(Number(r.buyTarget)||entry));
- set('bestSell',fmtPrice(Number(r.sellTarget)||exit));
- const eta=(targetPx,side)=>{const pts=Array.isArray(m.intraday)?m.intraday:[];const p=pts.find(x=>side==='buy'?Number(x.price)<=targetPx:Number(x.price)>=targetPx);if(!p)return '';const dt=Math.max(0,Number(p.time)-Date.now());if(dt<3600000)return 'Ориентир: в течение часа';if(dt<86400000)return 'Ориентир: около '+Math.round(dt/3600000)+' ч';return 'Ориентир: около '+Math.round(dt/86400000)+' дн.'};
- set('bestBuyTime',eta(Number(r.buyTarget)||entry,'buy'));
- set('bestSellTime',eta(Number(r.sellTarget)||exit,'sell'));
+ if(entryEl&&document.activeElement!==entryEl&&!(Number(entryEl.value)>0)) entryEl.placeholder=market?String(Math.round(market*100)/100):'';
+ if(exitEl&&document.activeElement!==exitEl&&!(Number(exitEl.value)>0)) exitEl.placeholder=exit?String(Math.round(exit*100)/100):'';
+ const qty=Math.max(0, Math.floor(Number(qtyEl.value)||0));
+ const profit=(exit-entry)*qty;
+ profitEl.textContent=qty>0&&entry>0?((profit>0?'+':'')+fmt(profit)):'—';
+ profitEl.classList.toggle('positive', profit>0);
+ profitEl.classList.toggle('negative', profit<0);
 }
-document.addEventListener('input',e=>{
- const money=e.target.closest('[data-calc-money]'),qty=e.target.closest('[data-calc-qty]'),entry=e.target.closest('[data-calc-entry]');
- if(money)updateTradeCalculator(Number(money.dataset.calcMoney));
- if(qty)updateTradeCalculator(Number(qty.dataset.calcQty));
- if(entry)updateTradeCalculator(Number(entry.dataset.calcEntry));
-});
-document.addEventListener('click',e=>{
- const h=e.target.closest('[data-calc-h]');if(!h)return;
- e.preventDefault();e.stopPropagation();
- const i=Number(h.dataset.i);if(!S.rows[i])return;
- S.rows[i].calcHorizon=Number(h.dataset.calcH)||1;
- const wrap=h.closest('[data-calc-horizons]');
- wrap&&wrap.querySelectorAll('[data-calc-h]').forEach(b=>b.classList.toggle('active',b===h));
- updateTradeCalculator(i);
-});
-async function loadDetail(i){
- const r=S.rows[i];if(!r)return;
- if(r.detailLoaded){requestAnimationFrame(()=>requestAnimationFrame(()=>paintChart(i)));return}
- if(r.detailLoading){
-  // wait briefly for warmSignals / parallel load then paint
-  for(let n=0;n<40;n++){await new Promise(res=>setTimeout(res,50));if(!r.detailLoading)break}
-  if(r.detailLoaded){requestAnimationFrame(()=>requestAnimationFrame(()=>paintChart(i)));return}
- }
- r.detailLoading=true;
- try{
-  const [daily,hourly,shortCandles]=await Promise.all([candles(r.uid,'CANDLE_INTERVAL_DAY',400),candles(r.uid,'CANDLE_INTERVAL_HOUR',60).catch(()=>[]),candles(r.uid,'CANDLE_INTERVAL_5_MIN',100).catch(()=>[])]);
-  const cs=daily.length?daily:hourly;r.candles=cs;r.daily=daily;r.hourly=hourly;r.shortCandles=shortCandles;r.chartCandles=(hourly.length?hourly:daily).slice(-(hourly.length?18:24));r.detailLoaded=true;r.detailLoading=false;
-  $('time-'+i).textContent='';
-  const model=forecastModel(daily,hourly,r.price,shortCandles,r.uid);
-  if(!model.ok){$('analysis-'+i).innerHTML=`<div class="analysis-block"><h3>Данных пока недостаточно</h3><p>${esc(model.reason)}</p></div>`;requestAnimationFrame(()=>requestAnimationFrame(()=>paintChart(i)));return}
-  r.model=model;r.modelUid=r.uid;calcTrade(i);const sig=signalFromModel(model);r.signalKey=sig.key;r.signalName=sig.name;const signalEl=$('signal-'+i);if(signalEl){signalEl.textContent=sig.name;signalEl.className='pill '+sig.key;}applyHelpSignal(i,sig.key);try{updateWelcomeRecs()}catch{}
-  const direction=model.drift>0?'Рост':model.drift<0?'Снижение':'Без направления';const info=$('analysis-'+i);if(info){info.innerHTML='';info.parentElement.classList.add('hidden')}
-  renderPath(i,model);updateTradeCalculator(i);requestAnimationFrame(()=>requestAnimationFrame(()=>{const lock=$('locked-'+i);if(lock)lock.classList.add('unlocked');paintChart(i);}));
- }catch(e){r.detailLoaded=false;$('time-'+i).textContent='';$('analysis-'+i).innerHTML=`<div class="analysis-block"><h3>Не удалось построить прогноз</h3><p>${esc(explainError(e))}</p></div>`;setStatus('Не удалось получить данные для прогноза: '+explainError(e),true)}
- finally{r.detailLoading=false}
-}
+
 function refreshForecastForCurrentPrice(i){
  const r=S.rows[i];if(!r||!r.detailLoaded||!((Array.isArray(r.daily)&&r.daily.length)||(Array.isArray(r.hourly)&&r.hourly.length)))return;
  const model=forecastModel(r.daily,r.hourly||[],Number(r.price)||0,r.shortCandles||[],r.uid);if(!model||!model.ok)return;
@@ -3786,9 +3749,16 @@ document.addEventListener('click',async e=>{
   function randomEvent(){
     const intensity=Math.max(0.35,activity);
     const chance=Math.random();
-    if(chance<0.15)return;
-    const impulse=(Math.random()-0.5)*(chance<0.72?(2.5+intensity*0.35):(5+intensity*0.75));
-    offset=Math.max(-15,Math.min(15,offset+impulse));
+    if(chance>0.97){
+      const jump=(Math.random()<0.5?-1:1)*(1+Math.floor(Math.random()*5));
+      target=Math.max(0,Math.min(100,target+jump));
+      try{localStorage.setItem(STORAGE_KEY,String(target));}catch{}
+      offset*=0.3;
+      return;
+    }
+    if(chance<0.22)return;
+    const impulse=(Math.random()-0.5)*(1.2+intensity*0.2);
+    offset=Math.max(-6,Math.min(6,offset+impulse));
   }
   let eventTimer=0;
   function scheduleEvent(){
@@ -3801,10 +3771,10 @@ document.addEventListener('click',async e=>{
     if(!running){raf=0;return;}
     const dt=Math.min((now-lastTime)/1000,0.05); lastTime=now;
     const desired=target+offset, difference=desired-current;
-    velocity+=difference*19*dt;
-    velocity*=Math.pow(0.84,dt*60);
+    velocity+=difference*24*dt;
+    velocity*=Math.pow(0.80,dt*60);
     current+=velocity*dt;
-    offset*=Math.pow(0.985,dt*60);
+    offset*=Math.pow(0.96,dt*60);
     activity*=Math.pow(0.997,dt*60);
     current=Math.max(0,Math.min(100,current));
     if(Math.abs(difference)<0.005&&Math.abs(velocity)<0.005&&Math.abs(offset)<0.005){
@@ -3842,13 +3812,10 @@ document.addEventListener('click',async e=>{
 async function buildSandboxEssay(){
   const box=$('sandboxText'); if(!box)return;
   const held=(S.portfolioRows||[]).filter(r=>r&&r.uid&&Number(r.qty)>0);
-  if(!held.length){
-    box.innerHTML='<p class="sandbox-lead">Нет купленных позиций — разбор только по реальному портфелю.</p>';
-    return;
-  }
   box.innerHTML='<p class="sandbox-lead">Считаю…</p>';
   const items=[];
   let buy=0,hold=0,sell=0,sumValue=0,sumPnl=0;
+  const sellList=[], buyList=[];
   for(const r of held){
     sumValue+=Number(r.value)||(Number(r.price)||0)*(Number(r.qty)||0);
     sumPnl+=Number(r.pnl)||0;
@@ -3862,29 +3829,46 @@ async function buildSandboxEssay(){
     }catch{}
     const sig=signalFromModel(model);
     r.signalKey=sig.key; r.signalName=sig.name;
-    if(sig.key==='buy')buy++; else if(sig.key==='sell')sell++; else hold++;
+    if(sig.key==='buy'){buy++; buyList.push(r);}
+    else if(sig.key==='sell'){sell++; sellList.push(r);}
+    else hold++;
     const price=Number(r.price)||0;
     const qty=Number(r.qty)||0;
     const support=model&&Number(model.support)>0?Number(model.support):0;
     const resistance=model&&Number(model.resistance)>0?Number(model.resistance):0;
     const ticker=String(r.ticker||'').toUpperCase();
     let note='';
-    if(sig.key==='buy') note=support>0?('интереснее ближе к поддержке '+support.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'структура ближе к набору';
-    else if(sig.key==='sell') note=resistance>0?('давление у сопротивления '+resistance.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'ближе к фиксации или сокращению';
-    else note=(support>0&&resistance>0)?('диапазон '+support.toLocaleString('ru-RU',{maximumFractionDigits:2})+'…'+resistance.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'ждать более чистого края';
+    if(sig.key==='buy') note=support>0?('интереснее у поддержки '+support.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'структура ближе к набору';
+    else if(sig.key==='sell') note=resistance>0?('давление у сопротивления '+resistance.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'ближе к фиксации';
+    else note=(support>0&&resistance>0)?('диапазон '+support.toLocaleString('ru-RU',{maximumFractionDigits:2})+'…'+resistance.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'ждать края';
     const sigClass=sig.key==='buy'?'sandbox-sig-buy':sig.key==='sell'?'sandbox-sig-sell':'sandbox-sig-hold';
     items.push('<p class="sandbox-item"><b>'+esc(ticker)+'</b> · <span class="'+sigClass+'">'+esc(sig.name)+'</span><br>'+qty+' шт. × '+(price>0?price.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽':'—')+' — '+esc(note)+'</p>');
   }
+  const ideasBuy=[], ideasSell=[];
+  try{
+    const pool=(typeof marketCache!=='undefined'&&Array.isArray(marketCache))?marketCache:[];
+    const heldU=new Set(held.map(h=>h.uid));
+    const sorted=[...pool].filter(x=>x&&x.uid&&!heldU.has(x.uid)&&Number(x.price)>0);
+    const byCh=[...sorted].sort((a,b)=>(Number(b.change)||0)-(Number(a.change)||0));
+    ideasBuy.push(...byCh.filter(x=>(Number(x.change)||0)>0).slice(0,3));
+    ideasSell.push(...byCh.filter(x=>(Number(x.change)||0)<0).slice(0,3));
+  }catch{}
   let stance='Базовый режим — держать и не торопиться.';
-  if(sell>buy&&sell>=hold) stance='Сейчас разумнее не наращивать риск и точечно разгружать слабые звенья.';
-  else if(buy>sell) stance='Смещение к удержанию и аккуратному набору там, где сигнал совпадает с вашей идеей.';
-  const lead='Портфель: '+held.length+' позици'+(held.length===1?'я':held.length<5?'и':'й')+', ≈ '+Math.round(sumValue).toLocaleString('ru-RU')+' ₽, результат '+(sumPnl>=0?'+':'')+Math.round(sumPnl).toLocaleString('ru-RU')+' ₽. Сигналы: покупать '+buy+', держать '+hold+', сокращать '+sell+'. '+stance;
-  box.innerHTML='<div class="sandbox-report"><p class="sandbox-lead">'+esc(lead)+'</p>'+items.join('')+'</div>';
+  if(held.length&&sell>buy&&sell>=hold) stance='По портфелю разумнее не наращивать риск и точечно разгружать слабые звенья.';
+  else if(held.length&&buy>sell) stance='По портфелю смещение к удержанию и аккуратному набору.';
+  else if(!held.length) stance='Купленных позиций нет — ниже идеи с рынка (нужен скан в «Анализ»).';
+  const lead=held.length
+    ?('Портфель: '+held.length+' позици'+(held.length===1?'я':held.length<5?'и':'й')+', ≈ '+Math.round(sumValue).toLocaleString('ru-RU')+' ₽, результат '+(sumPnl>=0?'+':'')+Math.round(sumPnl).toLocaleString('ru-RU')+' ₽. Сигналы: покупать '+buy+', держать '+hold+', сокращать '+sell+'. '+stance)
+    :stance;
+  let extra='';
+  if(sellList.length) extra+='<p class="sandbox-lead"><b>Лучше сократить из портфеля:</b> '+sellList.map(r=>String(r.ticker||'').toUpperCase()).join(', ')+'.</p>';
+  if(buyList.length) extra+='<p class="sandbox-lead"><b>Имеет смысл удерживать / доливать:</b> '+buyList.map(r=>String(r.ticker||'').toUpperCase()).join(', ')+'.</p>';
+  if(ideasBuy.length) extra+='<p class="sandbox-lead"><b>Куда присмотреться (вне портфеля):</b> '+ideasBuy.map(x=>String(x.ticker||'').toUpperCase()+' ('+(Number(x.change)>0?'+':'')+(Number(x.change)||0).toFixed(1)+'%)').join(', ')+'.</p>';
+  if(ideasSell.length) extra+='<p class="sandbox-lead"><b>Слабее на рынке сейчас:</b> '+ideasSell.map(x=>String(x.ticker||'').toUpperCase()+' ('+(Number(x.change)||0).toFixed(1)+'%)').join(', ')+'.</p>';
+  box.innerHTML='<div class="sandbox-report"><p class="sandbox-lead">'+esc(lead)+'</p>'+extra+(items.length?items.join(''):'')+'</div>';
 }
 
-$('sandboxPlaque')?.addEventListener('toggle',()=>{
-  if($('sandboxPlaque').open) buildSandboxEssay();
-});
+
 
 (function(){
   const ov=$('aboutOverlay');
