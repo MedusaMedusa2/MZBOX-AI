@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.23</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.26</title>
 
 
 
@@ -2151,6 +2151,42 @@ body:not(.dark) .sandbox-chain{background:#f3f2ed;border-color:#e2e0d8;color:#17
 .sandbox-copy-all{margin:0 0 12px}
 .sandbox-copy-all-btn{width:100%;min-height:40px}
 
+
+.sandbox-budget{margin-bottom:12px;padding:12px;border:1px solid var(--line,#333);border-radius:12px}
+.sandbox-budget label{display:block;font-size:12px;font-weight:650;margin-bottom:8px;color:inherit}
+.sandbox-budget-row{display:flex;gap:8px;align-items:stretch}
+.sandbox-budget-row input{
+  flex:1;min-width:0;padding:10px 12px;border-radius:10px;
+  border:1px solid var(--line,#444);background:transparent;color:inherit;font-size:14px;
+}
+.sandbox-budget-row .btn{flex:0 0 auto;white-space:nowrap}
+.sandbox-budget-hint{margin:8px 0 0;font-size:11px;line-height:1.45}
+.sandbox-steps{margin:8px 0;padding-left:18px;font-size:12.5px;line-height:1.45}
+.sandbox-steps li{margin-bottom:8px}
+.sandbox-strategy-card .btn.sandbox-copy-plan{width:100%;margin-top:8px;min-height:36px;font-size:12px}
+.sandbox-foot{margin-top:12px;font-size:10px}
+
+
+.sandbox-copy-all,.sandbox-copy-all-btn,.sandbox-copy-plan,.sandbox-copy-btn{display:none!important}
+.sandbox-now{color:#2c9b70;font-size:13px;line-height:1.45;margin:8px 0}
+.sandbox-wait{color:#b8963a;font-size:13px;line-height:1.45;margin:8px 0}
+.sandbox-summary{
+  padding:12px;margin-bottom:12px;border-radius:12px;
+  border:1px solid var(--line,#333);font-size:13px;line-height:1.5;
+}
+body:not(.dark) .sandbox-summary{background:#f6f5f1}
+body.dark .sandbox-summary{background:#141414}
+
+
+.sandbox-meta{margin:4px 0 8px;font-size:11px;opacity:.75}
+.sandbox-strategy-card{padding:10px 12px!important}
+.sandbox-steps{margin:6px 0 0;padding-left:16px;font-size:12px;line-height:1.4}
+.sandbox-steps li{margin-bottom:4px}
+.sandbox-summary p{margin:0 0 6px}
+.sandbox-summary p:last-child{margin:0}
+.sandbox-budget-hint{margin:6px 0 0!important}
+.sandbox-foot{display:none!important}
+
 </style>
 
 </head>
@@ -2232,7 +2268,15 @@ body:not(.dark) .sandbox-chain{background:#f3f2ed;border-color:#e2e0d8;color:#17
     <div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div>
   </div>
   <div class="tools-panel hidden" id="panelSandbox">
-    <div class="sandbox-text" id="sandboxText">Краткая сводка по портфелю появится здесь.</div>
+    <div class="sandbox-budget card-inner">
+      <label for="sandboxBudget">Сумма, которую готов выделить на коррекцию, ₽</label>
+      <div class="sandbox-budget-row">
+        <input id="sandboxBudget" type="number" min="1000" step="1000" placeholder="например 100000" inputmode="numeric">
+        <button type="button" class="btn" id="sandboxRunStrategy">Рассчитать</button>
+      </div>
+      <p class="sandbox-budget-hint muted">Скан «Анализ» · фильтр · вход 30/40/30 на просадке</p>
+    </div>
+    <div class="sandbox-text" id="sandboxText">Укажите сумму и нажмите «Рассчитать». Если скан рынка ещё не готов, он запустится в фоне.</div>
   </div>
   <div class="tools-panel hidden" id="panelSearch">
     <form class="search-row" id="stockSearchForm">
@@ -2243,7 +2287,7 @@ body:not(.dark) .sandbox-chain{background:#f3f2ed;border-color:#e2e0d8;color:#17
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.23 · 02.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.26 · 02.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -3063,7 +3107,7 @@ function showToolsPanel(which){
   }
   if(openSearch) setTimeout(()=>$('stockSearchInput')?.focus(), 50);
   if(openMarket && typeof marketCache!=='undefined' && marketCache.length && typeof renderMarketResults==='function') renderMarketResults();
-  if(openSandbox && typeof buildSandboxEssay==='function') buildSandboxEssay();
+  if(openSandbox){ try{const b=$('sandboxBudget'); if(b&&!b.value){const s=localStorage.getItem('mzbox-sandbox-budget'); if(s)b.value=s;}}catch{} if(typeof runCorrectionStrategy==='function') runCorrectionStrategy(); else if(typeof buildSandboxEssay==='function') buildSandboxEssay(); }
 }
 
 function hideToolsPanels(){showToolsPanel(null)}
@@ -4032,74 +4076,196 @@ function buildForecastChain(model, price){
 }
 
 
-async function buildSandboxEssay(){
-  const box=$('sandboxText'); if(!box)return;
-  const held=(S.portfolioRows||[]).filter(r=>r&&r.uid&&Number(r.qty)>0);
-  const watch=(S.watchRows||[]).filter(w=>w&&w.uid&&!held.some(h=>h.uid===w.uid));
-  const universe=[...held, ...watch].slice(0,12);
-  box.innerHTML='<p class="sandbox-lead">Считаю цепочки прогноза…</p>';
-  const blocks=[];
-  let buy=0,hold=0,sell=0,sumValue=0,sumPnl=0;
-  const sellList=[], buyList=[];
-  const allChains=[];
 
-  for(const r of (universe.length?universe:held)){
-    sumValue+=Number(r.value)||(Number(r.price)||0)*(Number(r.qty)||0);
-    sumPnl+=Number(r.pnl)||0;
-    let model=r.model;
-    try{
-      if(!model||!model.ok){
-        const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',120);
-        let hourly=[];
-        try{hourly=await candles(r.uid,'CANDLE_INTERVAL_HOUR',40)}catch{}
-        model=forecastModel(daily,hourly,Number(r.price)||0,[],r.uid);
-        r.model=model; r.daily=daily; r.hourly=hourly;
-      }
-    }catch{}
-    if(!model||!model.ok) continue;
+function getSandboxBudget(){
+  const el=$('sandboxBudget');
+  let v=Number(el&&el.value);
+  if(!(v>0)){
+    try{v=Number(localStorage.getItem('mzbox-sandbox-budget')||0)}catch{}
+  }
+  if(!(v>0)) v=100000;
+  try{localStorage.setItem('mzbox-sandbox-budget',String(Math.round(v)))}catch{}
+  if(el&&!(Number(el.value)>0)) el.value=String(Math.round(v));
+  return Math.max(1000, Math.round(v));
+}
+
+/** Quality + drawdown score from market scan row (+ optional model) */
+function scoreCorrectionCandidate(x, model){
+  const price=Number(x.price)||0;
+  if(!(price>0)) return -1e9;
+  const high=Number(x.recentHigh)||price;
+  const low=Number(x.recentLow)||price;
+  const dd=high>0?((price-high)/high)*100:0; // 0 or negative
+  const change=Number(x.change)||0;
+  let score=0;
+  // prefer mild-to-moderate drawdown (correction), not crash
+  if(dd<=-3&&dd>=-18) score+=40;
+  else if(dd<-18&&dd>=-28) score+=15;
+  else if(dd>-1) score-=10; // no discount yet
+  if(change<0&&change>-8) score+=12;
+  if(change<=-8&&change>-15) score+=6;
+  if(change<=-20) score-=20;
+  if(x.liquidity) score+=8;
+  if(x.inPortfolio) score+=5;
+  // model soft filter
+  if(model&&model.ok){
+    if(model.emaBull||(model.structure||0)>0) score+=18;
+    if(model.emaBear&&(model.structure||0)<0) score-=25;
     const sig=signalFromModel(model);
-    r.signalKey=sig.key; r.signalName=sig.name;
-    if(Number(r.qty)>0){
-      if(sig.key==='buy'){buy++; buyList.push(r);}
-      else if(sig.key==='sell'){sell++; sellList.push(r);}
-      else hold++;
-    }
-    const price=Number(r.price)||0;
-    const chainPack=buildForecastChain(model, price);
-    r.forecastChain=chainPack.chain;
-    if(chainPack.chain) allChains.push(String(r.ticker||'').toUpperCase()+' '+chainPack.chain);
-    const ticker=String(r.ticker||'').toUpperCase();
-    const sigClass=sig.key==='buy'?'sandbox-sig-buy':sig.key==='sell'?'sandbox-sig-sell':'sandbox-sig-hold';
-    blocks.push(
-      '<div class="sandbox-item sandbox-chain-card">'+
-        '<div class="sandbox-chain-head"><b>'+esc(ticker)+'</b> · <span class="'+sigClass+'">'+esc(sig.name)+'</span>'+
-        (Number(r.qty)>0?(' · '+Number(r.qty)+' шт.'):'')+
-        '</div>'+
-        (chainPack.note?'<p class="sandbox-chain-note">'+esc(chainPack.note)+'</p>':'')+
-        '<div class="sandbox-chain-row">'+
-          '<code class="sandbox-chain" id="chain-'+esc(String(r.uid))+'">'+esc(chainPack.chain||'—')+'</code>'+
-          '<button type="button" class="sandbox-copy-btn" data-copy-chain="'+esc(chainPack.chain||'')+'" title="Копировать цепочку">⧉</button>'+
-        '</div>'+
-        '<p class="sandbox-chain-hint muted">1 → 7 → 30 дней: уровни входа, локальные пики и дна прогноза</p>'+
-      '</div>'
-    );
+    if(sig.key==='buy') score+=14;
+    if(sig.key==='sell') score-=22;
+    if(Number(model.support)>0&&price>Number(model.support)*0.97) score+=6;
+  }
+  // avoid pure momentum collapse without range
+  const range=Number(x.dayRange)||0;
+  if(range>0.06) score-=8;
+  return score;
+}
+
+function buildStepLadder(price, recentHigh){
+  const base=Math.max(Number(price)||0, 0.01);
+  const high=Math.max(Number(recentHigh)||base, base);
+  const e1=Math.max(0.01, Math.min(high*0.96, base*0.99));
+  const e2=Math.max(0.01, Math.min(high*0.915, base*0.95));
+  const e3=Math.max(0.01, Math.min(high*0.865, base*0.90));
+  return [
+    {share:0.30, price:e1, label:'1 · 30%'},
+    {share:0.40, price:e2, label:'2 · 40%'},
+    {share:0.30, price:e3, label:'3 · 30%'}
+  ];
+}
+
+async function ensureMarketCache(){
+  if(typeof marketCache!=='undefined'&&Array.isArray(marketCache)&&marketCache.length) return marketCache;
+  if(typeof scanMarket==='function'&&S.token){
+    try{await scanMarket()}catch(e){console.warn('scanMarket',e)}
+  }
+  return (typeof marketCache!=='undefined'&&Array.isArray(marketCache))?marketCache:[];
+}
+
+async function runCorrectionStrategy(){
+  const box=$('sandboxText'); if(!box)return;
+  const budget=getSandboxBudget();
+  box.innerHTML='<p class="sandbox-lead">Считаю…</p>';
+  const cache=await ensureMarketCache();
+  if(!cache.length){
+    box.innerHTML='<p class="sandbox-lead">Нет скана. «Анализ» → «Сканировать».</p>';
+    return;
   }
 
-  let stance='Базовый режим — держать и не торопиться.';
-  if(held.length&&sell>buy&&sell>=hold) stance='По портфелю разумнее точечно разгружать слабые звенья.';
-  else if(held.length&&buy>sell) stance='Смещение к удержанию и аккуратному набору.';
-  else if(!held.length) stance='Нет купленных позиций — цепочки по списку наблюдения и рынку.';
+  const pool=[...cache].filter(x=>x&&x.uid&&Number(x.price)>0&&Number(x.price)<=budget);
+  if(!pool.length){
+    box.innerHTML='<p class="sandbox-lead">При '+budget.toLocaleString('ru-RU')+' ₽ нет доступных бумаг в скане (цена выше суммы).</p>';
+    return;
+  }
 
-  const lead=held.length
-    ?('Портфель: '+held.length+' позици'+(held.length===1?'я':held.length<5?'и':'й')+', ≈ '+Math.round(sumValue).toLocaleString('ru-RU')+' ₽. '+stance)
-    :stance;
+  const prelim=pool.map(x=>{
+    const high=Number(x.recentHigh)||Number(x.price);
+    const dd=high>0?((Number(x.price)-high)/high)*100:0;
+    return {...x,_dd:dd,_score:scoreCorrectionCandidate(x,null)};
+  }).sort((a,b)=>b._score-a._score).slice(0,16);
 
-  const copyAll=allChains.length
-    ?('<div class="sandbox-copy-all"><button type="button" class="btn sandbox-copy-all-btn" data-copy-chain="'+esc(allChains.join('\\n'))+'">Копировать все цепочки</button></div>')
-    :'';
+  const enriched=[];
+  for(let i=0;i<prelim.length;i+=4){
+    const batch=prelim.slice(i,i+4);
+    await Promise.all(batch.map(async x=>{
+      let model=null;
+      try{
+        const daily=await candles(x.uid,'CANDLE_INTERVAL_DAY',90);
+        model=forecastModel(daily,[],Number(x.price)||0,[],x.uid);
+      }catch{}
+      enriched.push({...x,model:model&&model.ok?model:null,_score:scoreCorrectionCandidate(x,model&&model.ok?model:null)});
+    }));
+  }
 
-  box.innerHTML='<div class="sandbox-report"><p class="sandbox-lead">'+esc(lead)+'</p>'+copyAll+(blocks.length?blocks.join(''):'<p class="sandbox-lead">Недостаточно данных для цепочек. Откройте карточки или обновите портфель.</p>')+'</div>';
+  let picked=enriched.filter(x=>x._score>=18).sort((a,b)=>b._score-a._score);
+  let n=Math.max(1,Math.min(5,picked.length));
+  picked=picked.slice(0,n);
+  let perIdea=Math.floor(budget/Math.max(1,picked.length));
+  while(picked.length>1&&picked.some(x=>Number(x.price)>perIdea)){
+    picked=picked.slice(0,picked.length-1);
+    perIdea=Math.floor(budget/picked.length);
+  }
+  picked=picked.filter(x=>Number(x.price)<=Math.max(perIdea,budget));
+  if(!picked.length){
+    box.innerHTML='<p class="sandbox-lead">Под бюджет и фильтр никого. Увеличьте сумму или обновите скан.</p>';
+    return;
+  }
+  n=picked.length;
+  perIdea=Math.floor(budget/n);
+  let rest=budget-perIdea*n;
+
+  const nowBuy=[];
+  const cards=[];
+
+  picked.forEach((x,idx)=>{
+    const ticker=String(x.ticker||'').toUpperCase();
+    const price=Number(x.price)||0;
+    const high=Number(x.recentHigh)||price;
+    const dd=high>0?((price-high)/high)*100:0;
+    let ideaBudget=perIdea+(idx===0?rest:0);
+    if(price>ideaBudget){
+      if(price<=budget) ideaBudget=Math.min(budget,perIdea+rest);
+      else return;
+    }
+    if(price>ideaBudget)return;
+
+    const steps=buildStepLadder(price,high).map(st=>{
+      const money=Math.floor(ideaBudget*st.share);
+      const qty=st.price>0?Math.floor(money/st.price):0;
+      return {...st,money,qty,sum:qty*st.price};
+    });
+    if(steps.every(s=>s.qty<1)){
+      const q=Math.floor(ideaBudget/price);
+      if(q<1)return;
+      steps[0].qty=Math.max(1,Math.floor(q*0.3)); steps[0].sum=steps[0].qty*price; steps[0].price=price;
+      steps[1].price=price*0.95; steps[1].qty=Math.floor((ideaBudget*0.4)/steps[1].price); steps[1].sum=steps[1].qty*steps[1].price;
+      steps[2].price=price*0.90; steps[2].qty=Math.floor((ideaBudget*0.3)/steps[2].price); steps[2].sum=steps[2].qty*steps[2].price;
+    }
+
+    const sig=x.model?signalFromModel(x.model):{key:'hold',name:'ДЕРЖАТЬ'};
+    const canNow=dd<=-3&&steps[0].qty>=1;
+
+    let h='<div class="sandbox-item sandbox-strategy-card">';
+    h+='<div class="sandbox-chain-head"><b>'+esc(ticker)+'</b> · '+price.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽ · '+(dd>=0?'+':'')+dd.toFixed(1)+'% · <span class="'+(sig.key==='buy'?'sandbox-sig-buy':sig.key==='sell'?'sandbox-sig-sell':'sandbox-sig-hold')+'">'+esc(sig.name)+'</span></div>';
+    h+='<p class="sandbox-meta">На идею '+ideaBudget.toLocaleString('ru-RU')+' ₽</p>';
+
+    if(canNow){
+      const q=steps[0].qty; const sum=Math.round(q*price);
+      h+='<p class="sandbox-now"><b>Сейчас:</b> ~'+q+' шт. ≈ '+sum.toLocaleString('ru-RU')+' ₽</p>';
+      nowBuy.push(ticker+' ~'+q+' шт.');
+    } else {
+      h+='<p class="sandbox-wait"><b>Сейчас:</b> ждать</p>';
+    }
+
+    h+='<ul class="sandbox-steps">';
+    steps.forEach(st=>{
+      if(st.qty<1){
+        h+='<li>'+esc(st.label)+' — ждать <b>'+st.price.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽</b></li>';
+      } else {
+        h+='<li>'+esc(st.label)+' — <b>'+st.price.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽</b> × '+st.qty+' шт. ≈ '+Math.round(st.sum).toLocaleString('ru-RU')+' ₽</li>';
+      }
+    });
+    h+='</ul></div>';
+    cards.push(h);
+  });
+
+  if(!cards.length){
+    box.innerHTML='<p class="sandbox-lead">Нет исполняемых идей под этот бюджет.</p>';
+    return;
+  }
+
+  const summary='<div class="sandbox-summary"><p><b>Сейчас:</b> '+(nowBuy.length?nowBuy.join(' · '):'—')+'</p><p><b>Заявки:</b> лимитки по ступеням, ждать цену</p><p class="sandbox-meta">Бюджет '+budget.toLocaleString('ru-RU')+' ₽ · идей '+cards.length+'</p></div>';
+  box.innerHTML='<div class="sandbox-report">'+summary+cards.join('')+'</div>';
 }
+
+
+
+async function buildSandboxEssay(){
+  // default: run strategy (needs budget field)
+  await runCorrectionStrategy();
+}
+
 
 
 
@@ -4114,6 +4280,19 @@ async function buildSandboxEssay(){
   if(ov)ov.addEventListener('click',e=>{if(e.target===ov)hide();});
 })();
 
+
+document.addEventListener('click',e=>{
+  const run=e.target.closest('#sandboxRunStrategy');
+  if(run){ e.preventDefault(); runCorrectionStrategy(); }
+});
+document.addEventListener('change',e=>{
+  if(e.target&&e.target.id==='sandboxBudget'){
+    const v=Number(e.target.value);
+    if(v>0) try{localStorage.setItem('mzbox-sandbox-budget',String(Math.round(v)))}catch{}
+  }
+});
+
 })();
 
 </script></body></html>
+
