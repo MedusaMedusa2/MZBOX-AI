@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.21</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.22</title>
 
 
 
@@ -2113,6 +2113,15 @@ main.app-main > .footer,
   transform:none!important;
 }
 
+
+.analysis{margin-top:10px!important;padding:12px!important}
+.analysis-block p{margin:0 0 6px!important;color:inherit!important;font-size:13px!important;line-height:1.5!important}
+.analysis-block .muted{opacity:.7}
+.chart-wrap{border-radius:12px!important;overflow:hidden}
+.trade-calc{padding:12px!important}
+.trade-calc .calc-output-simple b.positive{color:#2c9b70!important}
+.trade-calc .calc-output-simple b.negative{color:#d45b5b!important}
+
 </style>
 
 </head>
@@ -2122,9 +2131,9 @@ main.app-main > .footer,
     <div class="about-logo-row"><span class="about-mark" aria-hidden="true"></span><div class="about-logo-name">MZBOX <em>AI</em></div></div>
     <h2 class="about-title">Тише, чем рынок</h2>
     <div class="about-divider"></div>
-    <p class="about-text">Между шумом котировок и решением есть пауза. Здесь она не пустая: портфель, цифры и ясная картина — без чужих советов и без спешки.</p>
-    <p class="about-text">MZBOX AI не ведёт за руку к сделке. Он собирает смысл так, чтобы выбор оставался вашим — спокойным и своим.</p>
-    <p class="about-text">Скоро этот проект переедет в <strong>INJECTUM</strong> — туда же, где мысль становится инструментом, а инструмент не кричит громче, чем нужно.</p>
+    <p class="about-text">MZBOX AI — рабочая среда для инвестора: портфель, уровни, прогноз и спокойный разбор без информационного шума.</p>
+    <p class="about-text">Система не навязывает сделки. Она структурирует данные так, чтобы решение оставалось за вами — осознанным и подкреплённым цифрами.</p>
+    <p class="about-text">В ближайшее время проект будет развиваться на платформе <strong>INJECTUM</strong>: тот же подход к ясности, расширенные инструменты и единая экосистема.</p>
     <p class="about-foot">нажмите на фон, чтобы закрыть</p>
   </div>
 </div>
@@ -2205,7 +2214,7 @@ main.app-main > .footer,
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.21 · 02.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.22 · 02.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2559,6 +2568,55 @@ if(!window.__mzChartDelegated){
 }
 
 
+
+async function loadDetail(i){
+ i=Number(i);
+ const r=S.rows[i];
+ if(!r||!r.uid)return;
+ if(r.detailLoading)return;
+ r.detailLoading=true;
+ const a=$('analysis-'+i);
+ try{
+  if(a) a.innerHTML='<div class="analysis-block"><p class="muted">Считаю прогноз…</p></div>';
+  const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',120);
+  let hourly=[];
+  try{hourly=await candles(r.uid,'CANDLE_INTERVAL_HOUR',48)}catch{}
+  const model=forecastModel(daily,hourly,Number(r.price)||0,[],r.uid);
+  r.daily=daily;
+  r.hourly=hourly;
+  r.model=model&&model.ok?model:null;
+  r.modelUid=r.uid;
+  r.chartCandles=(hourly&&hourly.length?hourly:daily).slice(-(hourly&&hourly.length?24:30));
+  r.detailLoaded=true;
+  if(model&&model.ok){
+   const sig=signalFromModel(model);
+   r.signalKey=sig.key; r.signalName=sig.name;
+   try{applyHelpSignal(i,sig.key)}catch{}
+   try{calcTrade(i)}catch{}
+   const price=Number(r.price)||0;
+   const end=Number(model.p7&&model.p7.mid)||Number(model.points&&model.points[6]&&model.points[6].mid)||price;
+   const ch=price>0?((end-price)/price)*100:0;
+   let dir='БОКОВИК';
+   if(ch>0.8||(model.drift||0)>0.001) dir='РОСТ';
+   else if(ch<-0.8||(model.drift||0)<-0.001) dir='СНИЖЕНИЕ';
+   const support=Number(model.support)||0, resistance=Number(model.resistance)||0;
+   if(a){
+    a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p>'+(support||resistance?'<p class="muted">Мин ≈ '+(support?support.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' · Макс ≈ '+(resistance?resistance.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+'</p>':'')+'</div>';
+    if(a.parentElement) a.parentElement.classList.remove('hidden');
+   }
+  } else if(a){
+   a.innerHTML='<div class="analysis-block"><p>Недостаточно данных для прогноза.</p></div>';
+  }
+  try{paintChart(i)}catch(e){console.error(e)}
+  try{updateTradeCalculator(i)}catch(e){}
+ }catch(e){
+  console.error('loadDetail',e);
+  if(a) a.innerHTML='<div class="analysis-block"><p>Не удалось загрузить график. Обновите данные.</p></div>';
+ }finally{
+  r.detailLoading=false;
+ }
+}
+
 function paintChart(i){
   try{
     i=Number(i);
@@ -2728,11 +2786,26 @@ function drawChart(canvas,cs,model,currentPrice){
    const fLow=Math.min(...future.map(c=>Number(c.l)||Number(c.c)));
    const fHigh=Math.max(...future.map(c=>Number(c.h)||Number(c.c)));
    const fEnd=Number(future.at(-1).c)||current;
-   ctx.font='bold 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='left';
-   ctx.fillStyle='#2c9b70';ctx.fillText('Макс '+fHigh.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,Math.max(12,y(fHigh)-3));
-   ctx.fillStyle='#d45b5b';ctx.fillText('Мин '+fLow.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,Math.min(H-22,y(fLow)+11));
-   ctx.fillStyle=muted;ctx.font='8px -apple-system,BlinkMacSystemFont,sans-serif';
-   ctx.fillText((p===1?'1д':p===7?'7д':'30д')+' → '+fEnd.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r+5,H-8);
+   const dir=fEnd>current*1.004?'РОСТ':fEnd<current*0.996?'СНИЖЕНИЕ':'БОКОВИК';
+   const dirCol=dir==='РОСТ'?'#2c9b70':dir==='СНИЖЕНИЕ'?'#d45b5b':muted;
+   // dashed lines for min/max inside plot
+   ctx.setLineDash([3,3]);
+   ctx.strokeStyle='#2c9b70';ctx.lineWidth=1;
+   ctx.beginPath();ctx.moveTo(pad.l+histW,y(fHigh));ctx.lineTo(W-pad.r,y(fHigh));ctx.stroke();
+   ctx.strokeStyle='#d45b5b';
+   ctx.beginPath();ctx.moveTo(pad.l+histW,y(fLow));ctx.lineTo(W-pad.r,y(fLow));ctx.stroke();
+   ctx.setLineDash([]);
+   // labels on chart
+   ctx.font='bold 11px -apple-system,BlinkMacSystemFont,sans-serif';
+   ctx.textAlign='left';
+   ctx.fillStyle='#2c9b70';
+   ctx.fillText('Макс '+fHigh.toLocaleString('ru-RU',{maximumFractionDigits:2}), pad.l+histW+6, Math.max(pad.t+12, y(fHigh)-4));
+   ctx.fillStyle='#d45b5b';
+   ctx.fillText('Мин '+fLow.toLocaleString('ru-RU',{maximumFractionDigits:2}), pad.l+histW+6, Math.min(pad.t+plotH-4, y(fLow)+14));
+   ctx.fillStyle=dirCol;
+   ctx.font='bold 12px -apple-system,BlinkMacSystemFont,sans-serif';
+   ctx.textAlign='center';
+   ctx.fillText(dir+' · '+(p===1?'1д':p===7?'7д':'30д'), pad.l+histW+futureW/2, pad.t+14);
  }
  if(modelOK){
    [[Number(model.support),'#2c9b70'],[Number(model.resistance),'#d4a72c']].forEach(([level,color])=>{
@@ -2890,7 +2963,7 @@ function renderRows(rows){
 <div class="calc-output calc-output-simple"><div><span>Ожидаемый доход</span><b id="calcProfit-${i}">—</b></div></div>
 </div>
 <div class="path-wrap hidden"><div class="path-title">Сценарий</div><div class="path-list" id="path-${i}"></div></div>
-<div class="analysis"><div id="analysis-${i}"><div class="analysis-block"><p>Загрузка…</p></div></div></div>
+<div class="analysis"><div id="analysis-${i}"><div class="analysis-block"><p class="muted">Откройте карточку — появится краткий прогноз.</p></div></div></div>
 </div></div>
 </details>`;
     }catch(e){console.error('row',i,e);return `<div class="card">Ошибка карточки ${i}</div>`}
@@ -3019,13 +3092,30 @@ function calcTrade(i){
  const buy=$('buytarget-'+i),sell=$('selltarget-'+i);
  r.buyTarget=buyTarget;r.sellTarget=sellTarget;if(buy)buy.textContent=fmtPrice(buyTarget);if(sell)sell.textContent=fmtPrice(sellTarget);
 }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-calc-toggle]');if(!b)return;e.preventDefault();e.stopPropagation();const panel=$('tradeCalc-'+b.dataset.calcToggle);if(!panel)return;const open=panel.classList.toggle('hidden')===false;b.setAttribute('aria-expanded',String(open));b.textContent=open?'Скрыть калькулятор сделки':'Калькулятор сделки'});
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-calc-toggle]');if(!b)return;
+ e.preventDefault();e.stopPropagation();
+ const i=b.dataset.calcToggle;
+ const panel=$('tradeCalc-'+i);if(!panel)return;
+ const open=panel.classList.toggle('hidden')===false;
+ b.setAttribute('aria-expanded',String(open));
+ b.textContent=open?'Скрыть калькулятор':'Калькулятор сделки';
+ if(open) updateTradeCalculator(Number(i));
+});
+document.addEventListener('input',e=>{
+ const t=e.target; if(!t||!t.matches)return;
+ if(!t.matches('[data-calc-entry],[data-calc-exit],[data-calc-qty]'))return;
+ const i=t.dataset.calcEntry||t.dataset.calcExit||t.dataset.calcQty;
+ if(i!=null) updateTradeCalculator(Number(i));
+});
 function updateTradeCalculator(i){
- const r=S.rows[i]; if(!r)return;
+ i=Number(i);
+ const r=S.rows[i]||{};
  const entryEl=$('calcEntry-'+i), exitEl=$('calcExit-'+i), qtyEl=$('calcQty-'+i), profitEl=$('calcProfit-'+i);
- if(!qtyEl||!profitEl)return;
+ if(!profitEl)return;
  const market=Number(r.price)||0;
- let entry=Number(entryEl&&entryEl.value); if(!(entry>0)) entry=market;
+ let entry=Number(entryEl&&entryEl.value);
+ if(!(entry>0)) entry=market>0?market:0;
  let exit=Number(exitEl&&exitEl.value);
  if(!(exit>0)){
   const m=r.model;
@@ -3034,11 +3124,19 @@ function updateTradeCalculator(i){
    exit=Number(pt)||market;
   } else exit=market;
  }
- if(entryEl&&document.activeElement!==entryEl&&!(Number(entryEl.value)>0)) entryEl.placeholder=market?String(Math.round(market*100)/100):'';
- if(exitEl&&document.activeElement!==exitEl&&!(Number(exitEl.value)>0)) exitEl.placeholder=exit?String(Math.round(exit*100)/100):'';
- const qty=Math.max(0, Math.floor(Number(qtyEl.value)||0));
- const profit=(exit-entry)*qty;
- profitEl.textContent=qty>0&&entry>0?((profit>0?'+':'')+fmt(profit)):'—';
+ if(entryEl&&document.activeElement!==entryEl){
+  if(!(Number(entryEl.value)>0)) entryEl.placeholder=entry?String(Math.round(entry*100)/100):'';
+ }
+ if(exitEl&&document.activeElement!==exitEl){
+  if(!(Number(exitEl.value)>0)) exitEl.placeholder=exit?String(Math.round(exit*100)/100):'';
+ }
+ const qty=Math.max(0, Math.floor(Number(qtyEl&&qtyEl.value)||0));
+ const profit=(Number(exit)-Number(entry))*qty;
+ if(qty>0 && entry>0 && exit>0){
+  profitEl.textContent=(profit>0?'+':'')+(typeof fmt==='function'?fmt(profit):profit.toFixed(2));
+ } else {
+  profitEl.textContent='—';
+ }
  profitEl.classList.toggle('positive', profit>0);
  profitEl.classList.toggle('negative', profit<0);
 }
@@ -3049,8 +3147,18 @@ function refreshForecastForCurrentPrice(i){
  r.model=model;calcTrade(i);
  const sig=signalFromModel(model);r.signalKey=sig.key;r.signalName=sig.name;
  applyHelpSignal(i,sig.key);try{updateWelcomeRecs()}catch{}
- const a=$('analysis-'+i);if(a){a.innerHTML='';a.parentElement.classList.add('hidden')}
- renderPath(i,model);updateTradeCalculator(i);const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,model,r.price);
+ const price=Number(r.price)||0;
+ const end=Number(model.p7&&model.p7.mid)||price;
+ const ch=price>0?((end-price)/price)*100:0;
+ let dir='БОКОВИК';
+ if(ch>0.8||(model.drift||0)>0.001) dir='РОСТ';
+ else if(ch<-0.8||(model.drift||0)<-0.001) dir='СНИЖЕНИЕ';
+ const a=$('analysis-'+i);
+ if(a){
+  a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p></div>';
+  if(a.parentElement) a.parentElement.classList.remove('hidden');
+ }
+ renderPath(i,model);updateTradeCalculator(i);try{paintChart(i)}catch{}
 }
 // Market scanner: a bounded sample to avoid flooding the broker API.
 let marketMode='losers',marketCache=[];
@@ -3883,3 +3991,4 @@ async function buildSandboxEssay(){
 })();
 
 </script></body></html>
+
