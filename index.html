@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.22</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.23</title>
 
 
 
@@ -2122,6 +2122,35 @@ main.app-main > .footer,
 .trade-calc .calc-output-simple b.positive{color:#2c9b70!important}
 .trade-calc .calc-output-simple b.negative{color:#d45b5b!important}
 
+
+.sandbox-chain-card{margin-bottom:8px}
+.sandbox-chain-head{font-size:13px;margin-bottom:4px}
+.sandbox-chain-note{margin:0 0 6px;font-size:12px;opacity:.9}
+.sandbox-chain-row{display:flex;align-items:center;gap:8px}
+.sandbox-chain{
+  flex:1;min-width:0;
+  display:block;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid var(--line,#333);
+  background:rgba(0,0,0,.2);
+  font-size:12px;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.02em;
+  overflow-x:auto;
+  white-space:nowrap;
+  color:inherit;
+}
+body:not(.dark) .sandbox-chain{background:#f3f2ed;border-color:#e2e0d8;color:#171717}
+.sandbox-copy-btn{
+  flex:0 0 34px;width:34px;height:34px;
+  border-radius:9px;border:1px solid var(--line,#444);
+  background:transparent;color:inherit;cursor:pointer;font-size:14px;
+}
+.sandbox-chain-hint{margin:6px 0 0;font-size:10px}
+.sandbox-copy-all{margin:0 0 12px}
+.sandbox-copy-all-btn{width:100%;min-height:40px}
+
 </style>
 
 </head>
@@ -2214,7 +2243,7 @@ main.app-main > .footer,
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.22 · 02.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.23 · 02.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -3773,6 +3802,20 @@ window.__mzboxAddMarketWatch=(item)=>{if(!item||!item.uid||S.portfolioRows.some(
 window.__mzboxStudyRow=async(uid)=>{const i=S.rows.findIndex(x=>x.uid===uid);if(i<0)return false;const el=document.querySelector(`details.asset[data-index="${i}"]`);if(el)el.open=true;await loadDetail(i);return Boolean(S.rows[i]?.model?.ok)};
 
 document.addEventListener('click',async e=>{
+ const cb=e.target.closest('[data-copy-chain]');
+ if(cb){
+  e.preventDefault();
+  const val=(cb.getAttribute('data-copy-chain')||'').trim();
+  if(!val)return;
+  try{
+   if(navigator.clipboard&&window.isSecureContext) await navigator.clipboard.writeText(val);
+   else{const ta=document.createElement('textarea');ta.value=val;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
+   const prev=cb.textContent; cb.textContent='✓'; setTimeout(()=>{cb.textContent=prev||'⧉';},1000);
+  }catch{ cb.textContent='!'; setTimeout(()=>{cb.textContent='⧉';},1000); }
+  return;
+ }
+});
+document.addEventListener('click',async e=>{
  const b=e.target.closest('#copyAssetNameBtn,.qi-copy');if(!b)return;
  e.preventDefault();
  const val=(b.dataset.copyTicker||b.dataset.copyName||'').trim();if(!val)return;
@@ -3917,64 +3960,147 @@ document.addEventListener('click',async e=>{
 })();
 
 /* ---- Интеллектуальная песочница ---- */
+
+function fmtChainPrice(v){
+  const n=Number(v);
+  if(!(n>0))return '';
+  return n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+/** Key path of forecast moves: buy lows / sell highs as a copyable chain */
+function buildForecastChain(model, price){
+  const p0=Number(price)||Number(model&&model.price)||0;
+  if(!(p0>0)) return {chain:'', points:[], note:''};
+  const pts=[];
+  // 1d microstructure
+  const intra=Array.isArray(model&&model.intraday)?model.intraday:[];
+  if(intra.length){
+    const step=Math.max(1,Math.floor(intra.length/4));
+    for(let i=step-1;i<intra.length;i+=step){
+      const x=intra[i];
+      const v=Number(x.price||x.mid||x.c||x.close);
+      if(v>0) pts.push({t:'1д', v, tag:i===step-1?'вход':''});
+    }
+  }
+  // daily path pivots from model.points (up to 30)
+  const path=Array.isArray(model&&model.points)?model.points:[];
+  if(path.length){
+    const vals=path.map((pt,i)=>({i, v:Number(pt.mid||pt.c||pt.close)||0, hi:Number(pt.high||pt.hi)||0, lo:Number(pt.low||pt.lo)||0})).filter(x=>x.v>0);
+    // always include start
+    pts.push({t:'сейчас', v:p0, tag:'вход'});
+    // local extrema
+    for(let i=1;i<vals.length-1;i++){
+      const a=vals[i-1].v, b=vals[i].v, c=vals[i+1].v;
+      const isPeak=b>=a&&b>=c;
+      const isTrough=b<=a&&b<=c;
+      if(isPeak||isTrough){
+        const horizon=vals[i].i+1<=1?'1д':vals[i].i+1<=7?'7д':'30д';
+        pts.push({t:horizon, v:b, tag:isPeak?'пик':'дно'});
+      }
+    }
+    // force anchors at 7 and 30
+    const p7=Number(model.p7&&model.p7.mid)|| (vals[6]&&vals[6].v);
+    const p30=Number(model.p30&&model.p30.mid)|| (vals[vals.length-1]&&vals[vals.length-1].v);
+    if(p7>0) pts.push({t:'7д', v:p7, tag:'ориентир'});
+    if(p30>0) pts.push({t:'30д', v:p30, tag:'ориентир'});
+  } else {
+    pts.push({t:'сейчас', v:p0, tag:'вход'});
+    const drift=Number(model&&model.drift)||0;
+    const vol=Math.max(0.005, Number(model&&model.vol)||0.015);
+    pts.push({t:'1д', v:p0*Math.exp(drift*0.8+vol*0.15), tag:''});
+    pts.push({t:'7д', v:p0*Math.exp(drift*5), tag:''});
+    pts.push({t:'30д', v:p0*Math.exp(drift*18), tag:''});
+  }
+  // dedupe near-equal consecutive, keep order, max 8 points
+  const cleaned=[];
+  for(const pt of pts){
+    if(!(pt.v>0))continue;
+    if(cleaned.length&&Math.abs(cleaned.at(-1).v-pt.v)/pt.v<0.0015) continue;
+    cleaned.push(pt);
+  }
+  const slim=cleaned.slice(0,8);
+  if(slim.length&&Math.abs(slim[0].v-p0)/p0>0.002) slim.unshift({t:'сейчас', v:p0, tag:'вход'});
+  // ensure start is current
+  if(slim.length) slim[0]={...slim[0], v:p0, tag:slim[0].tag||'вход'};
+  const chain='|'+slim.map(x=>fmtChainPrice(x.v)).join('—');
+  // human hint: buy at troughs, careful at peaks
+  let note='';
+  const troughs=slim.filter(x=>x.tag==='дно'||x.tag==='вход');
+  const peaks=slim.filter(x=>x.tag==='пик');
+  if(troughs.length) note='Выгоднее набирать ближе к '+fmtChainPrice(Math.min(...troughs.map(x=>x.v)))+' ₽';
+  if(peaks.length) note+=(note?'; ':'')+'зона давления около '+fmtChainPrice(Math.max(...peaks.map(x=>x.v)))+' ₽';
+  return {chain, points:slim, note};
+}
+
+
 async function buildSandboxEssay(){
   const box=$('sandboxText'); if(!box)return;
   const held=(S.portfolioRows||[]).filter(r=>r&&r.uid&&Number(r.qty)>0);
-  box.innerHTML='<p class="sandbox-lead">Считаю…</p>';
-  const items=[];
+  const watch=(S.watchRows||[]).filter(w=>w&&w.uid&&!held.some(h=>h.uid===w.uid));
+  const universe=[...held, ...watch].slice(0,12);
+  box.innerHTML='<p class="sandbox-lead">Считаю цепочки прогноза…</p>';
+  const blocks=[];
   let buy=0,hold=0,sell=0,sumValue=0,sumPnl=0;
   const sellList=[], buyList=[];
-  for(const r of held){
+  const allChains=[];
+
+  for(const r of (universe.length?universe:held)){
     sumValue+=Number(r.value)||(Number(r.price)||0)*(Number(r.qty)||0);
     sumPnl+=Number(r.pnl)||0;
     let model=r.model;
     try{
       if(!model||!model.ok){
         const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',120);
-        model=forecastModel(daily,[],Number(r.price)||0,[],r.uid);
-        r.model=model;
+        let hourly=[];
+        try{hourly=await candles(r.uid,'CANDLE_INTERVAL_HOUR',40)}catch{}
+        model=forecastModel(daily,hourly,Number(r.price)||0,[],r.uid);
+        r.model=model; r.daily=daily; r.hourly=hourly;
       }
     }catch{}
+    if(!model||!model.ok) continue;
     const sig=signalFromModel(model);
     r.signalKey=sig.key; r.signalName=sig.name;
-    if(sig.key==='buy'){buy++; buyList.push(r);}
-    else if(sig.key==='sell'){sell++; sellList.push(r);}
-    else hold++;
+    if(Number(r.qty)>0){
+      if(sig.key==='buy'){buy++; buyList.push(r);}
+      else if(sig.key==='sell'){sell++; sellList.push(r);}
+      else hold++;
+    }
     const price=Number(r.price)||0;
-    const qty=Number(r.qty)||0;
-    const support=model&&Number(model.support)>0?Number(model.support):0;
-    const resistance=model&&Number(model.resistance)>0?Number(model.resistance):0;
+    const chainPack=buildForecastChain(model, price);
+    r.forecastChain=chainPack.chain;
+    if(chainPack.chain) allChains.push(String(r.ticker||'').toUpperCase()+' '+chainPack.chain);
     const ticker=String(r.ticker||'').toUpperCase();
-    let note='';
-    if(sig.key==='buy') note=support>0?('интереснее у поддержки '+support.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'структура ближе к набору';
-    else if(sig.key==='sell') note=resistance>0?('давление у сопротивления '+resistance.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'ближе к фиксации';
-    else note=(support>0&&resistance>0)?('диапазон '+support.toLocaleString('ru-RU',{maximumFractionDigits:2})+'…'+resistance.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽'):'ждать края';
     const sigClass=sig.key==='buy'?'sandbox-sig-buy':sig.key==='sell'?'sandbox-sig-sell':'sandbox-sig-hold';
-    items.push('<p class="sandbox-item"><b>'+esc(ticker)+'</b> · <span class="'+sigClass+'">'+esc(sig.name)+'</span><br>'+qty+' шт. × '+(price>0?price.toLocaleString('ru-RU',{maximumFractionDigits:2})+' ₽':'—')+' — '+esc(note)+'</p>');
+    blocks.push(
+      '<div class="sandbox-item sandbox-chain-card">'+
+        '<div class="sandbox-chain-head"><b>'+esc(ticker)+'</b> · <span class="'+sigClass+'">'+esc(sig.name)+'</span>'+
+        (Number(r.qty)>0?(' · '+Number(r.qty)+' шт.'):'')+
+        '</div>'+
+        (chainPack.note?'<p class="sandbox-chain-note">'+esc(chainPack.note)+'</p>':'')+
+        '<div class="sandbox-chain-row">'+
+          '<code class="sandbox-chain" id="chain-'+esc(String(r.uid))+'">'+esc(chainPack.chain||'—')+'</code>'+
+          '<button type="button" class="sandbox-copy-btn" data-copy-chain="'+esc(chainPack.chain||'')+'" title="Копировать цепочку">⧉</button>'+
+        '</div>'+
+        '<p class="sandbox-chain-hint muted">1 → 7 → 30 дней: уровни входа, локальные пики и дна прогноза</p>'+
+      '</div>'
+    );
   }
-  const ideasBuy=[], ideasSell=[];
-  try{
-    const pool=(typeof marketCache!=='undefined'&&Array.isArray(marketCache))?marketCache:[];
-    const heldU=new Set(held.map(h=>h.uid));
-    const sorted=[...pool].filter(x=>x&&x.uid&&!heldU.has(x.uid)&&Number(x.price)>0);
-    const byCh=[...sorted].sort((a,b)=>(Number(b.change)||0)-(Number(a.change)||0));
-    ideasBuy.push(...byCh.filter(x=>(Number(x.change)||0)>0).slice(0,3));
-    ideasSell.push(...byCh.filter(x=>(Number(x.change)||0)<0).slice(0,3));
-  }catch{}
+
   let stance='Базовый режим — держать и не торопиться.';
-  if(held.length&&sell>buy&&sell>=hold) stance='По портфелю разумнее не наращивать риск и точечно разгружать слабые звенья.';
-  else if(held.length&&buy>sell) stance='По портфелю смещение к удержанию и аккуратному набору.';
-  else if(!held.length) stance='Купленных позиций нет — ниже идеи с рынка (нужен скан в «Анализ»).';
+  if(held.length&&sell>buy&&sell>=hold) stance='По портфелю разумнее точечно разгружать слабые звенья.';
+  else if(held.length&&buy>sell) stance='Смещение к удержанию и аккуратному набору.';
+  else if(!held.length) stance='Нет купленных позиций — цепочки по списку наблюдения и рынку.';
+
   const lead=held.length
-    ?('Портфель: '+held.length+' позици'+(held.length===1?'я':held.length<5?'и':'й')+', ≈ '+Math.round(sumValue).toLocaleString('ru-RU')+' ₽, результат '+(sumPnl>=0?'+':'')+Math.round(sumPnl).toLocaleString('ru-RU')+' ₽. Сигналы: покупать '+buy+', держать '+hold+', сокращать '+sell+'. '+stance)
+    ?('Портфель: '+held.length+' позици'+(held.length===1?'я':held.length<5?'и':'й')+', ≈ '+Math.round(sumValue).toLocaleString('ru-RU')+' ₽. '+stance)
     :stance;
-  let extra='';
-  if(sellList.length) extra+='<p class="sandbox-lead"><b>Лучше сократить из портфеля:</b> '+sellList.map(r=>String(r.ticker||'').toUpperCase()).join(', ')+'.</p>';
-  if(buyList.length) extra+='<p class="sandbox-lead"><b>Имеет смысл удерживать / доливать:</b> '+buyList.map(r=>String(r.ticker||'').toUpperCase()).join(', ')+'.</p>';
-  if(ideasBuy.length) extra+='<p class="sandbox-lead"><b>Куда присмотреться (вне портфеля):</b> '+ideasBuy.map(x=>String(x.ticker||'').toUpperCase()+' ('+(Number(x.change)>0?'+':'')+(Number(x.change)||0).toFixed(1)+'%)').join(', ')+'.</p>';
-  if(ideasSell.length) extra+='<p class="sandbox-lead"><b>Слабее на рынке сейчас:</b> '+ideasSell.map(x=>String(x.ticker||'').toUpperCase()+' ('+(Number(x.change)||0).toFixed(1)+'%)').join(', ')+'.</p>';
-  box.innerHTML='<div class="sandbox-report"><p class="sandbox-lead">'+esc(lead)+'</p>'+extra+(items.length?items.join(''):'')+'</div>';
+
+  const copyAll=allChains.length
+    ?('<div class="sandbox-copy-all"><button type="button" class="btn sandbox-copy-all-btn" data-copy-chain="'+esc(allChains.join('\\n'))+'">Копировать все цепочки</button></div>')
+    :'';
+
+  box.innerHTML='<div class="sandbox-report"><p class="sandbox-lead">'+esc(lead)+'</p>'+copyAll+(blocks.length?blocks.join(''):'<p class="sandbox-lead">Недостаточно данных для цепочек. Откройте карточки или обновите портфель.</p>')+'</div>';
 }
+
 
 
 
