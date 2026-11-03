@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.29</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.30</title>
 
 
 
@@ -2204,6 +2204,21 @@ body.pre-token #loadProgress{display:none!important}
 .connection-card.connected .token-welcome,
 .connection-card.connected .token-welcome-sub{display:none!important}
 
+
+.chart-scale-btn{
+  flex:1 1 0!important;height:40px!important;border:0!important;border-right:1px solid var(--line)!important;
+  background:transparent!important;color:var(--ink)!important;font-size:13px!important;font-weight:750!important;
+  cursor:pointer;
+}
+.chart-scale-btn:last-child{border-right:0!important}
+.chart-scale-btn.active{
+  background:var(--ink)!important;color:var(--card)!important;
+}
+#assets details.asset[open] .chart-scale-btn{
+  flex:1 1 0!important;height:40px!important;
+}
+.chart-wrap{transition:height .2s ease,max-width .2s ease}
+
 </style>
 
 </head>
@@ -2304,7 +2319,7 @@ body.pre-token #loadProgress{display:none!important}
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.29 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.30 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2684,6 +2699,20 @@ if(!window.__mzChartDelegated){
    paintChart(i);
    return;
   }
+    const scaleBtn=e.target.closest&&e.target.closest('[data-chart-scale]');
+  if(scaleBtn){
+   e.preventDefault();e.stopPropagation();
+   const i=Number(scaleBtn.dataset.chartIndex);
+   if(!Number.isFinite(i))return;
+   const sc=scaleBtn.dataset.chartScale||'m';
+   const set=chartSettings(i);
+   set.scale=['s','m','l'].includes(sc)?sc:'m';
+   const bar=scaleBtn.closest('.chart-bar, [data-chart-tools]');
+   if(bar)bar.querySelectorAll('[data-chart-scale]').forEach(x=>x.classList.toggle('active',x.dataset.chartScale===set.scale));
+   paintChart(i);
+   return;
+  }
+
   const drawBtn=e.target.closest&&e.target.closest('[data-draw]');
   if(drawBtn){
    e.preventDefault();e.stopPropagation();
@@ -2759,15 +2788,21 @@ function paintChart(i){
     if(!c){console.warn('no canvas',i);return}
     if(!r){console.warn('no row',i);return}
     const wrap=c.closest('.chart-wrap');
+    const set0=chartSettings(i);
+    const sc=set0.scale||'m';
+    const Hmap={s:160,m:220,l:320};
+    const CH=Hmap[sc]||220;
     if(wrap){
       wrap.style.display='block';
-      wrap.style.height='220px';
-      wrap.style.minHeight='220px';
+      wrap.style.height=CH+'px';
+      wrap.style.minHeight=CH+'px';
       wrap.style.width='100%';
+      wrap.style.maxWidth=sc==='s'?'92%':sc==='l'?'100%':'100%';
+      wrap.style.margin=sc==='s'?'0 auto':'0';
     }
     c.style.display='block';
     c.style.width='100%';
-    c.style.height='220px';
+    c.style.height=CH+'px';
     c.dataset.instrumentUid=String(r.uid||'');
     const set=chartSettings(i);
     const period=[1,7,30].includes(Number(set.period))?Number(set.period):1;
@@ -2780,11 +2815,16 @@ function paintChart(i){
       src=Array.from({length:14},(_,k)=>({time:now-(14-k)*step,o:p,h:p*1.005,l:p*0.995,c:p}));
     }
     drawChart(c, src, r.model, r.price);
+    try{
+      const bar=c.closest('details.asset')?.querySelector('.chart-bar');
+      const sc=(chartSettings(i).scale||'m');
+      if(bar)bar.querySelectorAll('[data-chart-scale]').forEach(x=>x.classList.toggle('active',x.dataset.chartScale===sc));
+    }catch(e){}
     try{bindChartDrawing(c,i)}catch(e){}
     try{redrawDrawings(c,i)}catch(e){}
   }catch(e){console.error('paintChart',e)}
 }
-function chartSettings(i){const k=chartKey(i);return MZ_CHART_SETTINGS[k]||(MZ_CHART_SETTINGS[k]={period:1})}
+function chartSettings(i){const k=chartKey(i);return MZ_CHART_SETTINGS[k]||(MZ_CHART_SETTINGS[k]={period:1,scale:'m'})}
 function drawChart(canvas,cs,model,currentPrice){
  if(!canvas)return;
  const ctx=canvas.getContext('2d');if(!ctx)return;
@@ -3079,9 +3119,9 @@ function renderRows(rows){
 <button type="button" class="chart-tool" data-chart-period="7" data-chart-index="${i}">7</button>
 <button type="button" class="chart-tool" data-chart-period="30" data-chart-index="${i}">30</button>
 <span class="chart-sep"></span>
-<button type="button" class="draw-tool" data-draw="hline" data-chart-index="${i}">―</button>
-<button type="button" class="draw-tool" data-draw="pen" data-chart-index="${i}">✎</button>
-<button type="button" class="draw-tool" data-draw="clear" data-chart-index="${i}">✕</button>
+<button type="button" class="chart-scale-btn" data-chart-scale="s" data-chart-index="${i}" title="Компактный">S</button>
+<button type="button" class="chart-scale-btn active" data-chart-scale="m" data-chart-index="${i}" title="Обычный">M</button>
+<button type="button" class="chart-scale-btn" data-chart-scale="l" data-chart-index="${i}" title="Крупный">L</button>
 </div></div>
 <div class="chart-wrap"><canvas class="chart" id="chart-${i}" width="600" height="240" data-instrument-uid="${esc(r.uid)}"></canvas></div>
 <button type="button" class="calc-reveal" data-calc-toggle="${i}">Калькулятор сделки</button>
