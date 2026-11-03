@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.26</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.29</title>
 
 
 
@@ -2187,6 +2187,23 @@ body.dark .sandbox-summary{background:#141414}
 .sandbox-budget-hint{margin:6px 0 0!important}
 .sandbox-foot{display:none!important}
 
+
+body.pre-token #tokenCard .token-welcome{
+  font-size:18px;font-weight:750;letter-spacing:-.3px;color:var(--ink);
+  margin:0 0 4px;
+}
+body.pre-token #tokenCard .token-welcome-sub{
+  font-size:13px;font-weight:500;opacity:.7;margin:0;
+}
+body.pre-token #tokenCard #status:empty,
+body.pre-token #tokenCard #status:not(:empty){
+  /* keep status only for real errors after click */
+}
+body.pre-token #tokenNote{display:none!important}
+body.pre-token #loadProgress{display:none!important}
+.connection-card.connected .token-welcome,
+.connection-card.connected .token-welcome-sub{display:none!important}
+
 </style>
 
 </head>
@@ -2196,9 +2213,9 @@ body.dark .sandbox-summary{background:#141414}
     <div class="about-logo-row"><span class="about-mark" aria-hidden="true"></span><div class="about-logo-name">MZBOX <em>AI</em></div></div>
     <h2 class="about-title">Тише, чем рынок</h2>
     <div class="about-divider"></div>
-    <p class="about-text">MZBOX AI — рабочая среда для инвестора: портфель, уровни, прогноз и спокойный разбор без информационного шума.</p>
-    <p class="about-text">Система не навязывает сделки. Она структурирует данные так, чтобы решение оставалось за вами — осознанным и подкреплённым цифрами.</p>
-    <p class="about-text">В ближайшее время проект будет развиваться на платформе <strong>INJECTUM</strong>: тот же подход к ясности, расширенные инструменты и единая экосистема.</p>
+    <p class="about-text">Пространство, где цифры не кричат. Портфель, уровни и прогноз — в одном спокойном контуре.</p>
+    <p class="about-text">MZBOX AI не подталкивает к сделке. Он собирает картину так, чтобы решение оставалось вашим.</p>
+    <p class="about-text">Дальше путь ведёт в <strong>INJECTUM</strong> — туда, где ясность становится системой.</p>
     <p class="about-foot">нажмите на фон, чтобы закрыть</p>
   </div>
 </div>
@@ -2210,7 +2227,7 @@ body.dark .sandbox-summary{background:#141414}
  <div class="welcome-top"><div class="welcome-greeting"><div class="welcome-kicker" id="welcomeDate">MZBOX · СЕГОДНЯ</div><h1 id="welcomeGreeting">Доброе утро, Дмитрий.</h1></div><div class="welcome-clock"><strong id="welcomeClock">--:--</strong><span id="welcomeWeather">Москва</span></div></div>
  <div class="welcome-bottom"><div class="welcome-quote"><span class="welcome-quote-mark">“</span><div><p id="welcomeQuote">Порядок в мыслях помогает наводить порядок в действиях.</p><small id="welcomeAuthor">MZBOX AI</small></div></div></div>
 </section>
-<section class="card connection-card" id="tokenCard"><div class="row"><div id="tokenHeading"></div><span id="busyIcon"></span></div><div class="tokenrow" id="tokenRow"><input id="token" class="token-input" type="password" autocomplete="off" spellcheck="false" placeholder="Вставь T‑Invest API-токен"><button id="connect" class="btn" type="button">Подключить</button></div><div class="token-note hidden" id="tokenNote"></div><div class="status" id="status"></div><div id="loadProgress" class="load-progress hidden" aria-live="polite"><div class="load-progress-track"><span id="loadProgressFill"></span></div><div class="load-progress-label"><span id="loadProgressText">Загрузка портфеля…</span><b id="loadProgressPct">0%</b></div></div></section>
+<section class="card connection-card" id="tokenCard"><div class="row"><div id="tokenHeading"><div class="token-welcome">Добро пожаловать</div><div class="token-welcome-sub">Пожалуйста, введите токен</div></div><span id="busyIcon"></span></div><div class="tokenrow" id="tokenRow"><input id="token" class="token-input" type="password" autocomplete="off" spellcheck="false" placeholder="T‑Invest API-токен"><button id="connect" class="btn" type="button">Подключить</button></div><div class="token-note hidden" id="tokenNote"></div><div class="status" id="status"></div><div id="loadProgress" class="load-progress hidden" aria-live="polite"><div class="load-progress-track"><span id="loadProgressFill"></span></div><div class="load-progress-label"><span id="loadProgressText">Загрузка портфеля…</span><b id="loadProgressPct">0%</b></div></div></section>
 <section class="card portfolio-line hidden" id="portfolioSummary" aria-label="Сводка портфеля">
   <div class="pf-left"><strong id="invested">—</strong></div>
   <div class="pf-div" aria-hidden="true"></div>
@@ -2287,7 +2304,7 @@ body.dark .sandbox-summary{background:#141414}
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.26 · 02.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.29 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2508,13 +2525,16 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  const ret10=closes.length>10?(closes.at(-1)/closes.at(-11)-1)/10:0;
  const ret20=closes.length>20?(closes.at(-1)/closes.at(-21)-1)/20:0;
  // weight recent price action heaviest so path "looks like continuation"
- let dayDrift=ret3*0.30+ret5*0.30+ret10*0.20+ret20*0.10+(Number(drift)||0)*0.05+shortSlope*0.25;
- // structure / EMA bias
- if(emaBull) dayDrift=Math.max(dayDrift, Math.abs(dayDrift)*0.15);
- if(emaBear) dayDrift=Math.min(dayDrift,-Math.abs(dayDrift)*0.15);
- if((structure||0)>0) dayDrift+=0.0008;
- if((structure||0)<0) dayDrift-=0.0008;
- dayDrift=Math.max(-0.015,Math.min(0.015,dayDrift));
+ // multi-horizon momentum (Pring / Murphy style)
+ let dayDrift=ret3*0.22+ret5*0.28+ret10*0.22+ret20*0.12+(Number(drift)||0)*0.06+shortSlope*0.22;
+ if(emaBull) dayDrift=Math.max(dayDrift, Math.abs(dayDrift)*0.2+0.0005);
+ if(emaBear) dayDrift=Math.min(dayDrift,-Math.abs(dayDrift)*0.2-0.0005);
+ if((structure||0)>0) dayDrift+=0.0014;
+ if((structure||0)<0) dayDrift-=0.0014;
+ if(typeof rsi==='number'){ if(rsi>68) dayDrift-=0.0012; else if(rsi<32) dayDrift+=0.0012; }
+ // slope of medium log-regression already in slope var
+ if(typeof slope==='number'&&Number.isFinite(slope)) dayDrift=dayDrift*0.85+slope*0.15;
+ dayDrift=Math.max(-0.018,Math.min(0.018,dayDrift));
  // daily vol from ATR and recent realized vol
  const realVol=Math.max(vol20||0, vol10||0, atrPct||0);
  const dailyVol=Math.max(0.005,Math.min(0.045, realVol*0.9+ (vol||0.01)*0.2));
@@ -2528,41 +2548,82 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  const t10=price*Math.exp(dayDrift*8);
  // Build path: mostly smooth toward target + occasional real pullback
  // Replay recent volatility profile into the future (more "real chart" look)
+ // Book-style path (Murphy trend + Elder impulse + Fib pullback + ATR envelope)
  const recentR=[];
- for(let i=Math.max(1,closes.length-20);i<closes.length;i++){
+ for(let i=Math.max(1,closes.length-30);i<closes.length;i++){
   const a=closes[i-1],b=closes[i];
   if(a>0&&b>0) recentR.push(Math.log(b/a));
  }
  const avgAbs=recentR.length?recentR.reduce((s,x)=>s+Math.abs(x),0)/recentR.length:dailyVol;
- const points=[]; let px=price;
- let ar=0;
- // shuffle index into recent returns so path is not a repeating copy of last 20 days
+ const atrMove=Math.max(avgAbs, atrPct||dailyVol, 0.004);
+ // last impulse leg (for Fib 38.2 / 50 / 61.8 pullback)
+ let impulseHigh=price, impulseLow=price;
+ for(let i=Math.max(0,closes.length-15);i<closes.length;i++){
+  impulseHigh=Math.max(impulseHigh, closes[i]);
+  impulseLow=Math.min(impulseLow, closes[i]);
+ }
+ const impulse=Math.max(impulseHigh-impulseLow, price*atrMove*3);
+ const fib=[0.382,0.5,0.618];
+ const fibDepth=fib[Math.floor(rnd()*3)];
+ // RSI mean-reversion nudge (Wilder idea)
+ let rsiBias=0;
+ if(typeof rsi==='number'){
+  if(rsi>70) rsiBias=-atrMove*0.35;
+  else if(rsi<30) rsiBias=atrMove*0.35;
+  else if(rsi>60) rsiBias=-atrMove*0.08;
+  else if(rsi<40) rsiBias=atrMove*0.08;
+ }
+ // Primary trend from MAs + structure (Murphy: trend is friend)
+ const dir=emaBull?1:emaBear?-1:(Math.sign(dayDrift)||(structure>0?1:structure<0?-1:0)||1);
+ // Phases: impulse → Fib pullback → trend resume → late consolidation
+ const legImp=4+Math.floor(rnd()*3);
+ const legFib=2+Math.floor(rnd()*3);
+ const legRun=8+Math.floor(rnd()*6);
+ const points=[]; let px=price; let ar=0; let mom=dayDrift+rsiBias*0.5;
  let ri=Math.floor(rnd()*Math.max(1,recentR.length));
+ let runPeak=price, runTrough=price;
  for(let d=1;d<=30;d++){
   const prev=px;
-  const histShock=recentR.length?recentR[ri%recentR.length]:((rnd()-0.5)*2*avgAbs);
-  ri++;
-  ar=0.3*ar+(rnd()-0.5);
-  // Main driver = historical daily return magnitude/sign mix + mild drift
-  // NOT a smooth line to target
-  let step=histShock*0.75 + dayDrift*0.55 + ar*avgAbs*0.35;
-  // soft gravity toward horizon target (weak — keeps overall direction without a ruler-line)
-  const remain=Math.max(1,31-d);
-  const pull=Math.log(Math.max(t30,0.01)/Math.max(prev,0.01))/remain;
-  step+=pull*0.18;
-  // consolidation days
-  if(rnd()<0.12) step*=0.2;
-  // mean-revert extreme spikes
-  if(Math.abs(step)>avgAbs*2.5) step*=0.5;
-  if(resistance>0 && prev>resistance) step-=avgAbs*0.4;
-  if(support>0 && prev<support) step+=avgAbs*0.4;
+  let phase='run';
+  if(d<=legImp) phase='impulse';
+  else if(d<=legImp+legFib) phase='fib';
+  else if(d<=legImp+legFib+legRun) phase='run';
+  else phase='chop';
+  const histShock=recentR.length?recentR[ri%recentR.length]:0; ri++;
+  ar=0.5*ar+0.5*(rnd()-0.5);
+  let regime=dir;
+  if(phase==='fib') regime=-dir;
+  if(phase==='chop') regime=dir*0.25;
+  // target strength by phase
+  const phaseAmp=phase==='impulse'?1.15:phase==='fib'?0.9:phase==='run'?1.0:0.35;
+  mom=0.68*mom+0.32*(dayDrift*0.75+regime*atrMove*0.7*phaseAmp+rsiBias*0.15);
+  let step=mom*0.82 + histShock*0.22 + ar*atrMove*0.18;
+  // Fib magnet during pullback: pull toward 38–62% of last impulse
+  if(phase==='fib'&&impulse>0){
+   const fibLevel=dir>0?(runPeak-impulse*fibDepth):(runTrough+impulse*fibDepth);
+   step+=Math.log(Math.max(fibLevel,0.01)/Math.max(prev,0.01))*0.28;
+  }
+  // anchors 7d / 30d (planning horizons)
+  const anchor=d<=7?t7:d<=10?t10:t30;
+  step+=Math.log(Math.max(anchor,0.01)/Math.max(prev,0.01))/Math.max(1,31-d)*0.2;
+  // ATR clamp (no fantasy spikes)
+  const maxStep=atrMove*2.6;
+  if(step>maxStep) step=maxStep;
+  if(step<-maxStep) step=-maxStep;
+  if(rnd()<0.1) step*=0.15; // inside day
+  // classic S/R reaction
+  if(resistance>0&&prev>=resistance*0.997) step=Math.min(step,-atrMove*0.35);
+  if(support>0&&prev<=support*1.003) step=Math.max(step,atrMove*0.35);
   px=Math.max(0.01,prev*Math.exp(step));
+  runPeak=Math.max(runPeak,px);
+  runTrough=Math.min(runTrough,px);
+  // OHLC from ATR (Wilder-style range)
   const body=Math.abs(px-prev);
-  const wick=Math.max(body*0.55, px*avgAbs*0.75, px*0.002);
+  const wick=Math.max(body*0.55, px*atrMove*0.7, px*0.0015);
   const up=px>=prev;
-  const high=Math.max(prev,px)+(up?wick*0.3:wick*0.7);
-  const low=Math.min(prev,px)-(up?wick*0.7:wick*0.3);
-  points.push({d,mid:px,open:prev,high,low:Math.max(0.01,low)});
+  const high=Math.max(prev,px)+(up?wick*0.28:wick*0.55);
+  const low=Math.min(prev,px)-(up?wick*0.55:wick*0.28);
+  points.push({d,mid:px,open:prev,high,low:Math.max(0.01,low),close:px});
  }
  const p7=Object.assign({},points[6]||points.at(-1));
  const p10=Object.assign({},points[9]||points.at(-1));
@@ -2754,41 +2815,38 @@ function drawChart(canvas,cs,model,currentPrice){
  let future=[];
  if(p===1){
    const pts=Array.isArray(model?.intraday)?model.intraday:[];
-   const steps=16;
+   const steps=Math.max(12, Math.min(20, pts.length||16));
    let prev=current;
-   const endTarget=pts.length&&Number(pts.at(-1).price)>0?Number(pts.at(-1).price):current*Math.exp(drift*0.5);
+   const endTarget=pts.length&&Number(pts.at(-1).price)>0?Number(pts.at(-1).price):current*Math.exp(drift*0.7);
    for(let k=0;k<steps;k++){
-     const q=pts.length?pts[Math.min(pts.length-1,Math.floor(k*pts.length/steps))]:null;
-     const u=(k+1)/steps;
-     let close=q&&Number(q.price)>0?Number(q.price):(current+(endTarget-current)*u);
-     close=prev*0.25+close*0.75;
+     const q=pts.length?pts[Math.min(pts.length-1, Math.round(k*(pts.length-1)/Math.max(1,steps-1)))]:null;
+     let close=q&&Number(q.price)>0?Number(q.price):(current+(endTarget-current)*((k+1)/steps));
+     close=prev*0.12+close*0.88;
      let hi=q&&Number(q.high)>0?Number(q.high):Math.max(prev,close);
      let lo=q&&Number(q.low)>0?Number(q.low):Math.min(prev,close);
-     const body=Math.abs(close-prev);
-     const wpad=Math.max(body*0.35,current*vol*0.1,current*0.0008);
-     hi=Math.max(hi,prev,close)+wpad*0.25;
-     lo=Math.min(lo,prev,close)-wpad*0.25;
-     future.push({time:Date.now()+(k+1)*2700000,o:prev,c:close,h:hi,l:Math.max(0.01,lo),forecast:true,step:k+1});
+     const wpad=Math.max(Math.abs(close-prev)*0.4, current*vol*0.08, current*0.0006);
+     hi=Math.max(hi,prev,close)+wpad*0.3;
+     lo=Math.min(lo,prev,close)-wpad*0.3;
+     future.push({time:Date.now()+(k+1)*2400000,o:prev,c:close,h:hi,l:Math.max(0.01,lo),forecast:true,step:k+1});
      prev=close;
    }
  } else {
    const steps=p===7?7:30;
    const pts=Array.isArray(model?.points)?model.points:[];
    let prev=current;
-   const endMid=p===7?(Number(model?.p7?.mid)||current*Math.exp(drift*5)):(Number(model?.p10?.mid)||Number(model?.p30?.mid)||current*Math.exp(drift*8));
+   const endMid=p===7?(Number(model?.p7?.mid)||current*Math.exp(drift*5)):(Number(model?.p30?.mid)||Number(model?.p10?.mid)||current*Math.exp(drift*16));
    for(let k=0;k<steps;k++){
      const pt=pts.length?pts[Math.min(pts.length-1,k)]:null;
-     const mid=pt?Number(pt.mid):NaN;
-     const u=(k+1)/steps;
-     let close=(Number.isFinite(mid)&&mid>0)?mid:(current+(endMid-current)*u);
      const open=prev;
-     close=open*0.15+close*0.85;
+     let close=pt&&Number(pt.mid)>0?Number(pt.mid):(current+(endMid-current)*((k+1)/steps));
+     // stick close to model path, light smoothing only
+     close=open*0.08+close*0.92;
      let hi=pt&&Number(pt.high)>0?Number(pt.high):Math.max(open,close);
      let lo=pt&&Number(pt.low)>0?Number(pt.low):Math.min(open,close);
      hi=Math.max(hi,open,close);
      lo=Math.min(lo,open,close);
-     const minR=current*Math.max(vol*0.12,0.0015);
-     if(hi-lo<minR){hi=(open+close)/2+minR/2;lo=(open+close)/2-minR/2;}
+     const minR=current*Math.max(vol*0.1,0.0012);
+     if(hi-lo<minR){const m=(open+close)/2;hi=m+minR/2;lo=m-minR/2;}
      future.push({time:Date.now()+(k+1)*86400000,o:open,c:close,h:hi,l:Math.max(0.01,lo),forecast:true,step:k+1});
      prev=close;
    }
@@ -2801,8 +2859,8 @@ function drawChart(canvas,cs,model,currentPrice){
  const total=hist.length+future.length;
  const histCenter=i=>pad.l+(i+.5)*histSlot;
  const futureCenter=i=>pad.l+histW+(i+.5)*futureSlot;
- const histBody=Math.max(1.5,Math.min(8,histSlot*.58));
- const futureBody=Math.max(1.5,Math.min(8,futureSlot*.58));
+ const histBody=Math.max(2,Math.min(9,histSlot*.55));
+ const futureBody=Math.max(2,Math.min(9,futureSlot*.55));
  let vals=data.flatMap(c=>[Number(c.l),Number(c.h),Number(c.o),Number(c.c)]).filter(Number.isFinite);
  if(future.length){
    vals.push(...future.flatMap(c=>[Number(c.l),Number(c.h),Number(c.c)]).filter(Number.isFinite));
@@ -2835,20 +2893,20 @@ function drawChart(canvas,cs,model,currentPrice){
    const o=Number(c.o||c.open||0),cl=Number(c.c||c.close||0);
    const hi=Number(c.h||c.high||Math.max(o,cl)),lo=Number(c.l||c.low||Math.min(o,cl));
    const up=cl>=o;
+   // один стиль на всю историю и прогноз — контурные свечи
    const color=up?'#2c9b70':'#d45b5b';
    const top=y(Math.max(o,cl)),bottom=y(Math.min(o,cl)),wickTop=y(hi),wickBottom=y(lo);
    ctx.save();
-   ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.25;
+   ctx.strokeStyle=color;
+   ctx.lineWidth=1.3;
+   ctx.globalAlpha=isForecast?0.92:1;
    ctx.beginPath();ctx.moveTo(x,wickTop);ctx.lineTo(x,wickBottom);ctx.stroke();
    const bh=Math.max(2,bottom-top);
-   const bw=Math.max(2,bodyW);
+   const bw=Math.max(2.2,bodyW);
+   ctx.fillStyle=dark?'rgba(12,12,12,0.25)':'rgba(255,255,255,0.35)';
    ctx.fillRect(x-bw/2,top,bw,bh);
-   // forecast: same fill, thin dashed top edge mark so zone is readable without different shape
-   if(isForecast){
-     ctx.setLineDash([2,2]);
-     ctx.strokeRect(x-bw/2+0.5,top+0.5,bw-1,Math.max(1,bh-1));
-     ctx.setLineDash([]);
-   }
+   ctx.strokeRect(x-bw/2+0.3,top+0.3,bw-0.6,Math.max(1,bh-0.6));
+   ctx.globalAlpha=1;
    ctx.restore();
  }
  hist.forEach((c,i)=>candle(c,histCenter(i),histBody,false));
@@ -3601,7 +3659,7 @@ function chooseWelcomeQuote(){
 }
 function markFooterDataUpdated(label='Данные обновлены',timestamp=Date.now()){const el=$('footerUpdated');if(!el)return;const d=new Date(Number(timestamp)||Date.now());el.textContent='Обновлено: '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 const bootStartedAt=Date.now();let bootHideTimer=0;
-function hideBootScreen(){const remaining=2000-(Date.now()-bootStartedAt);if(remaining>0){if(!bootHideTimer)bootHideTimer=setTimeout(()=>{bootHideTimer=0;hideBootScreen()},remaining);return}const el=$('bootScreen');if(el)el.classList.add('done')}
+function hideBootScreen(){const remaining=1000-(Date.now()-bootStartedAt);if(remaining>0){if(!bootHideTimer)bootHideTimer=setTimeout(()=>{bootHideTimer=0;hideBootScreen()},remaining);return}const el=$('bootScreen');if(el)el.classList.add('done')}
 function setWelcomeVisible(show){
   const el=$('welcomeStrip'), rest=$('welcomeRestore'); if(!el)return;
   if(show){
