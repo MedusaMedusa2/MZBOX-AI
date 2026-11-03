@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.31</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.32</title>
 
 
 
@@ -527,10 +527,10 @@ body.dark .chart-wrap{background:#20211f!important}body.dark .chart{background:t
 .forecast-stat b{grid-column:2!important;grid-row:1!important;font-size:12px!important;line-height:1.2!important;margin:0!important;white-space:nowrap!important;color:var(--ink)!important}
 .forecast-stat small{grid-column:1/-1!important;grid-row:2!important;margin:0!important;font-size:9px!important;line-height:1.2!important;text-align:left!important;white-space:normal!important;color:var(--muted)!important}
 /* Smaller chart labels and safe-area spacing. Keep both portrait and landscape usable. */
-.chart-wrap{padding:5px!important;overflow:hidden!important}.chart{height:220px!important;min-height:0!important;max-width:100%!important;touch-action:pan-y!important}
+.chart-wrap{padding:5px!important;overflow:hidden!important}.chart{height:100%;min-height:0!important;max-width:100%!important;touch-action:pan-y!important}
 .top{padding-top:env(safe-area-inset-top)!important}.header-actions{padding-right:env(safe-area-inset-right)!important;margin-left:auto;justify-content:flex-end;min-width:max-content} #refresh{opacity:1!important;visibility:visible!important;pointer-events:auto!important}.footer{padding-bottom:env(safe-area-inset-bottom)!important}
-@media(max-width:600px){main{padding-left:max(9px,env(safe-area-inset-left))!important;padding-right:max(9px,env(safe-area-inset-right))!important}.top{gap:5px!important}.header-actions{gap:3px!important}.icon-square,.theme-toggle{width:30px!important;height:30px!important;flex-basis:30px!important}.asset-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}.asset{padding:8px!important}.asset-head{grid-template-columns:minmax(0,1fr) minmax(72px,auto)!important;gap:5px!important}.asset-title-line{gap:4px!important}.asset-name{font-size:11px!important}.qty-chip{font-size:8px!important;padding:3px 4px!important;max-width:70px!important}.watch-chip{max-width:51px!important}.asset-price{font-size:10px!important}.asset-price>.asset-sub{font-size:7px!important}.asset-position-value{font-size:8px!important}.asset-signal{font-size:8px!important;padding:3px 5px!important}.asset-signal i{width:5px!important;height:5px!important;flex-basis:5px!important}.forecast-stat b{font-size:11px!important}.chart{height:205px!important}}
-@media(orientation:landscape) and (max-height:600px){main{max-width:1200px!important;padding-top:8px!important;padding-bottom:12px!important}.top{margin-bottom:8px!important}.asset-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}.asset[open]{grid-column:1/-1!important}.chart{height:190px!important}.card{padding:10px!important}}
+@media(max-width:600px){main{padding-left:max(9px,env(safe-area-inset-left))!important;padding-right:max(9px,env(safe-area-inset-right))!important}.top{gap:5px!important}.header-actions{gap:3px!important}.icon-square,.theme-toggle{width:30px!important;height:30px!important;flex-basis:30px!important}.asset-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}.asset{padding:8px!important}.asset-head{grid-template-columns:minmax(0,1fr) minmax(72px,auto)!important;gap:5px!important}.asset-title-line{gap:4px!important}.asset-name{font-size:11px!important}.qty-chip{font-size:8px!important;padding:3px 4px!important;max-width:70px!important}.watch-chip{max-width:51px!important}.asset-price{font-size:10px!important}.asset-price>.asset-sub{font-size:7px!important}.asset-position-value{font-size:8px!important}.asset-signal{font-size:8px!important;padding:3px 5px!important}.asset-signal i{width:5px!important;height:5px!important;flex-basis:5px!important}.forecast-stat b{font-size:11px!important}.chart{height:100%}}
+@media(orientation:landscape) and (max-height:600px){main{max-width:1200px!important;padding-top:8px!important;padding-bottom:12px!important}.top{margin-bottom:8px!important}.asset-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}.asset[open]{grid-column:1/-1!important}.chart{height:100%}.card{padding:10px!important}}
 /* Disable pinch/double-tap zoom as requested; retain ordinary scrolling and landscape layout. */
 input,button,select,textarea{touch-action:manipulation}
 
@@ -803,13 +803,13 @@ body:not(.pre-token) #assets,
 #assets details.asset[open] .locked-content,
 #assets details.asset[open] .locked-content.unlocked{display:block!important;visibility:visible!important}
 #assets details.asset[open] .chart-wrap{
-  display:block!important;width:100%!important;height:240px!important;min-height:240px!important;
+  display:block!important;width:100%!important;height:auto;min-height:auto;
   visibility:visible!important;opacity:1!important;margin:8px 0!important;padding:0!important;
   border:1px solid var(--line)!important;border-radius:12px!important;overflow:hidden!important;
   background:var(--card)!important;
 }
 #assets details.asset[open] canvas.chart{
-  display:block!important;width:100%!important;height:240px!important;visibility:visible!important;
+  display:block!important;width:100%!important;height:100%;visibility:visible!important;
 }
 #assets details.asset[open] .chart-tools{display:block!important;width:100%!important;margin:0 0 8px!important}
 #assets details.asset[open] .chart-bar{display:flex!important;width:100%!important;border:1px solid var(--line)!important;border-radius:12px!important;overflow:hidden!important;background:var(--bg)!important}
@@ -951,8 +951,8 @@ body.dark .btn,body.dark .search-btn,body.dark .market-study{background:#f3f3f3!
 #assets details.asset[open] .chart-wrap{
   display:block!important;
   width:100%!important;
-  height:220px!important;
-  min-height:220px!important;
+  height:auto;
+  min-height:auto;
   position:relative!important;
   background:#111!important;
   border:1px solid #333!important;
@@ -963,7 +963,7 @@ body:not(.dark) #assets details.asset[open] .chart-wrap{background:#f5f5f5!impor
 #assets details.asset[open] canvas.chart{
   display:block!important;
   width:100%!important;
-  height:220px!important;
+  height:100%;
   position:relative!important;
   z-index:2!important;
 }
@@ -2231,6 +2231,20 @@ body.pre-token #loadProgress{display:none!important}
 .chart-edit-btn:active{background:var(--ink)!important;color:var(--card)!important}
 #assets details.asset[open] .chart-edit-btn{flex:1 1 0!important;height:40px!important}
 
+
+.chart-wrap{
+  height:auto!important;
+  min-height:120px!important;
+  max-height:none!important;
+}
+.chart-wrap .chart,
+canvas.chart{
+  height:100%!important;
+  min-height:0!important;
+  width:100%!important;
+  display:block!important;
+}
+
 </style>
 
 </head>
@@ -2331,7 +2345,7 @@ body.pre-token #loadProgress{display:none!important}
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.31 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.32 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2722,12 +2736,19 @@ if(!window.__mzChartDelegated){
    else if(act==='shorter') set.heightLevel=Math.max(0,(Number(set.heightLevel)||2)-1);
    else if(act==='mode') set.mode=(set.mode==='line')?'candle':'line';
    // force layout then paint
-   const wrap=document.querySelector('#chart-'+i)?.closest('.chart-wrap');
    const CH=chartHeightPx(set.heightLevel);
-   if(wrap){wrap.style.height=CH+'px';wrap.style.minHeight=CH+'px';}
    const canvas=document.getElementById('chart-'+i);
-   if(canvas){canvas.style.height=CH+'px';canvas.style.minHeight=CH+'px';}
-   requestAnimationFrame(()=>{paintChart(i);requestAnimationFrame(()=>paintChart(i));});
+   const wrap=canvas?canvas.closest('.chart-wrap'):null;
+   if(wrap){
+     wrap.style.setProperty('height', CH+'px', 'important');
+     wrap.style.setProperty('min-height', CH+'px', 'important');
+   }
+   if(canvas){
+     canvas.style.setProperty('height', CH+'px', 'important');
+     canvas.style.setProperty('min-height', CH+'px', 'important');
+   }
+   paintChart(i);
+   setTimeout(()=>paintChart(i),50);
    return;
   }
 
@@ -2810,16 +2831,18 @@ function paintChart(i){
     const CH=chartHeightPx(set0.heightLevel);
     if(wrap){
       wrap.style.display='block';
-      wrap.style.height=CH+'px';
-      wrap.style.minHeight=CH+'px';
+      wrap.style.setProperty('height', CH+'px', 'important');
+      wrap.style.setProperty('min-height', CH+'px', 'important');
+      wrap.style.setProperty('max-height', 'none', 'important');
       wrap.style.width='100%';
-      wrap.style.maxWidth='100%';
       wrap.style.margin='0';
     }
     c.style.display='block';
     c.style.width='100%';
-    c.style.height=CH+'px';
-    c.style.minHeight=CH+'px';
+    c.style.setProperty('height', CH+'px', 'important');
+    c.style.setProperty('min-height', CH+'px', 'important');
+    c.setAttribute('height', String(CH));
+
     c.dataset.instrumentUid=String(r.uid||'');
     const set=chartSettings(i);
     const period=[1,7,30].includes(Number(set.period))?Number(set.period):1;
@@ -2842,7 +2865,12 @@ function drawChart(canvas,cs,model,currentPrice){
  if(!canvas)return;
  const ctx=canvas.getContext('2d');if(!ctx)return;
  const rect=canvas.getBoundingClientRect(),parentRect=canvas.parentElement?.getBoundingClientRect();
- const dpr=Math.max(1,window.devicePixelRatio||1),W=Math.max(300,rect.width||canvas.clientWidth||parentRect?.width||600),H=Math.max(220,rect.height||canvas.clientHeight||280);
+ const dpr=Math.max(1,window.devicePixelRatio||1);
+ const idxHint=Number((canvas.id||'').replace('chart-',''));
+ let preferH=0;
+ try{ if(Number.isFinite(idxHint)&&typeof chartSettings==='function') preferH=chartHeightPx(chartSettings(idxHint).heightLevel);}catch{}
+ const W=Math.max(280,rect.width||canvas.clientWidth||parentRect?.width||600);
+ const H=Math.max(120, preferH||rect.height||canvas.clientHeight||220);
  const dark=document.body.classList.contains('dark');
  if(rect.width===0&&canvas.closest('.locked-content')&&!canvas.closest('.locked-content').classList.contains('unlocked'))return;
  canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width='100%';
