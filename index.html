@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.33</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.34</title>
 
 
 
@@ -2356,7 +2356,7 @@ canvas.chart{
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.33 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.34 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2628,54 +2628,64 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  // Primary trend from MAs + structure (Murphy: trend is friend)
  const dir=emaBull?1:emaBear?-1:(Math.sign(dayDrift)||(structure>0?1:structure<0?-1:0)||1);
  // Phases: impulse → Fib pullback → trend resume → late consolidation
- const legImp=4+Math.floor(rnd()*3);
- const legFib=2+Math.floor(rnd()*3);
- const legRun=8+Math.floor(rnd()*6);
+ // Explicit phases: trend leg → CORRECTION (visible) → resume
+ // Correction depth 3–8% so the path does not look like a one-way climb
+ const legTrend=3+Math.floor(rnd()*3);      // 3–5d with trend
+ const legCorr=3+Math.floor(rnd()*3);       // 3–5d correction (must be visible)
+ const corrDepth=0.03+rnd()*0.05;           // 3–8%
  const points=[]; let px=price; let ar=0; let mom=dayDrift+rsiBias*0.5;
  let ri=Math.floor(rnd()*Math.max(1,recentR.length));
  let runPeak=price, runTrough=price;
+ let corrTarget=null;
  for(let d=1;d<=30;d++){
   const prev=px;
-  let phase='run';
-  if(d<=legImp) phase='impulse';
-  else if(d<=legImp+legFib) phase='fib';
-  else if(d<=legImp+legFib+legRun) phase='run';
-  else phase='chop';
+  let phase='trend';
+  if(d<=legTrend) phase='trend';
+  else if(d<=legTrend+legCorr) phase='corr';
+  else phase='resume';
+  if(phase==='corr'&&corrTarget==null){
+    // set correction target against the leg just made
+    runPeak=Math.max(runPeak,prev);
+    runTrough=Math.min(runTrough,prev);
+    corrTarget=dir>0 ? prev*(1-corrDepth) : prev*(1+corrDepth);
+    // prefer fib of impulse if larger
+    if(impulse>0){
+      const fibLvl=dir>0?(runPeak-impulse*Math.max(fibDepth,0.382)):(runTrough+impulse*Math.max(fibDepth,0.382));
+      if(dir>0) corrTarget=Math.min(corrTarget,fibLvl);
+      else corrTarget=Math.max(corrTarget,fibLvl);
+    }
+  }
   const histShock=recentR.length?recentR[ri%recentR.length]:0; ri++;
   ar=0.5*ar+0.5*(rnd()-0.5);
   let regime=dir;
-  if(phase==='fib') regime=-dir;
-  if(phase==='chop') regime=dir*0.25;
-  // target strength by phase
-  const phaseAmp=phase==='impulse'?1.15:phase==='fib'?0.9:phase==='run'?1.0:0.35;
-  mom=0.68*mom+0.32*(dayDrift*0.75+regime*atrMove*0.7*phaseAmp+rsiBias*0.15);
-  let step=mom*0.82 + histShock*0.22 + ar*atrMove*0.18;
-  // Fib magnet during pullback: pull toward 38–62% of last impulse
-  if(phase==='fib'&&impulse>0){
-   const fibLevel=dir>0?(runPeak-impulse*fibDepth):(runTrough+impulse*fibDepth);
-   step+=Math.log(Math.max(fibLevel,0.01)/Math.max(prev,0.01))*0.28;
+  if(phase==='corr') regime=-dir;
+  const phaseAmp=phase==='trend'?1.1:phase==='corr'?1.25:0.95;
+  mom=0.62*mom+0.38*(dayDrift*0.55+regime*atrMove*0.85*phaseAmp+rsiBias*0.12);
+  let step=mom*0.8 + histShock*0.18 + ar*atrMove*0.15;
+  // hard pull toward correction target while in corr phase
+  if(phase==='corr'&&corrTarget>0){
+    const left=Math.max(1, (legTrend+legCorr)-d+1);
+    step+=Math.log(Math.max(corrTarget,0.01)/Math.max(prev,0.01))/left*0.55;
   }
-  // anchors 7d / 30d (planning horizons)
   const anchor=d<=7?t7:d<=10?t10:t30;
-  step+=Math.log(Math.max(anchor,0.01)/Math.max(prev,0.01))/Math.max(1,31-d)*0.2;
-  // ATR clamp (no fantasy spikes)
-  const maxStep=atrMove*2.6;
+  // during correction weaken long-horizon pull so path really dips
+  const pullW=phase==='corr'?0.06:0.22;
+  step+=Math.log(Math.max(anchor,0.01)/Math.max(prev,0.01))/Math.max(1,31-d)*pullW;
+  const maxStep=atrMove*(phase==='corr'?3.2:2.5);
   if(step>maxStep) step=maxStep;
   if(step<-maxStep) step=-maxStep;
-  if(rnd()<0.1) step*=0.15; // inside day
-  // classic S/R reaction
-  if(resistance>0&&prev>=resistance*0.997) step=Math.min(step,-atrMove*0.35);
-  if(support>0&&prev<=support*1.003) step=Math.max(step,atrMove*0.35);
+  if(rnd()<0.08) step*=0.2;
+  if(resistance>0&&prev>=resistance*0.997) step=Math.min(step,-atrMove*0.4);
+  if(support>0&&prev<=support*1.003) step=Math.max(step,atrMove*0.4);
   px=Math.max(0.01,prev*Math.exp(step));
   runPeak=Math.max(runPeak,px);
   runTrough=Math.min(runTrough,px);
-  // OHLC from ATR (Wilder-style range)
   const body=Math.abs(px-prev);
   const wick=Math.max(body*0.55, px*atrMove*0.7, px*0.0015);
   const up=px>=prev;
   const high=Math.max(prev,px)+(up?wick*0.28:wick*0.55);
   const low=Math.min(prev,px)-(up?wick*0.55:wick*0.28);
-  points.push({d,mid:px,open:prev,high,low:Math.max(0.01,low),close:px});
+  points.push({d,mid:px,open:prev,high,low:Math.max(0.01,low),close:px,phase});
  }
  const p7=Object.assign({},points[6]||points.at(-1));
  const p10=Object.assign({},points[9]||points.at(-1));
@@ -2943,7 +2953,11 @@ function drawChart(canvas,cs,model,currentPrice){
      lo=Math.min(lo,open,close);
      const minR=current*Math.max(vol*0.1,0.0012);
      if(hi-lo<minR){const m=(open+close)/2;hi=m+minR/2;lo=m-minR/2;}
-     future.push({time:Date.now()+(k+1)*86400000,o:open,c:close,h:hi,l:Math.max(0.01,lo),forecast:true,step:k+1});
+     const ph=pt&&pt.phase?pt.phase:((k+1)<=(pts.findIndex?0:0)?'trend':'trend');
+     // map model phase: first third trend, mid corr if marked, else infer by local drop
+     let phase=pt&&pt.phase?String(pt.phase):'trend';
+     if(phase==='fib') phase='corr';
+     future.push({time:Date.now()+(k+1)*86400000,o:open,c:close,h:hi,l:Math.max(0.01,lo),forecast:true,step:k+1,phase,correction:phase==='corr'});
      prev=close;
    }
  }
@@ -2989,8 +3003,9 @@ function drawChart(canvas,cs,model,currentPrice){
    const o=Number(c.o||c.open||0),cl=Number(c.c||c.close||0);
    const hi=Number(c.h||c.high||Math.max(o,cl)),lo=Number(c.l||c.low||Math.min(o,cl));
    const up=cl>=o;
-   // один стиль на всю историю и прогноз — контурные свечи
-   const color=up?'#2c9b70':'#d45b5b';
+   const isCorr=isForecast&&(c.phase==='corr'||c.correction);
+   // коррекция — янтарный контур; остальное зелёный/красный
+   const color=isCorr?'#d4a017':(up?'#2c9b70':'#d45b5b');
    const top=y(Math.max(o,cl)),bottom=y(Math.min(o,cl)),wickTop=y(hi),wickBottom=y(lo);
    ctx.save();
    ctx.strokeStyle=color;
@@ -3011,20 +3026,22 @@ function drawChart(canvas,cs,model,currentPrice){
      if(!arr.length)return;
      ctx.save();
      ctx.lineJoin='round';ctx.lineCap='round';
-     ctx.strokeStyle=forecast?(dark?'#7dceb0':'#2a9b6a'):(dark?'#c8c8c8':'#3a3a3a');
-     ctx.lineWidth=forecast?1.7:2;
-     ctx.setLineDash(forecast?[5,4]:[]);
-     ctx.beginPath();
-     arr.forEach((c,i)=>{
-       const x=centerFn(i), yy=y(Number(c.c||c.close||c.mid)||0);
-       if(i===0)ctx.moveTo(x,yy); else ctx.lineTo(x,yy);
-     });
-     ctx.stroke();
-     // end dot
+     // draw segment-by-segment to color correction amber
+     for(let i=1;i<arr.length;i++){
+       const a=arr[i-1],b=arr[i];
+       const corr=forecast&&(b.phase==='corr'||b.correction||a.phase==='corr');
+       ctx.strokeStyle=corr?'#d4a017':(forecast?(dark?'#7dceb0':'#2a9b6a'):(dark?'#c8c8c8':'#3a3a3a'));
+       ctx.lineWidth=forecast?1.7:2;
+       ctx.setLineDash(forecast?(corr?[]:[5,4]):[]);
+       ctx.beginPath();
+       ctx.moveTo(centerFn(i-1), y(Number(a.c||a.close||a.mid)||0));
+       ctx.lineTo(centerFn(i), y(Number(b.c||b.close||b.mid)||0));
+       ctx.stroke();
+     }
      const last=arr[arr.length-1];
      const lx=centerFn(arr.length-1), ly=y(Number(last.c||last.close||last.mid)||0);
      ctx.setLineDash([]);
-     ctx.fillStyle=ctx.strokeStyle;
+     ctx.fillStyle=(forecast&&(last.phase==='corr'||last.correction))?'#d4a017':(forecast?(dark?'#7dceb0':'#2a9b6a'):(dark?'#c8c8c8':'#3a3a3a'));
      ctx.beginPath();ctx.arc(lx,ly,3,0,Math.PI*2);ctx.fill();
      ctx.restore();
    };
@@ -3033,6 +3050,23 @@ function drawChart(canvas,cs,model,currentPrice){
  } else {
    hist.forEach((c,i)=>candle(c,histCenter(i),histBody,false));
    future.forEach((c,i)=>candle(c,futureCenter(i),futureBody,true));
+ }
+ // коррекция: подпись и лёгкая заливка
+ {
+   const corrIdx=[];
+   future.forEach((c,i)=>{ if(c&&(c.phase==='corr'||c.correction)) corrIdx.push(i); });
+   if(corrIdx.length){
+     const x0=futureCenter(corrIdx[0])-(futureSlot*0.45);
+     const x1=futureCenter(corrIdx[corrIdx.length-1])+(futureSlot*0.45);
+     ctx.save();
+     ctx.fillStyle=dark?'rgba(212,160,23,0.10)':'rgba(212,160,23,0.12)';
+     ctx.fillRect(x0,pad.t,Math.max(4,x1-x0),plotH);
+     ctx.fillStyle='#d4a017';
+     ctx.font='bold 10px -apple-system,BlinkMacSystemFont,sans-serif';
+     ctx.textAlign='center';
+     ctx.fillText('Коррекция', (x0+x1)/2, pad.t+12);
+     ctx.restore();
+   }
  }
  // Current price guide.
  ctx.strokeStyle=dark?'#aaa':'#777';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(pad.l,y(current));ctx.lineTo(W-pad.r,y(current));ctx.stroke();ctx.setLineDash([]);
