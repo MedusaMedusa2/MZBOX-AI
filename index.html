@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.34</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.35</title>
 
 
 
@@ -2356,7 +2356,7 @@ canvas.chart{
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.34 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.35 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2420,6 +2420,8 @@ function signalFromModel(m){
  if(Number(m.structure)>0)score+=1; else if(Number(m.structure)<0)score-=1;
  if(Number(m.candleScore)>=1)score+=1; else if(Number(m.candleScore)<=-1)score-=1;
  if(m.emaBull)score+=1; if(m.emaBear)score-=1;
+ if(m.technical&&Number.isFinite(Number(m.technical.bias)))score+=Math.max(-2,Math.min(2,Number(m.technical.bias)));
+
  if(m.p7&&price>0){const up=(Number(m.p7.mid)/price)-1; if(up>0.01)score+=1; else if(up<-0.01)score-=1;}
  if(m.p10&&price>0){const up=(Number(m.p10.mid)/price)-1; if(up>0.015)score+=1; else if(up<-0.015)score-=1;}
  else if(m.p30&&price>0){const up=(Number(m.p30.mid)/price)-1; if(up>0.03)score+=1; else if(up<-0.03)score-=1;}
@@ -2448,6 +2450,59 @@ function calcRSI(closes,period=14){
  const ag=gains/period, al=losses/period;
  if(al<1e-12)return 100;
  const rs=ag/al; return 100-100/(1+rs);
+}
+function sma(a,n){if(!Array.isArray(a)||a.length<n)return null;const z=a.slice(-n);return z.reduce((x,y)=>x+y,0)/n}
+function regressionLine(values){
+ const a=(values||[]).map(Number).filter(Number.isFinite),n=a.length;if(n<3)return null;
+ const xb=(n-1)/2,yb=a.reduce((x,y)=>x+y,0)/n;let num=0,den=0;
+ for(let i=0;i<n;i++){num+=(i-xb)*(a[i]-yb);den+=(i-xb)*(i-xb)}
+ const slope=den?num/den:0;return {slope,intercept:yb-slope*xb,start:yb-slope*xb,end:yb+slope*(n-1-xb),n};
+}
+function analyzeMarketStructure(cs,price){
+ const closes=cs.map(c=>Number(c.c)).filter(x=>x>0),highs=cs.map(c=>Number(c.h||c.c)),lows=cs.map(c=>Number(c.l||c.c));
+ const e50=closes.length>=50?ema(closes.slice(-Math.min(400,closes.length)),50):null;
+ const e200=closes.length>=200?ema(closes.slice(-Math.min(600,closes.length)),200):null;
+ const ma18=sma(closes,18),ma50=sma(closes,50);
+ const last=cs.at(-1),prev=cs.at(-2),prior=cs.slice(-21,-1);
+ const priorHigh=prior.length?Math.max(...prior.map(c=>Number(c.h||c.c))):null;
+ const priorLow=prior.length?Math.min(...prior.map(c=>Number(c.l||c.c))):null;
+ const volBase=cs.slice(-21,-1).map(c=>Number(c.v)||0).filter(v=>v>0);
+ const avgVol=volBase.length?volBase.reduce((a,b)=>a+b,0)/volBase.length:0;
+ const lastVol=Number(last&&last.v)||0,volConfirmed=avgVol>0&&lastVol>=avgVol*1.25;
+ let falseBreakout=null;
+ if(last&&prev&&priorHigh>0&&priorLow>0){
+  const h=Number(last.h||last.c),l=Number(last.l||last.c),c=Number(last.c),o=Number(last.o||last.c);
+  if(h>priorHigh*1.002&&c<priorHigh&&c<o)falseBreakout={direction:'up',level:priorHigh,confirmed:volConfirmed,description:'Ложный пробой вверх: цена вышла выше локального максимума, но закрылась обратно ниже'};
+  else if(l<priorLow*.998&&c>priorLow&&c>o)falseBreakout={direction:'down',level:priorLow,confirmed:volConfirmed,description:'Ложный пробой вниз: цена вышла ниже локального минимума, но закрылась обратно выше'};
+ }
+ // Parallel channel and converging wedge from recent rolling highs/lows.
+ const win=cs.slice(-40),hiLine=regressionLine(win.map(c=>Number(c.h||c.c))),loLine=regressionLine(win.map(c=>Number(c.l||c.c)));
+ let channel=null,pattern='нет подтверждённой формации';
+ if(hiLine&&loLine){
+  const width0=hiLine.start-loLine.start,width1=hiLine.end-loLine.end;
+  if(width0>0&&width1>0){
+   const convergence=(width0-width1)/width0;
+   channel={upper:hiLine,lower:loLine,width:width1,convergence};
+   if(convergence>.18&&hiLine.slope>0&&loLine.slope>hiLine.slope)pattern='восходящий клин';
+   else if(convergence>.18&&hiLine.slope<0&&loLine.slope<hiLine.slope)pattern='нисходящий клин';
+   else if(convergence>.18&&hiLine.slope<0&&loLine.slope>0)pattern='симметричный треугольник';
+   else if(Math.abs(hiLine.slope-loLine.slope)<Math.max(1e-9,Math.abs(hiLine.slope)*.35)&&Math.abs(loLine.slope)>0)pattern='ценовой канал';
+  }
+ }
+ const above=(v)=>v!=null&&price>v,below=(v)=>v!=null&&price<v;
+ let channelBreakout=null;
+ if(channel&&last){const buffer=Math.max(price*.002,Math.abs(Number(last.h||price)-Number(last.l||price))*.15);if(price>channel.upper.end+buffer)channelBreakout={direction:'up',level:channel.upper.end,confirmed:volConfirmed};else if(price<channel.lower.end-buffer)channelBreakout={direction:'down',level:channel.lower.end,confirmed:volConfirmed};}
+ let bias=0,signals=[];
+ if(ma18!=null&&ma50!=null){if(price>ma18&&ma18>ma50){bias++;signals.push('Цена выше SMA18 и SMA50');}else if(price<ma18&&ma18<ma50){bias--;signals.push('Цена ниже SMA18 и SMA50');}}
+ if(e200!=null){if(above(e200)){bias++;signals.push('Цена выше EMA200');}else{bias--;signals.push('Цена ниже EMA200');}}
+ if(e50!=null){if(above(e50)){bias++;signals.push('Цена выше EMA50');}else{bias--;signals.push('Цена ниже EMA50');}}
+ if(falseBreakout){bias+=falseBreakout.direction==='up'?-1:1;signals.push(falseBreakout.description+(falseBreakout.confirmed?' · объём выше среднего':' · объём не подтвердил движение'));}
+ if(channelBreakout){bias+=channelBreakout.direction==='up'?2:-2;signals.push('Пробой '+(channelBreakout.direction==='up'?'верхней':'нижней')+' границы структуры'+(channelBreakout.confirmed?' с подтверждением объёмом':' · без подтверждения объёмом'));}
+ if(pattern==='восходящий клин')signals.push('Обнаружен восходящий клин — статистически чаще риск пробоя вниз, но нужен факт выхода цены');
+ if(pattern==='нисходящий клин')signals.push('Обнаружен нисходящий клин — возможен пробой вверх, но направление пока не подтверждено');
+ if(pattern==='симметричный треугольник')signals.push('Обнаружен симметричный треугольник; направление пробоя неизвестно');
+ if(pattern==='ценовой канал')signals.push('Обнаружен наклонный ценовой канал');
+ return {ma18,ma50,ema50:e50,ema200:e200,priorHigh,priorLow,channel,channelBreakout,pattern,falseBreakout,volConfirmed,avgVol,lastVol,bias,signals,historyCount:closes.length,ema200Available:e200!=null};
 }
 function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  /* Deep per-instrument forecast:
@@ -2557,7 +2612,10 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  if(kurt>1.5)drift*=0.85; // unstable tails → damp
  drift=Math.max(-0.025,Math.min(0.025,drift));
 
- const trend=drift>0.0012||(emaBull&&structure>=0)?'восходящее движение':drift<-0.0012||(emaBear&&structure<=0)?'нисходящее движение':'боковое движение';
+ const technical=analyzeMarketStructure(cs,price);
+ // Technical confluence is a bounded modifier, never a standalone buy/sell trigger.
+ drift=Math.max(-0.025,Math.min(0.025,drift+technical.bias*0.00045));
+ const trend=drift>0.0012||(emaBull&&structure>=0&&technical.bias>=0)?'восходящее движение':drift<-0.0012||(emaBear&&structure<=0&&technical.bias<=0)?'нисходящее движение':'боковое движение';
  const momentum=shortSlope>0.002?'ускорение':shortSlope<-0.002?'затухание':'ровный';
  const risk=vol>0.035||volRatio>1.4||kurt>2?'повышенный':vol<0.012?'сдержанный':'умеренный';
 
@@ -2615,8 +2673,8 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
   impulseLow=Math.min(impulseLow, closes[i]);
  }
  const impulse=Math.max(impulseHigh-impulseLow, price*atrMove*3);
+ // Fib levels are measured from price structure for display; never chosen randomly as a forecast target.
  const fib=[0.382,0.5,0.618];
- const fibDepth=fib[Math.floor(rnd()*3)];
  // RSI mean-reversion nudge (Wilder idea)
  let rsiBias=0;
  if(typeof rsi==='number'){
@@ -2627,12 +2685,12 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  }
  // Primary trend from MAs + structure (Murphy: trend is friend)
  const dir=emaBull?1:emaBear?-1:(Math.sign(dayDrift)||(structure>0?1:structure<0?-1:0)||1);
- // Phases: impulse → Fib pullback → trend resume → late consolidation
- // Explicit phases: trend leg → CORRECTION (visible) → resume
- // Correction depth 3–8% so the path does not look like a one-way climb
- const legTrend=3+Math.floor(rnd()*3);      // 3–5d with trend
- const legCorr=3+Math.floor(rnd()*3);       // 3–5d correction (must be visible)
- const corrDepth=0.03+rnd()*0.05;           // 3–8%
+ // A correction is forecast only when current market evidence supports it.
+ // No mandatory/random 3–8% pullback: use current ATR, EMA21 distance and short-term momentum.
+ const correctionLikely=(dir>0&&shortSlope<0&&price<e21l)||(dir<0&&shortSlope>0&&price>e21l)||(Math.abs(distEma)>Math.max(atrPct*1.8,0.025));
+ const legTrend=correctionLikely?0:30;
+ const legCorr=correctionLikely?Math.max(2,Math.min(4,Math.ceil(Math.abs(distEma)/Math.max(atrPct,0.005)))):0;
+ const corrDepth=Math.max(0.006,Math.min(0.025,atrPct*1.15));
  const points=[]; let px=price; let ar=0; let mom=dayDrift+rsiBias*0.5;
  let ri=Math.floor(rnd()*Math.max(1,recentR.length));
  let runPeak=price, runTrough=price;
@@ -2644,16 +2702,8 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
   else if(d<=legTrend+legCorr) phase='corr';
   else phase='resume';
   if(phase==='corr'&&corrTarget==null){
-    // set correction target against the leg just made
-    runPeak=Math.max(runPeak,prev);
-    runTrough=Math.min(runTrough,prev);
+    runPeak=Math.max(runPeak,prev);runTrough=Math.min(runTrough,prev);
     corrTarget=dir>0 ? prev*(1-corrDepth) : prev*(1+corrDepth);
-    // prefer fib of impulse if larger
-    if(impulse>0){
-      const fibLvl=dir>0?(runPeak-impulse*Math.max(fibDepth,0.382)):(runTrough+impulse*Math.max(fibDepth,0.382));
-      if(dir>0) corrTarget=Math.min(corrTarget,fibLvl);
-      else corrTarget=Math.max(corrTarget,fibLvl);
-    }
   }
   const histShock=recentR.length?recentR[ri%recentR.length]:0; ri++;
   ar=0.5*ar+0.5*(rnd()-0.5);
@@ -2721,7 +2771,7 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  const advice=trend==='восходящее движение'&&rsi<65?'Смещать внимание к удержанию/набору на откатах.':trend==='нисходящее движение'&&rsi>35?'Осторожность с усреднением против структуры.':'Дождаться более ясного края диапазона.';
  const sigma=vol;
 
- return {ok:true,_uid:String(uid||''),price,cs,support,resistance,vol,rsi,trend,risk,points,p7,p10,p30,summary,riskText,levelsText,momentum,scenario,advice,drift,intraday,sigma,ac1,skew,seed,volRatio,atrPct,structure,candleScore,patterns:patterns.slice(0,6),emaBull,emaBear};
+ return {ok:true,_uid:String(uid||''),price,cs,support,resistance,vol,rsi,trend,risk,points,p7,p10,p30,summary,riskText,levelsText,momentum,scenario,advice,drift,intraday,sigma,ac1,skew,seed,volRatio,atrPct,structure,candleScore,patterns:patterns.slice(0,6),emaBull,emaBear,technical,correctionLikely};
 }
 
 
@@ -2760,6 +2810,7 @@ if(!window.__mzChartDelegated){
      editBtn.textContent=set.mode==='line'?'／':'〰';
      editBtn.title=set.mode==='line'?'Линия':'Свечи';
    }
+   else if(act==='technical'){set.showTechnical=!set.showTechnical;editBtn.classList.toggle('active',!!set.showTechnical);editBtn.title=set.showTechnical?'Скрыть техническую разметку':'Показать техническую разметку';}
    // force layout then paint
    const CH=chartHeightPx(set.heightLevel);
    const canvas=document.getElementById('chart-'+i);
@@ -2828,7 +2879,7 @@ async function loadDetail(i){
    else if(ch<-0.8||(model.drift||0)<-0.001) dir='СНИЖЕНИЕ';
    const support=Number(model.support)||0, resistance=Number(model.resistance)||0;
    if(a){
-    a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p>'+(support||resistance?'<p class="muted">Мин ≈ '+(support?support.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' · Макс ≈ '+(resistance?resistance.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+'</p>':'')+'</div>';
+    a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p>'+(support||resistance?'<p class="muted">Мин ≈ '+(support?support.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' · Макс ≈ '+(resistance?resistance.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+'</p>':'')+(model.technical?'<p class="muted">Техструктура: '+esc(model.technical.pattern)+'. '+esc((model.technical.signals||[]).slice(0,3).join(' · '))+(model.technical.ema200Available?'':' · Для EMA200 недостаточно истории')+'</p>':'')+'</div>';
     if(a.parentElement) a.parentElement.classList.remove('hidden');
    }
   } else if(a){
@@ -2885,7 +2936,7 @@ function paintChart(i){
   }catch(e){console.error('paintChart',e)}
 }
 function chartHeightPx(level){const L=[150,190,230,290,360];const i=Math.max(0,Math.min(4,Number(level)||2));return L[i];}
-function chartSettings(i){const k=chartKey(i);const d=MZ_CHART_SETTINGS[k]||(MZ_CHART_SETTINGS[k]={period:1,heightLevel:2,mode:'candle'});if(d.heightLevel==null)d.heightLevel=2;if(!d.mode)d.mode='candle';return d}
+function chartSettings(i){const k=chartKey(i);const d=MZ_CHART_SETTINGS[k]||(MZ_CHART_SETTINGS[k]={period:1,heightLevel:2,mode:'candle',showTechnical:false});if(d.heightLevel==null)d.heightLevel=2;if(!d.mode)d.mode='candle';return d}
 function drawChart(canvas,cs,model,currentPrice){
  if(!canvas)return;
  const ctx=canvas.getContext('2d');if(!ctx)return;
@@ -3102,6 +3153,22 @@ function drawChart(canvas,cs,model,currentPrice){
      if(Number.isFinite(level)&&level>=min&&level<=max){ctx.strokeStyle=color;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(pad.l,y(level));ctx.lineTo(W-pad.r,y(level));ctx.stroke();ctx.setLineDash([])}
    });
  }
+ // Optional model-derived technical overlays. The toggle affects drawings only, not calculations.
+ const chartOpts=typeof chartSettings==='function'?chartSettings(idx):{};
+ const tech=modelOK&&model.technical?model.technical:null;
+ if(chartOpts.showTechnical&&tech){
+   const drawLevel=(v,color,label,dash=[5,4])=>{if(!(Number(v)>min&&Number(v)<max))return;ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.1;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(pad.l,y(v));ctx.lineTo(W-pad.r,y(v));ctx.stroke();ctx.setLineDash([]);ctx.font='8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='right';ctx.fillText(label+' '+Number(v).toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r-3,y(v)-3);ctx.restore();};
+   drawLevel(tech.ma18,'#d5b85a','SMA18',[2,3]);drawLevel(tech.ma50,'#b98c54','SMA50',[5,3]);drawLevel(tech.ema200,'#a58bc4','EMA200',[7,3]);
+   drawLevel(tech.ema50,'#8c9dba','EMA50',[4,3]);
+   if(p!==1&&tech.channel){
+    const ch=tech.channel,x0=pad.l+histW,x1=W-pad.r;
+    const project=(line,color,label)=>{const end=Number(line.end),futureEnd=end+Number(line.slope||0)*Math.max(1,future.length);if(!Number.isFinite(end)||!Number.isFinite(futureEnd))return;ctx.save();ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.setLineDash([5,3]);ctx.beginPath();ctx.moveTo(x0,y(end));ctx.lineTo(x1,y(futureEnd));ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=color;ctx.font='8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='right';ctx.fillText(label,x1-2,y(futureEnd)-3);ctx.restore();};
+    project(ch.upper,'#c77d65','Канал · верх');project(ch.lower,'#65a98c','Канал · низ');
+    if(tech.pattern==='восходящий клин'||tech.pattern==='нисходящий клин'||tech.pattern==='симметричный треугольник'){ctx.save();ctx.fillStyle='#c9a35b';ctx.font='bold 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='left';ctx.fillText('СХОДЯЩИЙСЯ КЛИН · ПРОБОЙ НЕ ПОДТВЕРЖДЁН',pad.l+histW+6,pad.t+25);ctx.restore();}
+   }
+   if(tech.falseBreakout){const fb=tech.falseBreakout;drawLevel(fb.level,fb.direction==='up'?'#d45b5b':'#2c9b70',fb.direction==='up'?'Ложный пробой ↑':'Ложный пробой ↓',[1,3]);}
+   if(tech.channelBreakout){const br=tech.channelBreakout;drawLevel(br.level,br.direction==='up'?'#2c9b70':'#d45b5b',br.direction==='up'?'Пробой канала ↑':'Пробой канала ↓',[6,2]);}
+ }
  ctx.fillStyle=muted;ctx.font='8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='center';
  if(p===1){
    const histEvery=Math.max(1,Math.ceil(hist.length/2));
@@ -3240,7 +3307,7 @@ function renderRows(rows){
 <span class="chart-sep"></span>
 <button type="button" class="chart-edit-btn" data-chart-edit="taller" data-chart-index="${i}" title="Выше" aria-label="Выше">＋</button>
 <button type="button" class="chart-edit-btn" data-chart-edit="shorter" data-chart-index="${i}" title="Ниже" aria-label="Ниже">－</button>
-<button type="button" class="chart-edit-btn chart-mode-btn" data-chart-edit="mode" data-chart-index="${i}" title="Свечи / линия" aria-label="Режим">〰</button>
+<button type="button" class="chart-edit-btn chart-mode-btn" data-chart-edit="mode" data-chart-index="${i}" title="Свечи / линия" aria-label="Режим">〰</button><button type="button" class="chart-edit-btn" data-chart-edit="technical" data-chart-index="${i}" title="Техническая разметка" aria-label="Техническая разметка">МА</button>
 </div></div>
 <div class="chart-wrap"><canvas class="chart" id="chart-${i}" width="600" height="240" data-instrument-uid="${esc(r.uid)}"></canvas></div>
 <button type="button" class="calc-reveal" data-calc-toggle="${i}">Калькулятор сделки</button>
@@ -4512,4 +4579,3 @@ document.addEventListener('change',e=>{
 })();
 
 </script></body></html>
-
