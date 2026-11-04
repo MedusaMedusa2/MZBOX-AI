@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.11.07</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.11.08</title>
 
 
 
@@ -711,6 +711,17 @@ body.dark .search-reopen,body.dark .calc-reveal{background:#1b1c18!important;bor
 .result-value-line #pnl{display:inline-block!important;margin:0!important}
 .result-value-line #returnPct{display:inline-block!important;margin:0!important}
 @media(max-width:600px){.portfolio-line{align-items:center!important}.portfolio-metric{min-height:0!important}.portfolio-metric strong{font-size:clamp(16px,4.7vw,22px)!important}.result-value-line{flex-direction:row!important;gap:4px!important}.result-value-line #returnPct{font-size:9px!important}}
+
+
+/* MZBOX V22.11.08: clean chart-only asset cards */
+.forecast-head,.analysis,.calc-reveal,.trade-calc,.path-wrap{display:none!important}
+#brentPanel.brent-compact{display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 9px;width:100%;min-width:0;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink)}
+.brent-title{font-size:9px;font-weight:750;letter-spacing:.06em;color:var(--muted)}
+.brent-price{font-size:14px;font-weight:760;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.brent-change{font-size:11px;font-weight:700;white-space:nowrap}
+.brent-meta{font-size:9px;line-height:1.3;color:var(--muted);flex-basis:100%;margin:0}
+.brent-status{font-size:9px;color:var(--muted)}
+.brent-status.error{color:var(--red)}
 
 </style>
 
@@ -2258,6 +2269,13 @@ canvas.chart{
 
 </style>
 
+
+<style id="mzbox-v221110-clean-ui">
+.brent-compact{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;padding:7px 10px!important;min-height:0!important;border-radius:10px!important;font-size:10px!important}
+.brent-title{font-size:9px!important;letter-spacing:.45px!important}.brent-price{font-size:13px!important;font-weight:750!important}.brent-change{font-size:10px!important;font-weight:700!important}.brent-status{font-size:9px!important}.brent-meta{display:none!important}
+.chart-edit-btn{font-size:11px!important;font-weight:750!important;padding:0 8px!important;min-width:30px}
+.chart-edit-btn.active{border-color:#b5a45c!important;background:#3a3524!important;color:#f0df91!important}
+</style>
 </head>
 <body>
 <div id="aboutOverlay" class="about-overlay hidden" aria-hidden="true" hidden role="dialog" aria-label="О проекте">
@@ -2316,8 +2334,6 @@ canvas.chart{
 
 <!-- Access is provided by the registered T-Invest token; no startup PIN. -->
 <div id="assets" class="asset-list"></div>
-
-
 <section class="card tools-workspace" id="toolsWorkspace">
   <div class="tools-bar">
     <button type="button" class="tools-open-btn" id="openSandbox" aria-expanded="false">Песочница</button>
@@ -2337,6 +2353,7 @@ canvas.chart{
     <div id="marketResults" class="market-results"><div class="empty">Нажми «Сканировать», чтобы получить список акций.</div></div>
   </div>
   <div class="tools-panel hidden" id="panelSandbox">
+    <div id="brentPanel" aria-live="polite" class="brent-compact"><span class="brent-title">BRENT · BRM 12.26</span><strong id="brentPrice" class="brent-price">—</strong><span id="brentChange" class="brent-change">—</span><span id="brentStatus" class="brent-status">Ожидание котировки</span><span id="brentMeta" class="brent-meta">Нефтяной фактор для прогноза ROSN</span></div>
     <div class="sandbox-budget card-inner">
       <label for="sandboxBudget">Сумма, которую готов выделить на коррекцию, ₽</label>
       <div class="sandbox-budget-row">
@@ -2356,7 +2373,7 @@ canvas.chart{
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.11.07 · 04.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.11.11 · 04.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2834,7 +2851,7 @@ function chartKey(i){try{const r=(S&&S.rows&&S.rows[i])||null;if(r&&r.uid)return
 // Chart controls: event delegation (works after every renderRows)
 if(!window.__mzChartDelegated){
  window.__mzChartDelegated=true;
- document.addEventListener('click',function(e){
+ document.addEventListener('click',async function(e){
   const periodBtn=e.target.closest&&e.target.closest('[data-chart-period]');
   if(periodBtn){
    e.preventDefault();e.stopPropagation();
@@ -2855,26 +2872,23 @@ if(!window.__mzChartDelegated){
    if(!Number.isFinite(i))return;
    const act=editBtn.dataset.chartEdit;
    const set=chartSettings(i);
-   if(act==='taller') set.heightLevel=Math.min(4,(Number(set.heightLevel)||2)+1);
-   else if(act==='shorter') set.heightLevel=Math.max(0,(Number(set.heightLevel)||2)-1);
+   if(act==='refresh'){
+     if(editBtn.dataset.busy==='1')return;
+     editBtn.dataset.busy='1';editBtn.textContent='…';editBtn.disabled=true;
+     try{const row=S.rows[i];if(row?.uid){const fresh=await lastPrices([row.uid]);if(Number(fresh[row.uid])>0)row.price=Number(fresh[row.uid]);}if(row?.detailLoading){const started=Date.now();while(row.detailLoading&&Date.now()-started<30000)await new Promise(resolve=>setTimeout(resolve,100));}if(row)row.detailLoaded=false;await loadDetail(i,true);const row2=S.rows[i];if(row2&&row2.detailLoaded){refreshForecastForCurrentPrice(i);await loadOrderBookForChart(i);paintChart(i);}}
+     catch(err){console.warn('Manual chart refresh',err);}
+     finally{editBtn.dataset.busy='0';editBtn.textContent='↻';editBtn.disabled=false;}
+     return;
+   }
+   if(act==='scenarios'){set.showScenarios=!set.showScenarios;editBtn.classList.toggle('active',!!set.showScenarios);editBtn.title=set.showScenarios?'Скрыть альтернативные сценарии':'Показать три сценария с оценкой вероятности';}
+   else if(act==='structure'){set.showStructure=!set.showStructure;editBtn.classList.toggle('active',!!set.showStructure);editBtn.title=set.showStructure?'Скрыть структуру рынка':'Показать уровни и крупные заявки';}
    else if(act==='mode'){
      set.mode=(set.mode==='line')?'candle':'line';
-     editBtn.textContent=set.mode==='line'?'／':'〰';
-     editBtn.title=set.mode==='line'?'Линия':'Свечи';
+     editBtn.textContent=set.mode==='line'?'▱':'〰';
+     editBtn.title=set.mode==='line'?'Детальный график':'Свечи';
    }
    else if(act==='technical'){set.showTechnical=!set.showTechnical;editBtn.classList.toggle('active',!!set.showTechnical);editBtn.title=set.showTechnical?'Скрыть техническую разметку':'Показать техническую разметку';}
-   // force layout then paint
-   const CH=chartHeightPx(set.heightLevel);
-   const canvas=document.getElementById('chart-'+i);
-   const wrap=canvas?canvas.closest('.chart-wrap'):null;
-   if(wrap){
-     wrap.style.setProperty('height', CH+'px', 'important');
-     wrap.style.setProperty('min-height', CH+'px', 'important');
-   }
-   if(canvas){
-     canvas.style.setProperty('height', CH+'px', 'important');
-     canvas.style.setProperty('min-height', CH+'px', 'important');
-   }
+   // Rebuild the full drawing from the latest stored market inputs.
    paintChart(i);
    setTimeout(()=>paintChart(i),50);
    return;
@@ -2975,6 +2989,124 @@ function detectRecentShock(daily,hourly,model){
  return {detected,returnPct:ret*100,hourlyPct:hImpulse*100,rangePct:range*100,volumeRatio:volRatio,adjustment,extraRange,kind:detected?(ret>0?'резкий рост':ret<0?'резкое падение':'всплеск волатильности'):'обычная динамика'};
 }
 
+
+// ================= MZBOX V22.11.10 · BRENT FACTOR =================
+let BRENT_INSTRUMENT=null, BRENT_DAILY=[], BRENT_QUOTE=0, BRENT_UPDATED_AT=0, BRENT_BUSY=null;
+const BRENT_LABEL='BRM 12.26';
+function brentStatus(text,error=false){const el=$('brentStatus');if(el){el.textContent=text;el.classList.toggle('error',!!error)}}
+async function findBrentFuture(){
+ if(BRENT_INSTRUMENT)return BRENT_INSTRUMENT;
+ const queries=['BRM 12.26','BRMZ6','BRM-12.26'];
+ let found=[];
+ for(const query of queries){
+  try{
+   const d=await api(INS,'FindInstrument',{query,instrumentKind:'INSTRUMENT_TYPE_FUTURES'},12000);
+   const arr=d.instruments||d.instrument||[];
+   found.push(...arr.filter(x=>get(x,'uid','instrumentUid','instrumentUID')));
+   const exact=found.find(x=>{const t=String(get(x,'ticker')||'').toUpperCase().replace(/[^A-Z0-9]/g,'');const n=String(get(x,'name')||'').toLowerCase();return /BRMZ6|BRM1226/.test(t)||(n.includes('brent')&&(/12[. -]?26|декабр/.test(n)||/2026/.test(n)));});
+   if(exact){BRENT_INSTRUMENT={uid:get(exact,'uid','instrumentUid','instrumentUID'),ticker:get(exact,'ticker')||'BRMZ6',name:get(exact,'name')||'Brent December 2026',currency:get(exact,'currency')||'usd'};return BRENT_INSTRUMENT;}
+  }catch(e){}
+ }
+ // Do not silently select a different expiry or a spot instrument.
+ throw new Error('Контракт BRM 12.26 не найден в каталоге T‑Invest. Проверь доступность фьючерса в API.');
+}
+function dayKey(t){const d=new Date(Number(t));return Number.isFinite(d.getTime())?d.toISOString().slice(0,10):''}
+function oilRelationship(stockDaily,oilDaily){
+ const dayMs=86400000;
+ const oil=(oilDaily||[]).filter(c=>Number(c.c)>0&&Number(c.time)>0).map(c=>({t:Math.floor(Number(c.time)/dayMs),c:Number(c.c)})).sort((a,b)=>a.t-b.t);
+ const stock=(stockDaily||[]).filter(c=>Number(c.c)>0&&Number(c.time)>0).map(c=>({t:Math.floor(Number(c.time)/dayMs),c:Number(c.c)})).sort((a,b)=>a.t-b.t);
+ const pairs=[];let oi=0;
+ for(let i=1;i<stock.length;i++){
+  const d0=stock[i-1].t,d1=stock[i].t;
+  while(oi+1<oil.length&&oil[oi+1].t<=d1)oi++;
+  let j=oi;
+  if(j<1||Math.abs(oil[j].t-d1)>2)continue;
+  // Use the last available oil close at or before each stock close; tolerate weekend/holiday gaps.
+  let j0=j-1;while(j0>=0&&oil[j0].t>=d0)j0--;
+  if(j0<0||Math.abs(oil[j0].t-d0)>4)continue;
+  const sr=Math.log(stock[i].c/stock[i-1].c),or=Math.log(oil[j].c/oil[j0].c);
+  if(Number.isFinite(sr)&&Number.isFinite(or))pairs.push({s:sr,o:or});
+ }
+ const n=pairs.length;
+ const od=(oilDaily||[]).filter(c=>Number(c.c)>0).sort((a,b)=>a.time-b.time),last=od.at(-1)?.c||0;
+ const ret=(k)=>od.length>k&&Number(od[od.length-1-k].c)>0?last/Number(od[od.length-1-k].c)-1:0;
+ if(n<2)return {samples:n,corr:0,beta:0,ready:false,empirical:false,ret5:ret(5),ret20:ret(20)};
+ if(n<12)return {samples:n,corr:.25,beta:.35,ready:true,empirical:false,ret5:ret(5),ret20:ret(20)};
+ const mean=a=>a.reduce((x,y)=>x+y,0)/a.length,os=pairs.map(x=>x.o),ss=pairs.map(x=>x.s),mo=mean(os),ms=mean(ss);
+ let cov=0,vo=0,vs=0;for(let i=0;i<n;i++){cov+=(os[i]-mo)*(ss[i]-ms);vo+=(os[i]-mo)**2;vs+=(ss[i]-ms)**2;}
+ const corr=vo>0&&vs>0?cov/Math.sqrt(vo*vs):0,beta=vo>0?cov/vo:0;
+ return {samples:n,corr:Math.max(-1,Math.min(1,corr)),beta:Math.max(-2,Math.min(2,beta)),ready:true,empirical:true,ret5:ret(5),ret20:ret(20)};
+}
+function applyBrentInfluence(model,stockDaily,oilDaily){
+ if(!model||!model.ok||!Array.isArray(oilDaily)||!oilDaily.length)return model;
+ const rel=oilRelationship(stockDaily,oilDaily),last=oilDaily.at(-1),prev=oilDaily.at(-2);
+ const change1d=prev&&Number(prev.c)>0?(Number(last.c)/Number(prev.c)-1):0;
+ if(!rel.ready){model.oilContext={...rel,price:Number(last.c)||0,change1d,applied:false};return model;}
+ // Empirical ROSN sensitivity to Brent. Beta keeps its sign; correlation only controls confidence shrinkage.
+ const confidence=rel.empirical?Math.max(.15,Math.min(.8,Math.abs(rel.corr))):.18; 
+ const beta=Math.max(-1.25,Math.min(1.25,rel.beta));
+ const impact7=Math.max(-.035,Math.min(.035,beta*rel.ret5*confidence*.72));
+ const impact30=Math.max(-.055,Math.min(.055,beta*rel.ret20*confidence*.48));
+ const pts=Array.isArray(model.points)?model.points:[];
+ for(let i=0;i<pts.length;i++){
+  const h=i+1,oilEffect=h<=7?impact7*h/7:impact7+(impact30-impact7)*(h-7)/23;
+  const f=Math.exp(oilEffect),p=pts[i];
+  for(const k of ['mid','open','high','low','close'])if(Number(p[k])>0)p[k]*=f;
+ }
+ const band=(arr,k)=>{const values=arr.map(x=>Number(x[k])||Number(x.mid)||Number(model.price)).filter(Number.isFinite);if(!values.length)return Number(model.price)||0;return k==='low'?Math.min(...values):Math.max(...values)};
+ if(pts.length){Object.assign(model.p7||{}, {mid:pts[Math.min(6,pts.length-1)].mid,low:band(pts.slice(0,7),'low'),high:band(pts.slice(0,7),'high')});Object.assign(model.p30||{}, {mid:pts[Math.min(29,pts.length-1)].mid,low:band(pts,'low'),high:band(pts,'high')});if(model.p10&&pts[9])model.p10.mid=pts[9].mid;}
+ // The 1-day chart is driven by intraday points, so explicitly carry the oil impulse into that path too.
+ const intra=Array.isArray(model.intraday)?model.intraday:[];
+ for(let i=0;i<intra.length;i++){const f=Math.exp(impact7*.55*(i+1)/Math.max(1,intra.length));for(const k of ['price','high','low'])if(Number(intra[i][k])>0)intra[i][k]*=f;}
+ model.drift=Math.max(-.035,Math.min(.035,(Number(model.drift)||0)+impact7/7));
+ model.oilContext={...rel,price:Number(last.c)||0,change1d,impact7,impact30,applied:true};
+ model.dataFingerprint=String(model.dataFingerprint||'')+'|BRM:'+String(last.time)+':'+Number(last.c).toFixed(4)+':'+rel.corr.toFixed(3);
+ return model;
+}
+async function loadBrentContext(force=true){
+ if(BRENT_BUSY)return BRENT_BUSY;
+ BRENT_BUSY=(async()=>{
+  brentStatus('Загружаю BRM 12.26…');
+  const inst=await findBrentFuture();
+  let quote=0;try{const p=await lastPrices([inst.uid]);quote=Number(p[inst.uid])||0;}catch(e){}
+  let hist=[];try{hist=await candles(inst.uid,'CANDLE_INTERVAL_DAY',240,!!force);}catch(e){if(!quote)throw e;}
+  if(!quote&&hist.length)quote=Number(hist.at(-1).c)||0;
+  if(!(quote>0))throw new Error('T‑Invest не вернул актуальную цену контракта.');
+  BRENT_DAILY=hist;BRENT_QUOTE=quote;BRENT_UPDATED_AT=Date.now();
+  const prior=hist.length>1?Number(hist.at(-2).c):0,dayPct=prior>0?(quote/prior-1)*100:null;
+  const priceEl=$('brentPrice'),changeEl=$('brentChange'),metaEl=$('brentMeta');
+  if(priceEl)priceEl.textContent=quote.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:4})+' $/барр.';
+  if(changeEl){changeEl.textContent=dayPct==null?'—':(dayPct>0?'+':'')+dayPct.toFixed(2)+'%';changeEl.style.color=dayPct>0?'var(--green)':dayPct<0?'var(--red)':'var(--muted)';}
+  brentStatus('Котировка получена · '+new Date(BRENT_UPDATED_AT).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}));
+  if(metaEl)metaEl.textContent='';
+  applyBrentToRosneftRows();
+  return {instrument:inst,quote,history:hist};
+ })().catch(e=>{brentStatus(explainError(e),true);const meta=$('brentMeta');if(meta)meta.textContent='';throw e;}).finally(()=>{BRENT_BUSY=null});
+ return BRENT_BUSY;
+}
+function isRosneftRow(r){return /ROSN|РОСНЕФТ/i.test(String(r?.ticker||'')+' '+String(r?.name||''));}
+function applyBrentToRosneftRows(){
+ if(!BRENT_DAILY.length)return;
+ (S.rows||[]).forEach((r,i)=>{if(!isRosneftRow(r)||!Array.isArray(r.daily)||!r.daily.length)return;
+  const model=forecastModel(r.daily,r.hourly||[],Number(r.price)||0,r.shortCandles||[],r.uid,{fourHour:r.fourHour||[],weekly:r.weekly||[]});
+  if(!model?.ok)return;
+  const learning=r.learningStats||learnFromHistory(r.daily,r.uid);applyHistoricalLearning(model,learning,r.daily,r.hourly||[]);applyBrentInfluence(model,r.daily,BRENT_DAILY);
+  r.model=model;r.learningStats=learning;r.oilAppliedAt=BRENT_UPDATED_AT;const sig=signalFromModel(model);r.signalKey=sig.key;r.signalName=sig.name;try{applyHelpSignal(i,sig.key)}catch{}try{paintChart(i)}catch{};
+ });
+ const meta=$('brentMeta');const ros=(S.rows||[]).find(isRosneftRow);if(meta&&ros?.model?.oilContext){const o=ros.model.oilContext;meta.textContent=o.applied?'ROSN · нефть учтена':'ROSN · фактор ожидает подтверждения';}
+}
+// ================= END BRENT FACTOR =================
+
+async function loadOrderBookForChart(i){
+ const r=S.rows[i];if(!r?.uid||!S.token)return null;
+ try{
+  const d=await api(MD,'GetOrderBook',{instrumentId:r.uid,depth:50},10000);
+  const bids=(d.bids||[]).map(x=>({price:val(x.price),qty:Number(x.quantity)||0})).filter(x=>x.price>0).sort((a,b)=>b.price-a.price);
+  const asks=(d.asks||[]).map(x=>({price:val(x.price),qty:Number(x.quantity)||0})).filter(x=>x.price>0).sort((a,b)=>a.price-b.price);
+  r.orderBook={bids,asks,time:Date.now()};return r.orderBook;
+ }catch(e){r.orderBookError=explainError(e);return null;}
+}
+
 async function loadDetail(i,forceCandles=true){
  i=Number(i);
  const r=S.rows[i];
@@ -2987,43 +3119,34 @@ async function loadDetail(i,forceCandles=true){
   const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',420,!!forceCandles||!!S.forceCandleRefresh);
   let hourly=[],fourHour=[],weekly=[];
   try{hourly=await candles(r.uid,'CANDLE_INTERVAL_HOUR',96,!!forceCandles||!!S.forceCandleRefresh)}catch(e){r.hourlyError=explainError(e)}
-  try{fourHour=await candles(r.uid,'CANDLE_INTERVAL_4_HOUR',120,!!forceCandles||!!S.forceCandleRefresh)}catch(e){r.fourHourError=explainError(e)}
+  try{fourHour=await candles(r.uid,'CANDLE_INTERVAL_4_HOUR',30,!!forceCandles||!!S.forceCandleRefresh)}catch(e){r.fourHourError=explainError(e)}
   try{weekly=await candles(r.uid,'CANDLE_INTERVAL_WEEK',520,!!forceCandles||!!S.forceCandleRefresh)}catch(e){r.weeklyError=explainError(e)}
   const model=forecastModel(daily,hourly,Number(r.price)||0,[],r.uid,{fourHour,weekly});
   r.learningStats=learnFromHistory(daily,r.uid);
   if(model&&model.ok)applyHistoricalLearning(model,r.learningStats,daily,hourly);
+  if(model&&model.ok&&isRosneftRow(r)){
+   try{if(!BRENT_DAILY.length)await loadBrentContext(true);if(BRENT_DAILY.length)applyBrentInfluence(model,daily,BRENT_DAILY);}catch(oilError){console.warn('Brent context unavailable',oilError);}
+  }
   r.daily=daily;
   r.hourly=hourly;r.fourHour=fourHour;r.weekly=weekly;
   r.model=model&&model.ok?model:null;
   r.modelUid=r.uid;
   r.chartCandles=(hourly&&hourly.length?hourly:daily).slice(-(hourly&&hourly.length?24:30));
-  r.candleUpdatedAt=Date.now();r.chartRefreshSeq=(Number(r.chartRefreshSeq)||0)+1;r.candleDataLastTime=Math.max(Number(daily.at(-1)?.time)||0,Number(hourly.at(-1)?.time)||0);
-  const stamp=$('time-'+i);if(stamp){const lastBar=(hourly&&hourly.length?hourly:daily).at(-1);stamp.textContent='Последняя свеча: '+(lastBar&&lastBar.time?new Date(lastBar.time).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—')+' · запрос '+new Date(r.candleUpdatedAt).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+' · обновление №'+r.chartRefreshSeq+' · ID '+String(model&&model.seed!=null?model.seed:'—');}
+  r.candleUpdatedAt=Date.now();r.chartRefreshSeq=(Number(r.chartRefreshSeq)||0)+1;
+  await loadOrderBookForChart(i);r.candleDataLastTime=Math.max(Number(daily.at(-1)?.time)||0,Number(hourly.at(-1)?.time)||0);
   r.detailLoaded=true;
   if(model&&model.ok){
    const sig=signalFromModel(model);
    r.signalKey=sig.key; r.signalName=sig.name;
    try{applyHelpSignal(i,sig.key)}catch{}
    try{calcTrade(i)}catch{}
-   const price=Number(r.price)||0;
-   const end=Number(model.p7&&model.p7.mid)||Number(model.points&&model.points[6]&&model.points[6].mid)||price;
-   const ch=price>0?((end-price)/price)*100:0;
-   let dir='БОКОВИК';
-   if(ch>0.8||(model.drift||0)>0.001) dir='РОСТ';
-   else if(ch<-0.8||(model.drift||0)<-0.001) dir='СНИЖЕНИЕ';
-   const support=Number(model.support)||0, resistance=Number(model.resistance)||0;
-   if(a){
-    a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p>'+(support||resistance?'<p class="muted">Мин ≈ '+(support?support.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' · Макс ≈ '+(resistance?resistance.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+'</p>':'')+(model.technical?'<p class="muted">Структура: '+esc(model.technical.pattern)+'. '+esc((model.technical.signals||[]).slice(0,4).join(' · '))+(model.technical.ema200Available?'':' · EMA200: недостаточно истории')+'</p>':'')+'<p class="muted">Объём: '+(model.relativeVolume!=null?model.relativeVolume.toFixed(2)+'× к среднему':'нет данных')+' · 4ч: '+(model.fourHourSlope>0?'↑':model.fourHourSlope<0?'↓':'—')+' · неделя: '+(model.weeklySlope>0?'↑':model.weeklySlope<0?'↓':'—')+'</p>'+(model.scenarioSet?'<p class="muted">Основной сценарий: '+esc(model.scenarioSet.primary)+'. Отмена: '+(model.scenarioSet.invalidate?fmtPrice(model.scenarioSet.invalidate):'нет единого уровня')+'. Вероятности не откалиброваны.</p>':'')+'<p class="muted">MACD: '+(model.macd?model.macd.hist.toFixed(4):'недостаточно истории')+' · Полосы Боллинджера: '+(model.bbPosition!=null?(model.bbPosition*100).toFixed(0)+'% диапазона':'—')+'</p><p class="muted">Внешний фон не подключён: новости, ставка ЦБ, курс и сектор не учитываются.</p>'+(r.hourlyError?'<p class="muted">Часовые данные: '+esc(r.hourlyError)+'</p>':'')+(r.fourHourError?'<p class="muted">4-часовые данные: '+esc(r.fourHourError)+'</p>':'')+(r.weeklyError?'<p class="muted">Недельные данные: '+esc(r.weeklyError)+'</p>':'')+'<p class="muted">Историческая адаптация: '+(model.learningSummary?model.learningSummary.samples+' срезов · '+esc(model.learningSummary.quality)+' · поправка 7д '+(model.learningSummary.bias7*100).toFixed(2)+'%':'недостаточно истории')+'. '+(model.shock?.detected?('Учтён импульс: '+esc(model.shock.kind)+' · '+model.shock.returnPct.toFixed(2)+'%'):'Резкого импульса не обнаружено.')+'</p>'+'</div>';
-    if(a.parentElement) a.parentElement.classList.remove('hidden');
-   }
-  } else if(a){
-   a.innerHTML='<div class="analysis-block"><p>Недостаточно данных для прогноза.</p></div>';
-  }
+   if(a)a.innerHTML='';
+  } else if(a){a.innerHTML='';}
   try{paintChart(i)}catch(e){console.error(e)}
   try{updateTradeCalculator(i)}catch(e){}
  }catch(e){
   console.error('loadDetail',e);
-  if(a) a.innerHTML='<div class="analysis-block"><p><strong>Не удалось обновить анализ.</strong></p><p class="muted">'+esc(explainError(e)||e.message||'Неизвестная ошибка')+'</p><p class="muted">Проверь подключение и повтори обновление. Старый прогноз не считается новым.</p></div>'; 
+  if(a)a.innerHTML=''; 
  }finally{
   r.detailLoading=false;
  }
@@ -3075,7 +3198,7 @@ function paintChart(i){
   }catch(e){console.error('paintChart',e)}
 }
 function chartHeightPx(level){const L=[150,190,230,290,360];const i=Math.max(0,Math.min(4,Number(level)||2));return L[i];}
-function chartSettings(i){const k=chartKey(i);const d=MZ_CHART_SETTINGS[k]||(MZ_CHART_SETTINGS[k]={period:1,heightLevel:2,mode:'candle',showTechnical:false});if(d.heightLevel==null)d.heightLevel=2;if(!d.mode)d.mode='candle';return d}
+function chartSettings(i){const k=chartKey(i);const d=MZ_CHART_SETTINGS[k]||(MZ_CHART_SETTINGS[k]={period:1,heightLevel:2,mode:'candle',showTechnical:false,showScenarios:false,showStructure:true});if(d.heightLevel==null)d.heightLevel=2;if(!d.mode)d.mode='candle';if(d.showScenarios==null)d.showScenarios=false;if(d.showStructure==null)d.showStructure=true;return d}
 function drawChart(canvas,cs,model,currentPrice){
  if(!canvas)return;
  const ctx=canvas.getContext('2d');if(!ctx)return;
@@ -3151,6 +3274,26 @@ function drawChart(canvas,cs,model,currentPrice){
      prev=close;
    }
  }
+ // Three alternative paths. Weights are model-derived scenario scores, not statistically calibrated probabilities.
+ const chartOptsForScenarios=typeof chartSettings==='function'?chartSettings(idx):{};
+ let scenarioPaths=[];
+ if(chartOptsForScenarios.showScenarios&&future.length){
+   const horizon=Math.max(1,future.length);
+   const signal=(Number(model?.drift)||0)*Math.sqrt(horizon)/Math.max(.002,vol);
+   const rsi=Number(model?.rsi);
+   const bullScore=Math.exp(Math.max(-2,Math.min(2,signal*.42+(rsi>50?.18:rsi<35?-.12:0))));
+   const bearScore=Math.exp(Math.max(-2,Math.min(2,-signal*.42+(rsi<50?.18:rsi>70?-.12:0)+(model?.correctionLikely ? .18 : 0))));
+   const baseScore=Math.exp(.25);
+   const sum=bullScore+bearScore+baseScore;
+   const probs={bull:bullScore/sum,base:baseScore/sum,bear:bearScore/sum};
+   const makePath=(kind)=>future.map((f,k)=>{
+     const t=(k+1)/horizon, spread=current*vol*Math.sqrt(t)*(.48+(.52*t));
+     const mid=Number(f.c)||current;
+     const adj=kind==='bull'?spread*.95:kind==='bear'?-spread*.95:0;
+     return {x:k,price:Math.max(.01,mid+adj)};
+   });
+   scenarioPaths=[{key:'bull',label:'Рост',prob:probs.bull,path:makePath('bull'),color:'#2c9b70'},{key:'base',label:'База',prob:probs.base,path:makePath('base'),color:dark?'#e0d2a0':'#8b7130'},{key:'bear',label:'Снижение',prob:probs.bear,path:makePath('bear'),color:'#d45b5b'}];
+ }
  const data=[...hist,...future];
  if(!data.length){ctx.fillStyle=text;ctx.font='11px sans-serif';ctx.fillText('Нет данных для графика',12,24);return}
  const pad={l:10,r:72,t:18,b:36},plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
@@ -3165,6 +3308,7 @@ function drawChart(canvas,cs,model,currentPrice){
  if(future.length){
    vals.push(...future.flatMap(c=>[Number(c.l),Number(c.h),Number(c.c)]).filter(Number.isFinite));
  }
+ if(scenarioPaths.length)vals.push(...scenarioPaths.flatMap(s=>s.path.map(p=>p.price)));
  let min=Math.min(...vals),max=Math.max(...vals);
  if(!Number.isFinite(min)||!Number.isFinite(max)||max<=min){min=current*.99;max=current*1.01}
  // fit entire series into view with modest padding
@@ -3212,6 +3356,17 @@ function drawChart(canvas,cs,model,currentPrice){
  }
  const chartMode=(typeof chartSettings==='function'&&Number.isFinite(idx))? (chartSettings(idx).mode||'candle'):'candle';
  if(chartMode==='line'){
+   // Detailed mode: forecast confidence envelope, smooth path, technical references and concise risk notes.
+   if(future.length){
+     ctx.save();ctx.beginPath();
+     future.forEach((c,i)=>{const x=futureCenter(i);if(i===0)ctx.moveTo(x,y(c.h));else ctx.lineTo(x,y(c.h));});
+     for(let i=future.length-1;i>=0;i--){const c=future[i];ctx.lineTo(futureCenter(i),y(c.l));}
+     ctx.closePath();ctx.fillStyle=dark?'rgba(104,190,158,.11)':'rgba(40,145,105,.10)';ctx.fill();ctx.restore();
+   }
+   // Historical short/long averages for detailed mode.
+   const average=(arr,n)=>arr.map((c,i)=>{const part=arr.slice(Math.max(0,i-n+1),i+1);return part.reduce((a,x)=>a+x.c,0)/part.length});
+   const drawAverage=(values,color,dash)=>{ctx.save();ctx.strokeStyle=color;ctx.lineWidth=1;ctx.setLineDash(dash);ctx.beginPath();values.forEach((v,i)=>{const x=histCenter(i),yy=y(v);if(i===0)ctx.moveTo(x,yy);else ctx.lineTo(x,yy)});ctx.stroke();ctx.restore();};
+   if(hist.length>4){drawAverage(average(hist,5),'#c5a44b',[3,3]);drawAverage(average(hist,12),'#8d9bb0',[6,3]);}
    const strokeLine=(arr,centerFn,forecast)=>{
      if(!arr.length)return;
      ctx.save();
@@ -3224,8 +3379,8 @@ function drawChart(canvas,cs,model,currentPrice){
        ctx.lineWidth=forecast?1.7:2;
        ctx.setLineDash(forecast?(corr?[]:[5,4]):[]);
        ctx.beginPath();
-       ctx.moveTo(centerFn(i-1), y(Number(a.c||a.close||a.mid)||0));
-       ctx.lineTo(centerFn(i), y(Number(b.c||b.close||b.mid)||0));
+       const x0=centerFn(i-1),y0=y(Number(a.c||a.close||a.mid)||0),x1=centerFn(i),y1=y(Number(b.c||b.close||b.mid)||0);
+       if(forecast&&i>1&&i<arr.length-1){const prev=arr[i-2],next=arr[i+1];const yp=y(Number(prev.c||prev.close||prev.mid)||0),yn=y(Number(next.c||next.close||next.mid)||0);ctx.moveTo(x0,y0);ctx.bezierCurveTo(x0+(x1-x0)*.34,y0+(y1-yp)*.18,x1-(x1-x0)*.34,y1-(yn-y0)*.18,x1,y1);}else{ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);}
        ctx.stroke();
      }
      const last=arr[arr.length-1];
@@ -3237,9 +3392,26 @@ function drawChart(canvas,cs,model,currentPrice){
    };
    strokeLine(hist,histCenter,false);
    strokeLine(future,futureCenter,true);
+   // Actual order-book liquidity walls: nearest large bid/ask levels around the live quote.
+   const row=S.rows[idx],book=row?.orderBook;
+   if(chartSettings(idx).showStructure&&book){
+    const large=(side)=>{const maxQ=Math.max(1,...side.map(x=>x.qty));return side.filter(x=>x.qty>=maxQ*.55).slice(0,2)};
+    const walls=[...large(book.bids||[]).map(x=>({...x,label:'Заявки BUY',color:'#3b9b76'})),...large(book.asks||[]).map(x=>({...x,label:'Заявки SELL',color:'#c87568'}))];
+    walls.forEach(w=>{if(w.price>min&&w.price<max){const yy=y(w.price);ctx.save();ctx.strokeStyle=w.color;ctx.globalAlpha=.8;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(W-pad.r,yy);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=w.color;ctx.font='7px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='right';ctx.fillText(w.label+' '+w.price.toLocaleString('ru-RU',{maximumFractionDigits:2}),W-pad.r-2,yy-3);ctx.restore();}});
+   }
+   // Minimal warning labels; no verbose forecast paragraphs.
+   const notes=[];if(modelOK){if(Number(model.rsi)>70)notes.push('RSI перегрет');else if(Number(model.rsi)<30)notes.push('RSI перепродан');if(Number(model.atrPct)>.045)notes.push('высокая волатильность');if(model.correctionLikely)notes.push('риск коррекции');if(model.oilContext&&!model.oilContext.applied&&isRosneftRow(row))notes.push('Brent не учтён');}
+   if(notes.length){ctx.save();ctx.fillStyle=dark?'#d4b96b':'#8c6b1c';ctx.font='7px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='left';ctx.fillText(notes.slice(0,3).join(' · '),pad.l+2,H-20);ctx.restore();}
  } else {
    hist.forEach((c,i)=>candle(c,histCenter(i),histBody,false));
    future.forEach((c,i)=>candle(c,futureCenter(i),futureBody,true));
+ }
+ // Alternative forecast paths overlay, with compact model-weight legend.
+ if(scenarioPaths.length){
+   scenarioPaths.forEach(sc=>{ctx.save();ctx.strokeStyle=sc.color;ctx.lineWidth=sc.key==='base'?2:1.25;ctx.globalAlpha=sc.key==='base'?.98:.78;ctx.setLineDash(sc.key==='base'?[]:[4,4]);ctx.beginPath();sc.path.forEach((pt,k)=>{const xx=futureCenter(k),yy=y(pt.price);if(k===0)ctx.moveTo(xx,yy);else ctx.lineTo(xx,yy)});ctx.stroke();ctx.restore();});
+   ctx.save();ctx.font='7px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='left';ctx.fillStyle=muted;ctx.fillText('ОЦЕНКА МОДЕЛИ',futureX+5,pad.t+22);ctx.font='bold 8px -apple-system,BlinkMacSystemFont,sans-serif';let lx=futureX+5,ly=pad.t+34;
+   scenarioPaths.forEach(sc=>{const label=`${sc.label} ${Math.round(sc.prob*100)}%`;ctx.fillStyle=sc.color;ctx.fillText(label,lx,ly);lx+=ctx.measureText(label).width+9;if(lx>W-pad.r-55){lx=futureX+5;ly+=11;}});
+   ctx.restore();
  }
  // коррекция: подпись и лёгкая заливка
  {
@@ -3287,7 +3459,7 @@ function drawChart(canvas,cs,model,currentPrice){
    ctx.textAlign='left';
    ctx.fillText(dir+' · '+(p===1?'1д':p===7?'7д':'30д'), pad.l+histW+8, pad.t+13);
  }
- if(modelOK){
+ if(modelOK&&chartSettings(idx).showStructure){
    [[Number(model.support),'#2c9b70'],[Number(model.resistance),'#d4a72c']].forEach(([level,color])=>{
      if(Number.isFinite(level)&&level>=min&&level<=max){ctx.strokeStyle=color;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(pad.l,y(level));ctx.lineTo(W-pad.r,y(level));ctx.stroke();ctx.setLineDash([])}
    });
@@ -3438,28 +3610,18 @@ function renderRows(rows){
 </summary>
 <div class="asset-detail">
 <div class="locked-content unlocked" id="locked-${i}">
-<div class="forecast-head"><span class="small muted" id="time-${i}"></span></div>
+<div class="forecast-head" aria-hidden="true"></div>
 <div class="chart-tools" data-chart-tools="${i}"><div class="chart-bar" role="group">
 <button type="button" class="chart-tool active" data-chart-period="1" data-chart-index="${i}">1</button>
 <button type="button" class="chart-tool" data-chart-period="7" data-chart-index="${i}">7</button>
 <button type="button" class="chart-tool" data-chart-period="30" data-chart-index="${i}">30</button>
 <span class="chart-sep"></span>
-<button type="button" class="chart-edit-btn" data-chart-edit="taller" data-chart-index="${i}" title="Выше" aria-label="Выше">＋</button>
-<button type="button" class="chart-edit-btn" data-chart-edit="shorter" data-chart-index="${i}" title="Ниже" aria-label="Ниже">－</button>
-<button type="button" class="chart-edit-btn chart-mode-btn" data-chart-edit="mode" data-chart-index="${i}" title="Свечи / линия" aria-label="Режим">〰</button><button type="button" class="chart-edit-btn" data-chart-edit="technical" data-chart-index="${i}" title="Техническая разметка" aria-label="Техническая разметка">МА</button>
+<button type="button" class="chart-edit-btn" data-chart-edit="scenarios" data-chart-index="${i}" title="Показать три сценария с оценкой вероятности" aria-label="Сценарии">◉</button>
+<button type="button" class="chart-edit-btn active" data-chart-edit="structure" data-chart-index="${i}" title="Уровни поддержки, сопротивления и крупные заявки" aria-label="Структура рынка">⌖</button>
+<button type="button" class="chart-edit-btn chart-mode-btn" data-chart-edit="mode" data-chart-index="${i}" title="Свечи / детальный график" aria-label="Режим">〰</button><button type="button" class="chart-edit-btn" data-chart-edit="refresh" data-chart-index="${i}" title="Обновить котировку, историю, стакан и прогноз" aria-label="Обновить график">↻</button>
 </div></div>
 <div class="chart-wrap"><canvas class="chart" id="chart-${i}" width="600" height="240" data-instrument-uid="${esc(r.uid)}"></canvas></div>
-<button type="button" class="calc-reveal" data-calc-toggle="${i}">Калькулятор сделки</button>
-<div class="trade-calc hidden" id="tradeCalc-${i}">
-<div class="income-grid calc-simple">
-<div class="field"><label>Цена входа, ₽</label><input id="calcEntry-${i}" type="number" min="0" step="0.01" value="" data-calc-entry="${i}" placeholder="Текущая"></div>
-<div class="field"><label>Цена выхода, ₽</label><input id="calcExit-${i}" type="number" min="0" step="0.01" value="" data-calc-exit="${i}" placeholder="Цель"></div>
-<div class="field"><label>Количество акций</label><input id="calcQty-${i}" type="number" min="0" step="1" value="1" data-calc-qty="${i}"></div>
-</div>
-<div class="calc-output calc-output-simple"><div><span>Ожидаемый доход</span><b id="calcProfit-${i}">—</b></div></div>
-</div>
-<div class="path-wrap hidden"><div class="path-title">Сценарий</div><div class="path-list" id="path-${i}"></div></div>
-<div class="analysis"><div id="analysis-${i}"><div class="analysis-block"><p class="muted">Откройте карточку — появится краткий прогноз.</p></div></div></div>
+<div class="analysis" aria-hidden="true"><div id="analysis-${i}"></div></div>
 </div></div>
 </details>`;
     }catch(e){console.error('row',i,e);return `<div class="card">Ошибка карточки ${i}</div>`}
@@ -3595,7 +3757,7 @@ document.addEventListener('click',e=>{
  const panel=$('tradeCalc-'+i);if(!panel)return;
  const open=panel.classList.toggle('hidden')===false;
  b.setAttribute('aria-expanded',String(open));
- b.textContent=open?'Скрыть калькулятор':'Калькулятор сделки';
+ b.textContent=open?'Скрыть':'Открыть';
  if(open) updateTradeCalculator(Number(i));
 });
 document.addEventListener('input',e=>{
@@ -3639,8 +3801,8 @@ function updateTradeCalculator(i){
 
 function refreshForecastForCurrentPrice(i){
  const r=S.rows[i];if(!r||!r.detailLoaded||!((Array.isArray(r.daily)&&r.daily.length)||(Array.isArray(r.hourly)&&r.hourly.length)))return;
- const model=forecastModel(r.daily,r.hourly||[],Number(r.price)||0,r.shortCandles||[],r.uid,{fourHour:r.fourHour||[],weekly:r.weekly||[]});if(!model||!model.ok)return;applyHistoricalLearning(model,r.learningStats||learnFromHistory(r.daily,r.uid),r.daily,r.hourly||[]);
- r.model=model;calcTrade(i);
+ const model=forecastModel(r.daily,r.hourly||[],Number(r.price)||0,r.shortCandles||[],r.uid,{fourHour:r.fourHour||[],weekly:r.weekly||[]});if(!model||!model.ok)return;applyHistoricalLearning(model,r.learningStats||learnFromHistory(r.daily,r.uid),r.daily,r.hourly||[]);if(isRosneftRow(r)&&BRENT_DAILY.length)applyBrentInfluence(model,r.daily,BRENT_DAILY);
+ r.model=model;r.forecastUpdatedAt=Date.now();r.forecastPrice=Number(r.price)||0;calcTrade(i);
  const sig=signalFromModel(model);r.signalKey=sig.key;r.signalName=sig.name;
  applyHelpSignal(i,sig.key);try{updateWelcomeRecs()}catch{}
  const price=Number(r.price)||0;
@@ -3649,11 +3811,7 @@ function refreshForecastForCurrentPrice(i){
  let dir='БОКОВИК';
  if(ch>0.8||(model.drift||0)>0.001) dir='РОСТ';
  else if(ch<-0.8||(model.drift||0)<-0.001) dir='СНИЖЕНИЕ';
- const a=$('analysis-'+i);
- if(a){
-  a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p><p class="muted">Объём: '+(model.relativeVolume!=null?model.relativeVolume.toFixed(2)+'× к среднему':'нет данных')+' · 4ч: '+(model.fourHourSlope>0?'↑':model.fourHourSlope<0?'↓':'—')+' · неделя: '+(model.weeklySlope>0?'↑':model.weeklySlope<0?'↓':'—')+'</p><p class="muted">Историческая адаптация: '+(model.learningSummary?model.learningSummary.samples+' срезов · '+esc(model.learningSummary.quality):'недостаточно истории')+'. '+(model.shock?.detected?('Учтён импульс: '+esc(model.shock.kind)+' · '+model.shock.returnPct.toFixed(2)+'%'):'Без резкого импульса')+'</p><p class="muted">Внешний фон: новости, ставка ЦБ, курс и сектор не подключены.</p></div>';
-  if(a.parentElement) a.parentElement.classList.remove('hidden');
- }
+ const a=$('analysis-'+i);if(a)a.innerHTML='';
  renderPath(i,model);updateTradeCalculator(i);try{paintChart(i)}catch{}
 }
 // Market scanner: a bounded sample to avoid flooding the broker API.
@@ -3771,7 +3929,7 @@ S.rows=dedupeByUid([...S.portfolioRows,...S.watchRows]);calcSummary(S.portfolioR
   else{if(chart&&r.chartCandles)drawChart(chart,r.chartCandles,r.model,r.price);updateTradeCalculator(i);}
  });savePortfolioCache();$('lastUpdated').textContent='Обновлено: '+new Date().toLocaleString('ru-RU');markFooterDataUpdated('Обновлено');document.querySelectorAll('details.asset[open]').forEach(d=>{const i=Number(d.dataset.index);if(S.rows[i]){S.rows[i].detailLoaded=false;loadDetail(i,forceCandles)}});}).catch(e=>{console.warn('lastPrices refresh failed',e);document.querySelectorAll('details.asset[open]').forEach(d=>{const i=Number(d.dataset.index);if(S.rows[i]){S.rows[i].detailLoaded=false;loadDetail(i,forceCandles)}});});}
  }catch(e){const msg=explainError(e);setStatus(msg,true);S.rows.forEach(r=>{r.pricePending=false});if(!S.rows.length)$('assets').innerHTML=`<section class="card empty">${esc(msg)}<br><br>Если сообщение содержит CORS или Failed to fetch, проблема в ограничениях браузера, а не в токене.</section>`;else renderRows(S.rows)}
- finally{S.busy=false;$('connect').disabled=false;$('refresh').disabled=!S.token;$('busyIcon').textContent='';setTimeout(()=>{const lp=$('loadProgress');if(lp)lp.classList.add('hidden')},900);hideBootScreen()}
+ finally{if(S.token)loadBrentContext(true).catch(()=>{});S.busy=false;$('connect').disabled=false;$('refresh').disabled=!S.token;$('busyIcon').textContent='';setTimeout(()=>{const lp=$('loadProgress');if(lp)lp.classList.add('hidden')},900);hideBootScreen()}
 }
 
 function dedupeByUid(arr){
