@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.10.35</title>
+<meta name="theme-color" content="#212121"><title>MZBOX AI · V22.11.04</title>
 
 
 
@@ -2356,7 +2356,7 @@ canvas.chart{
     <div class="search-results" id="stockSearchResults"></div>
   </div>
 </section>
-<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.10.35 · 03.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
+<div class="footer"><span class="footer-legal">Не является индивидуальной инвестиционной рекомендацией</span><span class="footer-legal">Разработчик — Кутузов Дмитрий Владимирович</span><span class="build-version">Сборка V22.11.04 · 04.11.2026</span><button id="resetToken" class="reset-strip" type="button" aria-label="Сбросить весь сайт" title="Сбросить весь сайт"></button></div>
 </main>
 <script>
 (()=>{'use strict';try{localStorage.removeItem('mzbox-notes-permanent');localStorage.removeItem('mzbox-income-results')}catch{}
@@ -2390,13 +2390,13 @@ function setStatus(s,error=false){$('status').textContent=s;$('status').classLis
 async function api(service,method,body={},timeout=18000){const controller=new AbortController();const tm=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(API+service+'/'+method,{method:'POST',headers:{'Authorization':'Bearer '+S.token,'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(body),signal:controller.signal,cache:'no-store'});const text=await r.text();let data={};try{data=text?JSON.parse(text):{}}catch{}if(!r.ok)throw new Error(`HTTP ${r.status}: ${data.message||data.description||text.slice(0,180)||r.statusText}`);if(data.code&&data.code!=='0')throw new Error(data.message||data.description||data.code);return data;}finally{clearTimeout(tm)}}
 const USERS='tinkoff.public.invest.api.contract.v1.UsersService',OPS='tinkoff.public.invest.api.contract.v1.OperationsService',MD='tinkoff.public.invest.api.contract.v1.MarketDataService',INS='tinkoff.public.invest.api.contract.v1.InstrumentsService';
 async function lastPrices(uids){const out={},unique=[...new Set((uids||[]).filter(Boolean))],batches=[];for(let i=0;i<unique.length;i+=100)batches.push(unique.slice(i,i+100));const groups=await Promise.all(batches.map(batch=>api(MD,'GetLastPrices',{instrumentId:batch},12000)));for(const d of groups)for(const p of d.lastPrices||[]){const uid=get(p,'instrumentUid','instrumentUID','instrument_uid','figi');const price=val(get(p,'price','lastPrice'));if(uid&&price>0)out[uid]=price;}return out}
-async function candles(uid, interval='CANDLE_INTERVAL_DAY', days=400){
+async function candles(uid, interval='CANDLE_INTERVAL_DAY', days=400, force=false){
  const key='mzbox-candles:'+uid+':'+interval+':'+days,now=Date.now();
- try{const cached=JSON.parse(localStorage.getItem(key)||'null');if(cached&&Array.isArray(cached.data)&&cached.data.length&&now-cached.at<20*60*1000)return cached.data}catch{}
+ try{const cached=JSON.parse(localStorage.getItem(key)||'null');if(!force&&cached&&Array.isArray(cached.data)&&cached.data.length&&now-cached.at<3*60*1000)return cached.data}catch{}
  const to=new Date(),from=new Date(to.getTime()-days*86400000);
  const d=await api(MD,'GetCandles',{instrumentId:uid,from:from.toISOString(),to:to.toISOString(),interval},12000);
  const out=(d.candles||[]).map(c=>({time:new Date(c.time||c.timestamp).getTime(),o:val(c.open),h:val(c.high),l:val(c.low),c:val(c.close),v:val(c.volume)})).filter(c=>c.time&&c.c>0&&c.h>0&&c.l>0).sort((a,b)=>a.time-b.time);
- try{localStorage.setItem(key,JSON.stringify({at:now,data:out}))}catch{}
+ try{localStorage.setItem(key,JSON.stringify({at:Date.now(),data:out}))}catch{}
  return out;
 }
 function getLevel(cs,which){
@@ -2502,9 +2502,31 @@ function analyzeMarketStructure(cs,price){
  if(pattern==='нисходящий клин')signals.push('Обнаружен нисходящий клин — возможен пробой вверх, но направление пока не подтверждено');
  if(pattern==='симметричный треугольник')signals.push('Обнаружен симметричный треугольник; направление пробоя неизвестно');
  if(pattern==='ценовой канал')signals.push('Обнаружен наклонный ценовой канал');
- return {ma18,ma50,ema50:e50,ema200:e200,priorHigh,priorLow,channel,channelBreakout,pattern,falseBreakout,volConfirmed,avgVol,lastVol,bias,signals,historyCount:closes.length,ema200Available:e200!=null};
+ // Two-peak / two-trough structures and post-breakout retests.
+ const pivHi=[],pivLo=[];for(let i=Math.max(2,cs.length-70);i<cs.length-2;i++){
+  const h=Number(cs[i].h||cs[i].c),l=Number(cs[i].l||cs[i].c);
+  if(h>=Number(cs[i-1].h||cs[i-1].c)&&h>=Number(cs[i-2].h||cs[i-2].c)&&h>=Number(cs[i+1].h||cs[i+1].c)&&h>=Number(cs[i+2].h||cs[i+2].c))pivHi.push({i,v:h});
+  if(l<=Number(cs[i-1].l||cs[i-1].c)&&l<=Number(cs[i-2].l||cs[i-2].c)&&l<=Number(cs[i+1].l||cs[i+1].c)&&l<=Number(cs[i+2].l||cs[i+2].c))pivLo.push({i,v:l});
+ }
+ let secondaryPattern=null;
+ if(pivHi.length>=2){const a=pivHi.at(-2),b=pivHi.at(-1),similar=Math.abs(a.v-b.v)/Math.max(a.v,b.v)<.012;if(similar&&b.i-a.i>=4){const neck=Math.min(...cs.slice(a.i,b.i+1).map(c=>Number(c.l||c.c)));secondaryPattern=price<neck?'двойная вершина подтверждена':'формируется двойная вершина';}}
+ if(!secondaryPattern&&pivLo.length>=2){const a=pivLo.at(-2),b=pivLo.at(-1),similar=Math.abs(a.v-b.v)/Math.max(a.v,b.v)<.012;if(similar&&b.i-a.i>=4){const neck=Math.max(...cs.slice(a.i,b.i+1).map(c=>Number(c.h||c.c)));secondaryPattern=price>neck?'двойное дно подтверждено':'формируется двойное дно';}}
+ if(secondaryPattern)signals.push(secondaryPattern);
+ let retest=null;if(cs.length>=7){const recent=cs.slice(-6,-1),lastClose=Number(last?.c||0);const upLevel=priorHigh,downLevel=priorLow;if(upLevel&&recent.some(c=>Number(c.c)>upLevel*1.003)&&Math.abs(lastClose-upLevel)/upLevel<.008&&lastClose>=upLevel)retest={direction:'up',level:upLevel};else if(downLevel&&recent.some(c=>Number(c.c)<downLevel*.997)&&Math.abs(lastClose-downLevel)/downLevel<.008&&lastClose<=downLevel)retest={direction:'down',level:downLevel};}
+ if(retest)signals.push('Ретест пробитого уровня '+(retest.direction==='up'?'сверху':'снизу')+' около '+retest.level.toFixed(2));
+ return {ma18,ma50,ema50:e50,ema200:e200,priorHigh,priorLow,channel,channelBreakout,pattern,secondaryPattern,retest,falseBreakout,volConfirmed,avgVol,lastVol,bias,signals,historyCount:closes.length,ema200Available:e200!=null};
 }
-function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
+function calcMACD(values){if(!Array.isArray(values)||values.length<35)return null;const line=[];for(let i=0;i<values.length;i++){if(i<25)continue;const part=values.slice(0,i+1);line.push(ema(part,12)-ema(part,26));}if(line.length<9)return null;const signal=ema(line,9),macd=line.at(-1);return {macd,signal,hist:macd-signal};}
+function buildScenarioSet(price,technical,support,resistance,atrPct,drift,trend){
+ const atr=Math.max(0.004,Math.min(0.06,Number(atrPct)||0.015));
+ const up=technical?.channel?.upper?.value||resistance||price*(1+atr*2);
+ const dn=technical?.channel?.lower?.value||support||price*(1-atr*2);
+ const primary=trend==='восходящее движение'?'Рост при удержании поддержки':trend==='нисходящее движение'?'Снижение к ближайшей поддержке':'Движение внутри диапазона';
+ const triggerUp=Math.max(price*(1+atr*.35),Math.min(up,price*(1+atr*2.2)));
+ const triggerDown=Math.min(price*(1-atr*.35),Math.max(dn,price*(1-atr*2.2)));
+ return {primary,upside:{trigger:triggerUp,target:up,condition:'Закрепление выше сопротивления с подтверждением объёмом'},downside:{trigger:triggerDown,target:dn,condition:'Закрепление ниже поддержки'},invalidate:trend==='восходящее движение'?triggerDown:trend==='нисходящее движение'?triggerUp:null,range:{low:Math.min(dn,price*(1-atr)),high:Math.max(up,price*(1+atr))},confidence:'не откалибрована'};
+}
+function forecastModel(daily,hourly,current,shortCandles=[],uid='',timeframes={}){
  /* Deep per-instrument forecast:
     multi-horizon (1/7/30), multi-TF confluence, candle structure, swings,
     classical pattern heuristics (engulfing, pin, inside, higher-highs),
@@ -2613,8 +2635,30 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  drift=Math.max(-0.025,Math.min(0.025,drift));
 
  const technical=analyzeMarketStructure(cs,price);
+ const macd=calcMACD(closes),bbMid=sma(closes,20),bbStd=closes.length>=20?std(closes.slice(-20)):0,bbUpper=bbMid!=null?bbMid+2*bbStd:null,bbLower=bbMid!=null?bbMid-2*bbStd:null,bbPosition=bbUpper!=null&&bbLower!=null&&bbUpper>bbLower?(price-bbLower)/(bbUpper-bbLower):null;
+ if(macd){if(macd.hist>0){technical.bias+=.35;technical.signals.push('MACD выше сигнальной линии');}else if(macd.hist<0){technical.bias-=.35;technical.signals.push('MACD ниже сигнальной линии');}}
+ if(bbPosition!=null){if(bbPosition>.95)technical.signals.push('Цена у верхней полосы Боллинджера');else if(bbPosition<.05)technical.signals.push('Цена у нижней полосы Боллинджера');}
+ // Volume confirmation and candle pressure; unavailable volume is explicitly neutral.
+ const v20=cs.slice(-21,-1).map(c=>Number(c.v)||0).filter(v=>v>0);
+ const vAvg=v20.length?v20.reduce((a,b)=>a+b,0)/v20.length:0;
+ const vLast=Number(cs.at(-1)?.v)||0;
+ const relativeVolume=vAvg>0&&vLast>0?vLast/vAvg:null;
+ const lastC=cs.at(-1),prevC=cs.at(-2);
+ const candleRange=Math.max(1e-9,Number(lastC?.h||0)-Number(lastC?.l||0));
+ const candleBody=Math.abs(Number(lastC?.c||0)-Number(lastC?.o||0));
+ const upperWick=Number(lastC?.h||0)-Math.max(Number(lastC?.o||0),Number(lastC?.c||0));
+ const lowerWick=Math.min(Number(lastC?.o||0),Number(lastC?.c||0))-Number(lastC?.l||0);
+ const candleQuality={bodyRatio:candleBody/candleRange,closePosition:(Number(lastC?.c||0)-Number(lastC?.l||0))/candleRange,upperWickRatio:upperWick/candleRange,lowerWickRatio:lowerWick/candleRange,bullish:Number(lastC?.c||0)>Number(lastC?.o||0),engulfingBull:!!(prevC&&Number(lastC?.c)>Number(prevC?.o)&&Number(lastC?.o)<Number(prevC?.c)&&Number(lastC?.c)>Number(lastC?.o)),engulfingBear:!!(prevC&&Number(lastC?.c)<Number(prevC?.o)&&Number(lastC?.o)>Number(prevC?.c)&&Number(lastC?.c)<Number(lastC?.o))};
+ const h4=(timeframes.fourHour||[]).filter(c=>Number(c?.c)>0),wk=(timeframes.weekly||[]).filter(c=>Number(c?.c)>0);
+ const tfSlope=arr=>arr.length>2?(Math.log(Number(arr.at(-1).c))-Math.log(Number(arr[Math.max(0,arr.length-8)].c)))/Math.max(1,Math.min(7,arr.length-1)):0;
+ const fourHourSlope=tfSlope(h4),weeklySlope=tfSlope(wk);
+ const timeframeBias=(Math.sign(fourHourSlope)+Math.sign(weeklySlope));
+ if(relativeVolume!=null&&relativeVolume>1.5){technical.bias+=Math.sign(Number(lastC?.c)-Number(lastC?.o))*0.7;technical.signals.push('Объём выше среднего: '+relativeVolume.toFixed(2)+'×');}
+ if(relativeVolume!=null&&relativeVolume<0.65)technical.signals.push('Слабый объём: пробой требует подтверждения');
+ if(candleQuality.lowerWickRatio>0.55&&candleQuality.closePosition>0.65)technical.signals.push('Покупательская реакция: длинная нижняя тень и закрытие у максимума');
+ if(candleQuality.upperWickRatio>0.55&&candleQuality.closePosition<0.35)technical.signals.push('Продавецкая реакция: длинная верхняя тень и закрытие у минимума');
  // Technical confluence is a bounded modifier, never a standalone buy/sell trigger.
- drift=Math.max(-0.025,Math.min(0.025,drift+technical.bias*0.00045));
+ drift=Math.max(-0.025,Math.min(0.025,drift+technical.bias*0.00045+timeframeBias*0.00012));
  const trend=drift>0.0012||(emaBull&&structure>=0&&technical.bias>=0)?'восходящее движение':drift<-0.0012||(emaBear&&structure<=0&&technical.bias<=0)?'нисходящее движение':'боковое движение';
  const momentum=shortSlope>0.002?'ускорение':shortSlope<-0.002?'затухание':'ровный';
  const risk=vol>0.035||volRatio>1.4||kurt>2?'повышенный':vol<0.012?'сдержанный':'умеренный';
@@ -2771,7 +2815,7 @@ function forecastModel(daily,hourly,current,shortCandles=[],uid=''){
  const advice=trend==='восходящее движение'&&rsi<65?'Смещать внимание к удержанию/набору на откатах.':trend==='нисходящее движение'&&rsi>35?'Осторожность с усреднением против структуры.':'Дождаться более ясного края диапазона.';
  const sigma=vol;
 
- return {ok:true,_uid:String(uid||''),price,cs,support,resistance,vol,rsi,trend,risk,points,p7,p10,p30,summary,riskText,levelsText,momentum,scenario,advice,drift,intraday,sigma,ac1,skew,seed,volRatio,atrPct,structure,candleScore,patterns:patterns.slice(0,6),emaBull,emaBear,technical,correctionLikely};
+ return {ok:true,_uid:String(uid||''),price,cs,support,resistance,vol,rsi,trend,risk,points,p7,p10,p30,summary,riskText,levelsText,momentum,scenario,advice,drift,intraday,sigma,ac1,skew,seed,volRatio,atrPct,structure,candleScore,patterns:patterns.slice(0,6),emaBull,emaBear,technical,correctionLikely,relativeVolume,volumeAvailable:relativeVolume!=null,candleQuality,fourHourSlope,weeklySlope,timeframeBias,macd,bbPosition,bbUpper,bbLower,scenarioSet:buildScenarioSet(price,technical,support,resistance,atrPct,drift,trend)};
 }
 
 
@@ -2856,15 +2900,19 @@ async function loadDetail(i){
  const a=$('analysis-'+i);
  try{
   if(a) a.innerHTML='<div class="analysis-block"><p class="muted">Считаю прогноз…</p></div>';
-  const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',120);
-  let hourly=[];
-  try{hourly=await candles(r.uid,'CANDLE_INTERVAL_HOUR',48)}catch{}
-  const model=forecastModel(daily,hourly,Number(r.price)||0,[],r.uid);
+  const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',420,!!S.forceCandleRefresh);
+  let hourly=[],fourHour=[],weekly=[];
+  try{hourly=await candles(r.uid,'CANDLE_INTERVAL_HOUR',96,!!S.forceCandleRefresh)}catch{}
+  try{fourHour=await candles(r.uid,'CANDLE_INTERVAL_4_HOUR',120,!!S.forceCandleRefresh)}catch{}
+  try{weekly=await candles(r.uid,'CANDLE_INTERVAL_WEEK',520,!!S.forceCandleRefresh)}catch{}
+  const model=forecastModel(daily,hourly,Number(r.price)||0,[],r.uid,{fourHour,weekly});
   r.daily=daily;
-  r.hourly=hourly;
+  r.hourly=hourly;r.fourHour=fourHour;r.weekly=weekly;
   r.model=model&&model.ok?model:null;
   r.modelUid=r.uid;
   r.chartCandles=(hourly&&hourly.length?hourly:daily).slice(-(hourly&&hourly.length?24:30));
+  r.candleUpdatedAt=Date.now();
+  const stamp=$('time-'+i);if(stamp){const lastBar=(hourly&&hourly.length?hourly:daily).at(-1);stamp.textContent='Свечи: '+(lastBar&&lastBar.time?new Date(lastBar.time).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—')+' · запрос '+new Date(r.candleUpdatedAt).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
   r.detailLoaded=true;
   if(model&&model.ok){
    const sig=signalFromModel(model);
@@ -2879,7 +2927,7 @@ async function loadDetail(i){
    else if(ch<-0.8||(model.drift||0)<-0.001) dir='СНИЖЕНИЕ';
    const support=Number(model.support)||0, resistance=Number(model.resistance)||0;
    if(a){
-    a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p>'+(support||resistance?'<p class="muted">Мин ≈ '+(support?support.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' · Макс ≈ '+(resistance?resistance.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+'</p>':'')+(model.technical?'<p class="muted">Техструктура: '+esc(model.technical.pattern)+'. '+esc((model.technical.signals||[]).slice(0,3).join(' · '))+(model.technical.ema200Available?'':' · Для EMA200 недостаточно истории')+'</p>':'')+'</div>';
+    a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p>'+(support||resistance?'<p class="muted">Мин ≈ '+(support?support.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' · Макс ≈ '+(resistance?resistance.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+'</p>':'')+(model.technical?'<p class="muted">Структура: '+esc(model.technical.pattern)+'. '+esc((model.technical.signals||[]).slice(0,4).join(' · '))+(model.technical.ema200Available?'':' · EMA200: недостаточно истории')+'</p>':'')+'<p class="muted">Объём: '+(model.relativeVolume!=null?model.relativeVolume.toFixed(2)+'× к среднему':'нет данных')+' · 4ч: '+(model.fourHourSlope>0?'↑':model.fourHourSlope<0?'↓':'—')+' · неделя: '+(model.weeklySlope>0?'↑':model.weeklySlope<0?'↓':'—')+'</p>'+(model.scenarioSet?'<p class="muted">Основной сценарий: '+esc(model.scenarioSet.primary)+'. Отмена: '+(model.scenarioSet.invalidate?fmtPrice(model.scenarioSet.invalidate):'нет единого уровня')+'. Вероятности не откалиброваны.</p>':'')+'<p class="muted">MACD: '+(model.macd?model.macd.hist.toFixed(4):'недостаточно истории')+' · Полосы Боллинджера: '+(model.bbPosition!=null?(model.bbPosition*100).toFixed(0)+'% диапазона':'—')+'</p><p class="muted">Внешний фон не подключён: новости, ставка ЦБ, курс и сектор не учитываются.</p><button type="button" class="chart-edit-btn" data-backtest="'+i+'">Проверить модель на истории</button><div id="backtest-'+i+'" class="muted"></div>'+'</div>';
     if(a.parentElement) a.parentElement.classList.remove('hidden');
    }
   } else if(a){
@@ -2925,7 +2973,12 @@ function paintChart(i){
     let src=[];
     if(period===1) src=(r.hourly&&r.hourly.length>=8)?r.hourly:(r.shortCandles&&r.shortCandles.length?r.shortCandles:(r.chartCandles||r.daily||[]));
     else src=(r.daily&&r.daily.length)?r.daily:(r.chartCandles||r.hourly||[]);
-    if(!Array.isArray(src))src=[];
+    if(!Array.isArray(src))src=[];else src=src.slice();
+    // Keep the active candle visually synchronized with the latest quote without contaminating stored history/model inputs.
+    const live=Number(r.price)||0,lastBar=src.at(-1),freshWindow=period===1?2*3600e3:26*3600e3;
+    if(live>0&&lastBar&&Date.now()-Number(lastBar.time||0)>=0&&Date.now()-Number(lastBar.time||0)<freshWindow){
+      const updated={...lastBar,c:live,h:Math.max(Number(lastBar.h)||live,live),l:Math.min(Number(lastBar.l)||live,live)};src[src.length-1]=updated;
+    }
     if(!src.length && Number(r.price)>0){
       const p=Number(r.price), now=Date.now(), step=period===1?3600e3:864e5;
       src=Array.from({length:14},(_,k)=>({time:now-(14-k)*step,o:p,h:p*1.005,l:p*0.995,c:p}));
@@ -3498,9 +3551,31 @@ function updateTradeCalculator(i){
  profitEl.classList.toggle('negative', profit<0);
 }
 
+function runHistoricalBacktest(i){
+ const r=S.rows[i],out=$('backtest-'+i);if(!r||!out)return;
+ const cs=(r.daily||[]).filter(c=>Number(c.c)>0).sort((a,b)=>a.time-b.time);
+ if(cs.length<80){out.textContent='Для теста нужно минимум 80 дневных свечей.';return;}
+ out.textContent='Проверяю исторические сценарии…';
+ const horizons=[1,7,30],stats={};
+ for(const h of horizons){let tested=0,hit=0,absErr=0,up=0,down=0,flat=0;
+  const end=cs.length-h-1,begin=Math.max(20,end-119),stride=Math.max(1,Math.floor((end-begin+1)/100));
+  for(let k=begin;k<=end;k+=stride){
+   const hist=cs.slice(0,k+1),base=Number(hist.at(-1).c),actual=Number(cs[k+h].c);if(!(base>0&&actual>0))continue;
+   const m=forecastModel(hist,[],base,[],r.uid);if(!m||!m.ok)continue;
+   const pred=Number(m.points?.[h-1]?.mid)||base,pr=pred/base-1,ar=actual/base-1;
+   const ps=Math.abs(pr)<0.001?0:Math.sign(pr),as=Math.abs(ar)<0.001?0:Math.sign(ar);
+   if(ps===as)hit++;if(as>0)up++;else if(as<0)down++;else flat++;
+   absErr+=Math.abs(pred-actual)/base;tested++;
+  }
+  stats[h]={tested,hitRate:tested?hit/tested*100:0,mae:tested?absErr/tested*100:0,up,down,flat};
+ }
+ const rows=horizons.map(h=>{const x=stats[h];return `<div>${h} дн.: ${x.tested?x.hitRate.toFixed(1)+'% совпадений направления · ошибка '+x.mae.toFixed(2)+'% · выборка '+x.tested:'недостаточно выборки'}</div>`}).join('');
+ out.innerHTML='<div style="margin-top:7px;padding:8px;border:1px solid var(--line);border-radius:8px">'+rows+'<div style="margin-top:5px">Тест без заглядывания вперёд: каждый прогноз использует только свечи, доступные на ту дату. Прошлая точность не гарантирует будущую.</div></div>';
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-backtest]');if(!b)return;e.preventDefault();runHistoricalBacktest(Number(b.dataset.backtest));});
 function refreshForecastForCurrentPrice(i){
  const r=S.rows[i];if(!r||!r.detailLoaded||!((Array.isArray(r.daily)&&r.daily.length)||(Array.isArray(r.hourly)&&r.hourly.length)))return;
- const model=forecastModel(r.daily,r.hourly||[],Number(r.price)||0,r.shortCandles||[],r.uid);if(!model||!model.ok)return;
+ const model=forecastModel(r.daily,r.hourly||[],Number(r.price)||0,r.shortCandles||[],r.uid,{fourHour:r.fourHour||[],weekly:r.weekly||[]});if(!model||!model.ok)return;
  r.model=model;calcTrade(i);
  const sig=signalFromModel(model);r.signalKey=sig.key;r.signalName=sig.name;
  applyHelpSignal(i,sig.key);try{updateWelcomeRecs()}catch{}
@@ -3512,7 +3587,7 @@ function refreshForecastForCurrentPrice(i){
  else if(ch<-0.8||(model.drift||0)<-0.001) dir='СНИЖЕНИЕ';
  const a=$('analysis-'+i);
  if(a){
-  a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p></div>';
+  a.innerHTML='<div class="analysis-block"><p><strong>'+dir+'</strong> · ориентир ~7д: '+(end?end.toLocaleString('ru-RU',{maximumFractionDigits:2}):'—')+' ₽'+(price?(' ('+(ch>=0?'+':'')+ch.toFixed(1)+'%)'):'')+'</p><p class="muted">Объём: '+(model.relativeVolume!=null?model.relativeVolume.toFixed(2)+'× к среднему':'нет данных')+' · 4ч: '+(model.fourHourSlope>0?'↑':model.fourHourSlope<0?'↓':'—')+' · неделя: '+(model.weeklySlope>0?'↑':model.weeklySlope<0?'↓':'—')+'</p><p class="muted">Внешний фон: новости, ставка ЦБ, курс и сектор не подключены.</p><button type="button" class="chart-edit-btn" data-backtest="'+i+'">Проверить модель на истории</button><div id="backtest-'+i+'" class="muted"></div></div>';
   if(a.parentElement) a.parentElement.classList.remove('hidden');
  }
  renderPath(i,model);updateTradeCalculator(i);try{paintChart(i)}catch{}
@@ -3551,7 +3626,6 @@ $('marketResults').addEventListener('click',async e=>{const info=e.target.closes
 function explainError(e){const m=String(e&&e.message||e);if(/Failed to fetch|NetworkError|CORS|Load failed/i.test(m))return 'Браузер не смог обратиться к API. GitHub Pages — статический хостинг; если запрос блокируется политикой CORS T‑Invest, понадобится небольшой защищённый серверный прокси. Не вставляй токен в опубликованный код.';return m}
 function setLoadProgress(percent,label){const wrap=$('loadProgress');if(!wrap)return;wrap.classList.remove('hidden');const p=Math.max(0,Math.min(100,Math.round(percent)));$('loadProgressFill').style.width=p+'%';$('loadProgressPct').textContent=p+'%';$('loadProgressText').textContent=label||'Загрузка портфеля…';}
 async function refreshPortfolio(initial=false){
- if(!initial&&anyAssetOpen())return;
  if(S.busy)return;const refreshId=++S.activeRequest;S.busy=true;$('refresh').disabled=true;$('connect').disabled=true;$('busyIcon').innerHTML='<span class="spin"></span>';setLoadProgress(5,initial?'Подключение к T‑Invest…':'Обновление портфеля…');if(initial)setStatus('Подключаюсь к T‑Invest…');else setStatus('Обновляю цены и портфель…');
  try{
   const a=await api(USERS,'GetAccounts',{status:'ACCOUNT_STATUS_OPEN'},12000);S.accounts=a.accounts||[];
@@ -3690,8 +3764,8 @@ async function warmSignals(){
   if(r.detailLoading)return;
   try{
    r.detailLoading=true;
-   const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',120);
-   const hourly=await candles(r.uid,'CANDLE_INTERVAL_HOUR',40).catch(()=>[]);
+   const daily=await candles(r.uid,'CANDLE_INTERVAL_DAY',420);
+   const hourly=await candles(r.uid,'CANDLE_INTERVAL_HOUR',72).catch(()=>[]);
    const model=forecastModel(daily,hourly,r.price,[],r.uid);
    if(model&&model.ok){
     r.model=model;r.modelUid=r.uid;r.daily=daily;r.hourly=hourly;
@@ -3712,7 +3786,7 @@ async function warmSignals(){
  }
 }
 
-function startAuto(){if(S.timer)clearInterval(S.timer);S.timer=setInterval(()=>{if(document.visibilityState==='visible'&&S.token&&!S.busy&&!anyAssetOpen())refreshPortfolio(false)},60000);setTimeout(()=>warmSignals().catch(()=>{}),800)}
+function startAuto(){if(S.timer)clearInterval(S.timer);S.timer=setInterval(()=>{if(document.visibilityState==='visible'&&S.token&&!S.busy)refreshPortfolio(false)},60000);setTimeout(()=>warmSignals().catch(()=>{}),800)}
 function onAssetToggleRefresh(){
  if(anyAssetOpen())return;
  if(S.token&&!S.busy){
@@ -3749,9 +3823,9 @@ $('connect').addEventListener('click',async()=>{
 $('refresh').addEventListener('click',()=>{
   spinBrandMark();
   if(S.busy)return;
-  if(S.token)refreshPortfolio(false);
+  if(S.token){S.forceCandleRefresh=true;refreshPortfolio(false).finally(()=>{S.forceCandleRefresh=false});}
   else setStatus('Сначала подключи T‑Invest API-токен.',true);
-});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(S.token&&Date.now()-S.lastRefresh>=60000&&!S.busy&&!anyAssetOpen())refreshPortfolio(false)}});window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,r.model,r.price)}));
+});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(S.token&&Date.now()-S.lastRefresh>=60000&&!S.busy)refreshPortfolio(false)}});window.addEventListener('resize',()=>S.rows.forEach((r,i)=>{const c=$('chart-'+i);if(c&&r.chartCandles)drawChart(c,r.chartCandles,r.model,r.price)}));
 try{const cached=JSON.parse(localStorage.getItem('mzbox-portfolio-cache')||'null');if(cached&&Date.now()-Number(cached.at||0)<7*86400000){S.portfolioRows=dedupeByUid(Array.isArray(cached.portfolioRows)?cached.portfolioRows:[]);
 S.watchRows=dedupeByUid((Array.isArray(cached.watchRows)?cached.watchRows:[]).filter(w=>w&&w.uid&&!S.portfolioRows.some(p=>p.uid===w.uid)));
 S.rows=dedupeByUid([...S.portfolioRows,...S.watchRows]);
