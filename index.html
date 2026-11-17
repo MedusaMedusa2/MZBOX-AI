@@ -963,6 +963,47 @@ body.light {
   vertical-align: bottom;
 }
 
+
+.brief-date {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+.brief-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--green);
+  font-size: 14px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+.brief-check:hover { border-color: var(--green); }
+.words-cloud {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+.word-chip {
+  width: 100% !important;
+  max-width: 100% !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+}
+.word-chip span {
+  max-width: none !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
 </style>
 
 </head>
@@ -1219,6 +1260,7 @@ function idSafe() {
 }
 
 let data = loadData();
+seedDefaultEventsIfNeeded();
 let currentSection = null;
 let editingId = null;
 let financeFormType = "Пассивный доход";
@@ -1473,10 +1515,23 @@ function daysUntilDate(value) {
   today.setHours(0, 0, 0, 0);
   return Math.round((d - today) / 86400000);
 }
-function isDueSoon(value, withinDays = 7) {
-  const n = daysUntilDate(value);
-  // approaching OR overdue (still open)
-  return n !== null && n <= withinDays;
+function isDueSoon(value, withinDays = 10, item = null) {
+  // Красный только: за 10 дней до даты, или после даты если уже попадали в окно (seenYear)
+  let n = daysUntilDate(value);
+  if (item && (item.month && item.day)) {
+    const occ = thisYearOccurrence(item, new Date());
+    if (occ) {
+      const t = new Date();
+      t.setHours(0, 0, 0, 0);
+      n = Math.round((occ - t) / 86400000);
+    }
+  }
+  if (n === null) return false;
+  if (n > withinDays) return false;
+  if (n >= 0 && n <= withinDays) return true;
+  // просрочка — только если событие уже «открывалось» в этом году
+  if (n < 0 && item && Number(item.seenYear) === new Date().getFullYear()) return true;
+  return false;
 }
 function currentMonthKey() {
   const n = new Date();
@@ -1570,6 +1625,163 @@ function getMonthSalary(key) {
   return Number.isFinite(v) ? v : null;
 }
 
+
+
+function getDefaultEvents() {
+  const y = new Date().getFullYear();
+  const rows = [
+    ["МАРИЯ", "НГ", 1, 1, null],
+    ["ОЛЬГА", "НГ", 1, 1, null],
+    ["АРТЁМ", "НГ", 1, 1, null],
+    ["ДЕНИС", "НГ", 1, 1, null],
+    ["ВЛАДИМИР", "НГ", 1, 1, null],
+    ["ЮЛИЯ", "НГ", 1, 1, null],
+    ["МАРИЯ", "ДР", 1, 22, 1979],
+    ["ОЛЬГА", "14", 2, 14, null],
+    ["ВЛАДИМИР", "23", 2, 23, null],
+    ["ДЕНИС", "23", 2, 23, null],
+    ["АРТЁМ", "23", 2, 23, null],
+    ["ОЛЬГА", "ДР", 3, 1, 2003],
+    ["ОЛЬГА", "8М", 3, 8, null],
+    ["МАРИЯ", "8М", 3, 8, null],
+    ["ЮЛИЯ", "8М", 3, 8, null],
+    ["АРТЁМ Б", "ДР", 6, 10, 2014],
+    ["ДЕНИС", "ДР", 9, 23, 1976],
+    ["АРТЁМ П", "ДР", 10, 10, 1990],
+    ["ВЛАДИМИР", "ДР", 10, 27, 1977],
+    ["ЮЛИЯ", "ДР", 11, 26, 1986],
+    ["ЕВГЕНИЙ", "ДР", 12, 26, 1979]
+  ];
+  return rows.map(([title, eventType, month, day, birthYear]) => ({
+    id: id(),
+    title,
+    eventType,
+    eventTypeCustom: "",
+    month,
+    day,
+    birthYear,
+    recurring: true,
+    doneForYear: null,
+    date: padDate(y, month, day),
+    updatedAt: new Date().toISOString()
+  }));
+}
+
+function padDate(year, month, day) {
+  return year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+}
+
+function eventParts(ev) {
+  if (!ev) return null;
+  if (ev.month && ev.day) return { month: Number(ev.month), day: Number(ev.day) };
+  const d = parseDate(ev.date);
+  if (!d) return null;
+  return { month: d.getMonth() + 1, day: d.getDate() };
+}
+
+function occurrenceDate(ev, year) {
+  const p = eventParts(ev);
+  if (!p) return null;
+  const d = new Date(year, p.month - 1, p.day);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function thisYearOccurrence(ev, today) {
+  const y = today.getFullYear();
+  const p = eventParts(ev);
+  if (!p) {
+    const d = parseDate(ev.date);
+    if (!d) return null;
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  return occurrenceDate(ev, y);
+}
+
+function shouldShowDeadline(ev, today) {
+  today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const occ = thisYearOccurrence(ev, today);
+  if (!occ) return false;
+  const y = today.getFullYear();
+  if (Number(ev.doneForYear) === y) return false;
+  const diff = Math.round((occ - today) / 86400000);
+  // ещё рано (больше чем за 10 дней)
+  if (diff > 10) return false;
+  // в окне до даты (0..10) — показать и запомнить, что окно открывалось
+  if (diff >= 0 && diff <= 10) {
+    if (ev.seenYear !== y) {
+      ev.seenYear = y;
+      try { saveData(); } catch (_) {}
+    }
+    return true;
+  }
+  // после даты: только если уже попадали в 10-дневное окно и не отметили
+  // первый раз для уже прошедшей даты — не показывать
+  if (diff < 0) {
+    return Number(ev.seenYear) === y;
+  }
+  return false;
+}
+
+function toggleDoneById(entryId, section) {
+  const list = data[section];
+  if (!Array.isArray(list)) return;
+  const item = list.find(x => x.id === entryId);
+  if (!item) return;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const y = today.getFullYear();
+  const occ = thisYearOccurrence(item, today);
+  if (Number(item.doneForYear) === y) {
+    if (occ && occ >= today) item.doneForYear = null;
+  } else {
+    item.doneForYear = y;
+  }
+  item.updatedAt = new Date().toISOString();
+  saveData();
+}
+
+function seedDefaultEventsIfNeeded() {
+  try {
+    if (!Array.isArray(data.EVENTS)) data.EVENTS = [];
+    data.EVENTS.forEach(e => {
+      if ((!e.month || !e.day) && e.date) {
+        const d = parseDate(e.date);
+        if (d) {
+          e.month = d.getMonth() + 1;
+          e.day = d.getDate();
+          if (e.recurring == null) e.recurring = true;
+        }
+      }
+      if (e.doneForYear === undefined) e.doneForYear = null;
+    });
+    const defaults = getDefaultEvents();
+    const keyOf = (e) =>
+      [String(e.title || "").trim(), String(e.eventType || "").trim(), Number(e.month) || 0, Number(e.day) || 0].join("|");
+    const have = new Set(data.EVENTS.map(keyOf));
+    let added = 0;
+    defaults.forEach(d => {
+      const k = keyOf(d);
+      if (!have.has(k)) {
+        data.EVENTS.push(d);
+        have.add(k);
+        added++;
+      }
+    });
+    if (!localStorage.getItem("injectum_events_seed_v3") && data.EVENTS.length < defaults.length) {
+      if (data.EVENTS.length <= 3) {
+        data.EVENTS = defaults;
+        added = defaults.length;
+      }
+    }
+    localStorage.setItem("injectum_events_seed_v3", "1");
+    if (added > 0) saveData();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 function renderBriefing() {
   const now = new Date();
   const briefToday = document.getElementById("briefToday");
@@ -1582,21 +1794,38 @@ function renderBriefing() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Events + note-plans for list; notes with id for delete
   const upcoming = [];
+
   data.EVENTS.forEach(x => {
-    const d = parseDate(x.date);
-    if (d) {
-      const t = x.eventType === "Другое" ? (x.eventTypeCustom || "") : (x.eventType || "");
-      const title = t ? (t + " · " + x.title) : x.title;
-      upcoming.push({ kind: "event", id: x.id, title, date: x.date });
-    }
+    if (!shouldShowDeadline(x, today)) return;
+    const occ = thisYearOccurrence(x, today);
+    if (!occ) return;
+    const t = x.eventType === "Другое" ? (x.eventTypeCustom || "") : (x.eventType || "");
+    const title = t ? (t + " · " + x.title) : x.title;
+    const dateStr = padDate(occ.getFullYear(), occ.getMonth() + 1, occ.getDate());
+    upcoming.push({ kind: "event", id: x.id, title, date: dateStr, section: "EVENTS" });
   });
   data.NOTES.forEach(x => {
+    if (!x.date) return;
+    const y = today.getFullYear();
+    if (Number(x.doneForYear) === y) return;
     const d = parseDate(x.date);
-    if (d) upcoming.push({ kind: "note", id: x.id, title: x.title, date: x.date });
+    if (!d) return;
+    d.setHours(0, 0, 0, 0);
+    const diff = Math.round((d - today) / 86400000);
+    if (diff > 10) return;
+    if (diff >= 0 && diff <= 10) {
+      if (x.seenYear !== y) {
+        x.seenYear = y;
+        try { saveData(); } catch (_) {}
+      }
+      upcoming.push({ kind: "note", id: x.id, title: x.title, date: x.date, section: "NOTES" });
+      return;
+    }
+    if (diff < 0 && Number(x.seenYear) === y) {
+      upcoming.push({ kind: "note", id: x.id, title: x.title, date: x.date, section: "NOTES" });
+    }
   });
-  // overdue first, then nearest
   upcoming.sort((a, b) => String(a.date).localeCompare(String(b.date)));
 
   const dates = document.getElementById("briefDates");
@@ -1607,35 +1836,31 @@ function renderBriefing() {
     } else {
       const grid = document.createElement("div");
       grid.className = "brief-dates";
-      upcoming.slice(0, 8).forEach(x => {
+      upcoming.slice(0, 12).forEach(x => {
         const row = document.createElement("div");
-        row.className = "brief-date" + (x.kind === "note" ? " has-del" : "") + (isDueSoon(x.date) ? " due-soon" : "");
+        const src = (x.section === "EVENTS")
+          ? data.EVENTS.find(e => e.id === x.id)
+          : data.NOTES.find(e => e.id === x.id);
+        const soon = isDueSoon(x.date, 10, src || null);
+        row.className = "brief-date" + (soon ? " due-soon" : "");
+        const check = document.createElement("button");
+        check.type = "button";
+        check.className = "brief-check";
+        check.title = "Отметить";
+        check.textContent = "✓";
+        check.addEventListener("click", e => {
+          e.stopPropagation();
+          toggleDoneById(x.id, x.section);
+          renderBriefing();
+          showToast("Готово");
+        });
         const title = document.createElement("span");
         title.textContent = x.title;
-        const right = document.createElement("span");
-        right.style.display = "inline-flex";
-        right.style.alignItems = "center";
-        right.style.gap = "4px";
+        title.style.flex = "1";
+        title.style.minWidth = "0";
         const date = document.createElement("span");
         date.textContent = formatDate(x.date);
-        right.appendChild(date);
-        if (x.kind === "note") {
-          const del = document.createElement("button");
-          del.type = "button";
-          del.className = "brief-del";
-          del.title = "Удалить заметку";
-          del.textContent = "×";
-          del.addEventListener("click", e => {
-            e.stopPropagation();
-            if (!confirm("Удалить эту заметку?")) return;
-            data.NOTES = data.NOTES.filter(n => n.id !== x.id);
-            saveData();
-            renderBriefing();
-            showToast("Заметка удалена");
-          });
-          right.appendChild(del);
-        }
-        row.append(title, right);
+        row.append(check, title, date);
         grid.appendChild(row);
       });
       dates.appendChild(grid);
@@ -1957,6 +2182,13 @@ function saveEntry(event) {
         showToast("Укажите свой тип");
         return;
       }
+      const d = parseDate(entry.date);
+      if (d) {
+        entry.month = d.getMonth() + 1;
+        entry.day = d.getDate();
+        entry.recurring = true;
+      }
+      if (entry.doneForYear === undefined) entry.doneForYear = null;
     }
     if (currentSection === "ASSETS" || currentSection === "COLLECTION") {
       data[currentSection] = sortWordList(data[currentSection]);
@@ -1987,7 +2219,11 @@ function getSub(item) {
   }
   if (currentSection === "EVENTS") {
     const t = item.eventType === "Другое" ? (item.eventTypeCustom || "Другое") : (item.eventType || "");
-    return [t, formatDate(item.date)].filter(Boolean).join(" · ");
+    const p = eventParts(item);
+    const ds = p
+      ? String(p.day).padStart(2, "0") + "." + String(p.month).padStart(2, "0") + (item.recurring ? "" : "")
+      : formatDate(item.date);
+    return [t, ds].filter(Boolean).join(" · ");
   }
   if (currentSection === "ASSETS") return "";
   if (currentSection === "FINANCES") {
@@ -2182,7 +2418,7 @@ function renderEntries() {
   }
   list.forEach(item => {
     const row = document.createElement("div");
-    row.className = "entry" + (isDueSoon(item.date) ? " due-soon" : "");
+    row.className = "entry" + (isDueSoon(item.date, 10, item) ? " due-soon" : "");
     const main = document.createElement("div");
     main.className = "entry-main";
     const title = document.createElement("div");
