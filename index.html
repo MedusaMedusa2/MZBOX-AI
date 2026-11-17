@@ -1146,11 +1146,6 @@ const sections = {
       { name: "status", label: "Статус", type: "select", options: ["В планах", "В работе", "Выполнено"] }
     ]
   },
-  COLLECTION: {
-    fields: [
-      { name: "title", label: "Слово / название", type: "text", full: true, required: true }
-    ]
-  },
   ASSETS: {
     fields: [
       { name: "title", label: "Слово / название", type: "text", full: true, required: true }
@@ -1183,18 +1178,16 @@ const financeTypes = [
 
 const menu = [
   ["NOTES", "01"],
-  ["COLLECTION", "02"],
-  ["ASSETS", "03"],
-  ["EVENTS", "04"],
-  ["REFLECTION", "05"],
-  ["FINANCES", "06"]
+  ["ASSETS", "02"],
+  ["EVENTS", "03"],
+  ["REFLECTION", "04"],
+  ["FINANCES", "05"]
 ];
 
 function emptyData() {
   return {
     NOTES: [],
     PLANS: [],
-    COLLECTION: [],
     ASSETS: [],
     EVENTS: [],
     REFLECTION: [],
@@ -1261,6 +1254,7 @@ function idSafe() {
 
 let data = loadData();
 seedDefaultEventsIfNeeded();
+seedDefaultReflectionsIfNeeded();
 let currentSection = null;
 let editingId = null;
 let financeFormType = "Пассивный доход";
@@ -1464,9 +1458,9 @@ function depositEffectiveAmount(item) {
 function autoTensionFromMzbox() {
   const mz = readMzboxSummary();
   if (!mz || !(mz.cost > 0)) return null;
-  // 50% neutral; ~5% portfolio drop => 100
-  const pct = (mz.pnl / mz.cost) * 100; // positive = gain
-  const t = 50 - pct * 10;
+  // +10% к портфелю → 0% напряжённости; -10% → 100%; 0% → 50%
+  const pct = (mz.pnl / mz.cost) * 100;
+  const t = (10 - pct) * 5;
   return Math.max(0, Math.min(100, t));
 }
 
@@ -1742,6 +1736,84 @@ function toggleDoneById(entryId, section) {
   saveData();
 }
 
+
+function getDefaultReflections() {
+  const thoughts = [
+    ["ЦЕННОСТЬ — НЕ ДЕНЬГИ", "✅"],
+    ["ОБГОН СПРАВА — МИНУС", "🅾️"],
+    ["ВЕРНОСТЬ ЖЕНЕ — ПЛЮС", "✅"],
+    ["ПЛАНИРОВАНИЕ — ПЛЮС?", "⚠️"],
+    ["ПЛАНИРОВАНИЕ — ПЛЮС", "✅"],
+    ["АНИМЕ И ИГРЫ — ПЛЮС", "✅"],
+    ["ДЕВУШКА — ПОДДЕРЖКА", "✅"],
+    ["СЕРАЯ МАССА — МИНУС", "🅾️"],
+    ["СОСТЯЗАТЕЛЬ — МИНУС", "🅾️"],
+    ["ОРГАНИЗАЦИЯ — ПЛЮС", "✅"],
+    ["СПОКОЙСТВИЕ — ПЛЮС", "✅"],
+    ["ДРУЗЬЯ — ПОДДЕРЖКА", "✅"],
+    ["ИКОНА — ЦЕННОСТЬ", "✅"],
+    ["ПРОБЛЕМА РЕШАЕМА", "✅"],
+    ["СЧАСТЬЕ — ТИШИНА", "✅"],
+    ["MZBOX AI — ПЛЮС", "✅"],
+    ["ЗДОРОВЬЕ — ПЛЮС", "✅"],
+    ["ЗАВИСТЬ — МИНУС", "🅾️"],
+    ["МУЗЫКА — ПЛЮС", "✅"],
+    ["ПОЭЗИЯ — ПЛЮС", "✅"],
+    ["АРМИЯ — МИНУС", "🅾️"],
+    ["СЕМЬЯ — ПЛЮС", "✅"],
+    ["СИМ — ОПАСНО", "⚠️"]
+  ];
+  // Краткие формулировки-мысли
+  const lines = [
+    "✅ Ценность — не в деньгах, а в выборе.",
+    "🅾️ Обгон справа — всегда минус.",
+    "✅ Верность жене — плюс без условий.",
+    "⚠️ Планирование — плюс? Только если живое.",
+    "✅ Планирование — плюс к ясности.",
+    "✅ Аниме и игры — плюс к отдыху ума.",
+    "✅ Девушка — опора, не декорация.",
+    "🅾️ Серая масса — минус для характера.",
+    "🅾️ Составитель чужих сценариев — минус.",
+    "✅ Организация — плюс к свободе.",
+    "✅ Спокойствие — плюс сильнее шума.",
+    "✅ Друзья — поддержка, не толпа.",
+    "✅ Икона — ценность, если честная.",
+    "✅ Проблема решаема — почти всегда.",
+    "✅ Счастье — в тишине, не в ленте.",
+    "✅ MZBOX AI — плюс к контролю.",
+    "✅ Здоровье — главный плюс.",
+    "🅾️ Зависть — минус, который ест.",
+    "✅ Музыка — плюс к состоянию.",
+    "✅ Поэзия — плюс к слову.",
+    "🅾️ Армия — минус, если ломает смысл.",
+    "✅ Семья — плюс, который держит.",
+    "⚠️ Сим — опасно: не смешивать роли."
+  ];
+  return lines.map(title => ({
+    id: id(),
+    title,
+    updatedAt: new Date().toISOString()
+  }));
+}
+
+function seedDefaultReflectionsIfNeeded() {
+  try {
+    if (!Array.isArray(data.REFLECTION)) data.REFLECTION = [];
+    if (!localStorage.getItem("injectum_reflection_seed_v1")) {
+      if (data.REFLECTION.length <= 1) {
+        data.REFLECTION = getDefaultReflections();
+        saveData();
+      } else {
+        // merge nothing, just flag
+      }
+      localStorage.setItem("injectum_reflection_seed_v1", "1");
+    } else if (!data.REFLECTION.length) {
+      data.REFLECTION = getDefaultReflections();
+      saveData();
+    }
+  } catch (e) { console.error(e); }
+}
+
 function seedDefaultEventsIfNeeded() {
   try {
     if (!Array.isArray(data.EVENTS)) data.EVENTS = [];
@@ -1801,7 +1873,17 @@ function renderBriefing() {
     const occ = thisYearOccurrence(x, today);
     if (!occ) return;
     const t = x.eventType === "Другое" ? (x.eventTypeCustom || "") : (x.eventType || "");
-    const title = t ? (t + " · " + x.title) : x.title;
+    let title = t ? (t + " · " + x.title) : x.title;
+    if ((x.eventType === "ДР" || t === "ДР") && x.birthYear) {
+      const now = new Date();
+      let years = now.getFullYear() - Number(x.birthYear);
+      const p = eventParts(x);
+      if (p) {
+        const had = (now.getMonth() + 1 > p.month) || (now.getMonth() + 1 === p.month && now.getDate() >= p.day);
+        if (!had) years -= 1;
+      }
+      if (years >= 0) title += " · " + years + " лет";
+    }
     const dateStr = padDate(occ.getFullYear(), occ.getMonth() + 1, occ.getDate());
     upcoming.push({ kind: "event", id: x.id, title, date: dateStr, section: "EVENTS" });
   });
@@ -2092,7 +2174,7 @@ function openForm(item = null) {
   if (currentSection === "FINANCES") {
     financeFormType = item?.kind || "Пассивный доход";
     financeFields(item);
-  } else if (currentSection === "ASSETS" || currentSection === "COLLECTION") {
+  } else if (currentSection === "ASSETS") {
     if (item) {
       // single edit
       root.appendChild(createField(
@@ -2114,116 +2196,22 @@ function openForm(item = null) {
   document.getElementById("formPanel").classList.add("open");
   document.getElementById("addBtn").classList.add("hidden");
   if (currentSection === "EVENTS") {
-    const typeSel = document.querySelector('#formFields [name="eventType"]');
-    const customWrap = document.querySelector('#formFields [name="eventTypeCustom"]')?.closest(".field");
-    const syncType = () => {
-      if (!customWrap) return;
-      const show = typeSel && typeSel.value === "Другое";
-      customWrap.style.display = show ? "" : "none";
-    };
-    if (typeSel) {
-      typeSel.addEventListener("change", syncType);
-      syncType();
-    }
-  }
-  document.getElementById("formPanel").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function closeForm() {
-  document.getElementById("formPanel").classList.remove("open");
-  document.getElementById("addBtn").classList.remove("hidden");
-  document.getElementById("entryForm").reset();
-  editingId = null;
-}
-
-function saveEntry(event) {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const entry = {
-    id: editingId || id(),
-    updatedAt: new Date().toISOString()
-  };
-
-  if (currentSection === "FINANCES") {
-    entry.kind = String(form.get("kind") || "");
-    entry.title = String(form.get("title") || "").trim();
-    entry.amount = Number(form.get("amount")) || 0;
-    if (entry.kind === "Расход") {
-      entry.source = String(form.get("source") || "").trim();
-      entry.expenseCategory = String(form.get("expenseCategory") || "БАЗА").trim() || "БАЗА";
-      const mode = String(form.get("expenseMode") || "Постоянный");
-      entry.expenseMode = mode;
-      entry.temporary = mode === "Временный";
-    }
-    if (entry.kind === "Вклад") {
-      entry.rate = Number(form.get("rate")) || 0;
-      entry.frequency = String(form.get("frequency") || "Ежедневно");
-      entry.startDate = String(form.get("startDate") || "").trim();
-    }
-  } else if ((currentSection === "ASSETS" || currentSection === "COLLECTION") && !editingId) {
-    const bulk = String(form.get("bulk") || "").trim();
-    if (!bulk) {
-      showToast("Введите слова");
-      return;
-    }
-    const n = addBulkWords(currentSection, bulk);
-    saveData();
-    closeForm();
-    showToast(n ? ("Добавлено: " + n) : "Нечего добавлять");
-    renderEntries();
-    return;
-  } else {
-    sections[currentSection].fields.forEach(f => {
-      entry[f.name] = String(form.get(f.name) || "").trim();
-    });
-    if (currentSection === "EVENTS") {
-      if (entry.eventType !== "Другое") entry.eventTypeCustom = "";
-      if (entry.eventType === "Другое" && !entry.eventTypeCustom) {
-        showToast("Укажите свой тип");
-        return;
-      }
-      const d = parseDate(entry.date);
-      if (d) {
-        entry.month = d.getMonth() + 1;
-        entry.day = d.getDate();
-        entry.recurring = true;
-      }
-      if (entry.doneForYear === undefined) entry.doneForYear = null;
-    }
-    if (currentSection === "ASSETS" || currentSection === "COLLECTION") {
-      data[currentSection] = sortWordList(data[currentSection]);
-    }
-  }
-
-  if (editingId) {
-    const index = data[currentSection].findIndex(x => x.id === editingId);
-    if (index >= 0) data[currentSection][index] = entry;
-  } else {
-    entry.createdAt = new Date().toISOString();
-    data[currentSection].unshift(entry);
-  }
-  saveData();
-  closeForm();
-  if (currentSection === "FINANCES") renderFinancesView();
-  else renderEntries();
-  showToast("Сохранено");
-}
-
-function getSub(item) {
-  if (currentSection === "NOTES") {
-    if (item.date) return "План · " + formatDate(item.date);
-    return "Заметка";
-  }
-  if (currentSection === "PLANS") {
-    return [formatDate(item.date), item.status || "В планах"].filter(Boolean).join(" · ");
-  }
-  if (currentSection === "EVENTS") {
     const t = item.eventType === "Другое" ? (item.eventTypeCustom || "Другое") : (item.eventType || "");
     const p = eventParts(item);
     const ds = p
-      ? String(p.day).padStart(2, "0") + "." + String(p.month).padStart(2, "0") + (item.recurring ? "" : "")
+      ? String(p.day).padStart(2, "0") + "." + String(p.month).padStart(2, "0")
       : formatDate(item.date);
-    return [t, ds].filter(Boolean).join(" · ");
+    let age = "";
+    if ((item.eventType === "ДР" || t === "ДР") && item.birthYear) {
+      const now = new Date();
+      let years = now.getFullYear() - Number(item.birthYear);
+      if (p) {
+        const had = (now.getMonth() + 1 > p.month) || (now.getMonth() + 1 === p.month && now.getDate() >= p.day);
+        if (!had) years -= 1;
+      }
+      if (years >= 0) age = years + " лет";
+    }
+    return [t, ds, age].filter(Boolean).join(" · ");
   }
   if (currentSection === "ASSETS") return "";
   if (currentSection === "FINANCES") {
@@ -2392,7 +2380,7 @@ function renderEntries() {
   const root = document.getElementById("entries");
   root.innerHTML = "";
 
-  if (currentSection === "COLLECTION" || currentSection === "ASSETS") {
+  if (currentSection === "ASSETS") {
     renderWordSection();
     return;
   }
