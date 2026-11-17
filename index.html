@@ -1327,7 +1327,7 @@ body.rose .due-soon {
     <h3 id="archiveModalTitle">Архив</h3>
     <div class="arch-grid" id="archiveModalGrid"></div>
     <div class="arch-temps" id="archiveModalTemps"></div>
-    <button type="button" class="ghost-btn arch-close" id="archiveModalClose">Закрыть</button>
+    <button type="button" class="ghost-btn arch-close" id="archiveModalClose" onclick="window.__injArchClose && window.__injArchClose(event)">Закрыть</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -2061,30 +2061,107 @@ function toggleDoneById(entryId, section) {
 }
 
 
+
+function getDefaultAssets() {
+  const words = [
+    "ФЕН","ЧАСЫ","УТЮГ","КЕЙС","ИКОНА","ПЛИТА","НАСОС","КНИГА","ОДЕЖДА","МАШИНА",
+    "ПОСУДА","ЧАЙНИК","БРИТВА","МЕБЕЛЬ","SOS BOX","БЛЕНДЕР","ПРИНТЕР","ПЫЛЕСОС","КАРТИНА","НАГРАДА",
+    "КОРОБКА","МОНИТОР","КВАРТИРА","ПРОЕКТОР","ДОКУМЕНТЫ","ТЕЛЕВИЗОР","МАКУЛАТУРА","КОФЕМАШИНА","ИНСТРУМЕНТ","ВЕНТИЛЯТОР",
+    "JBL FLIP 5","APPLE IMAC","APPLE WATCH","ХОЛОДИЛЬНИК","JBL BOOMBOX","APPLE IPHONE","APPLE AIRTAG","ОТПАРИВАТЕЛЬ","APPLE MACBOOK","PLAYSTATION 4",
+    "РОБОТ ПЫЛЕСОС","ЯНДЕКС СТАНЦИЯ","ЭЛЕКТРОСАМОКАТ","СТИРАЛЬНАЯ МАШИНА","АЛЬБОМ ФОТОГРАФИЙ","APPLE MAGIC MOUSE","ОЧИСТИТЕЛЬ ВОЗДУХА","КАМЕРА ВИДЕОНАБЛЮДЕНИЯ","СКЕТЧБУК"
+  ];
+  // unique
+  const seen = {};
+  const list = [];
+  words.forEach(function (w) {
+    const k = w.toUpperCase();
+    if (seen[k]) return;
+    seen[k] = 1;
+    list.push({ id: id(), title: w, goal: false, updatedAt: new Date().toISOString() });
+  });
+  return sortWordList(list);
+}
+
+function getDefaultNotes() {
+  const lines = [
+    "Удалить лишние номера",
+    "Продать лишнее",
+    "Забрать вещи из дома",
+    "Оптимизировать имущество",
+    "Цветы на дембель",
+    "Навести порядок в документах",
+    "Оформить доверенность",
+    "Купить кольца",
+    "Оплатить стол в домиках",
+    "Выйти на работу",
+    "Купить машину",
+    "Переехать в новую квартиру",
+    "Дембельнуться",
+    "Проверить здоровье",
+    "Закрыть целевой договор",
+    "Продумать переезд",
+    "Продумать покупку машины"
+  ];
+  return lines.map(function (title) {
+    return { id: id(), title: title, date: "", updatedAt: new Date().toISOString() };
+  });
+}
+
+function seedDefaultAssetsIfNeeded() {
+  try {
+    if (!Array.isArray(data.ASSETS)) data.ASSETS = [];
+    if (!localStorage.getItem("injectum_assets_seed_v1")) {
+      if (data.ASSETS.length < 5) {
+        data.ASSETS = getDefaultAssets();
+        saveData();
+      }
+      localStorage.setItem("injectum_assets_seed_v1", "1");
+    } else if (!data.ASSETS.length) {
+      data.ASSETS = getDefaultAssets();
+      saveData();
+    }
+  } catch (e) { console.error(e); }
+}
+
+function seedDefaultNotesIfNeeded() {
+  try {
+    if (!Array.isArray(data.NOTES)) data.NOTES = [];
+    if (!localStorage.getItem("injectum_notes_seed_v1")) {
+      if (data.NOTES.length < 3) {
+        data.NOTES = getDefaultNotes();
+        saveData();
+      }
+      localStorage.setItem("injectum_notes_seed_v1", "1");
+    } else if (!data.NOTES.length) {
+      data.NOTES = getDefaultNotes();
+      saveData();
+    }
+  } catch (e) { console.error(e); }
+}
+
 function getDefaultReflections() {
   const lines = [
-    "Ценность — в выборе, не в сумме.",
-    "Обгон справа отдаёт характер.",
-    "Верность держит сильнее слов.",
-    "План жив, пока к нему возвращаешься.",
-    "Игры и аниме — пауза, не побег.",
-    "Рядом должна быть опора, не декорация.",
-    "Серость заразна — не стой в ней.",
-    "Чужой сценарий не станет твоим.",
-    "Порядок освобождает голову.",
-    "Тишина сильнее лишнего шума.",
-    "Друзья — круг, а не толпа.",
-    "Икона работает, только если честна.",
-    "Почти всё решаемо — вопрос хода.",
-    "Счастье ближе там, где тише.",
-    "Инструмент нужен для ясности, не для шума.",
-    "Здоровье — база всего остального.",
-    "Зависть пустая и дорогая.",
-    "Музыка выравнивает день.",
-    "Слово точнее, когда реже.",
-    "Смысл нельзя отдавать обстоятельствам.",
-    "Семья — опора на длинной дистанции.",
-    "Роли нельзя смешивать без цены."
+    "Ценность — не деньги",
+    "Обгон справа — минус",
+    "Планирование — плюс",
+    "Аниме и игры — плюс",
+    "Девушка — поддержка",
+    "Серая масса — минус",
+    "Составитель — минус",
+    "Организация — плюс",
+    "Спокойствие — плюс",
+    "Друзья — поддержка",
+    "Икона — ценность",
+    "Проблема решаема",
+    "Счастье — тишина",
+    "MZBOX AI — плюс",
+    "Здоровье — плюс",
+    "Зависть — минус",
+    "Музыка — плюс",
+    "Поэзия — плюс",
+    "Армия — минус",
+    "Семья — плюс",
+    "Сим — опасно"
   ];
   return lines.map(function (title) {
     return { id: id(), title: title, updatedAt: new Date().toISOString() };
@@ -2094,10 +2171,10 @@ function getDefaultReflections() {
 function seedDefaultReflectionsIfNeeded() {
   try {
     if (!Array.isArray(data.REFLECTION)) data.REFLECTION = [];
-    if (!localStorage.getItem("injectum_reflection_seed_v3")) {
+    if (!localStorage.getItem("injectum_reflection_seed_v4")) {
       data.REFLECTION = getDefaultReflections();
       saveData();
-      localStorage.setItem("injectum_reflection_seed_v3", "1");
+      localStorage.setItem("injectum_reflection_seed_v4", "1");
     } else if (!data.REFLECTION.length) {
       data.REFLECTION = getDefaultReflections();
       saveData();
@@ -3112,6 +3189,7 @@ function openArchiveView(arch) {
   }
   temps.innerHTML = htmlT;
   modal.classList.remove("hidden");
+  modal.style.display = "flex";
   modal.setAttribute("aria-hidden", "false");
 }
 
@@ -3119,7 +3197,15 @@ function closeArchiveView() {
   const modal = document.getElementById("archiveModal");
   if (!modal) return;
   modal.classList.add("hidden");
+  modal.style.display = "none";
   modal.setAttribute("aria-hidden", "true");
+}
+function openArchiveViewSafe(arch) {
+  openArchiveView(arch);
+  const modal = document.getElementById("archiveModal");
+  if (modal) {
+    modal.style.display = "flex";
+  }
 }
 
 function renderFinancesView() {
@@ -3568,8 +3654,27 @@ function openMzboxModule() {
   overlay.setAttribute("aria-hidden", "false");
   document.body.classList.add("mzbox-open");
   try {
+    frame.removeAttribute("sandbox");
     frame.removeAttribute("src");
+    // ensure token keys are readable by same-origin srcdoc
+    var tok = "";
+    try { tok = localStorage.getItem("mzbox-token") || localStorage.getItem("mzbox_token") || ""; } catch (_) {}
+    if (tok) {
+      try {
+        localStorage.setItem("mzbox-token", tok);
+        localStorage.setItem("mzbox_token", tok);
+      } catch (_) {}
+    }
     frame.srcdoc = MZBOX_HTML;
+    frame.onload = function () {
+      try {
+        if (tok && frame.contentWindow) {
+          try { frame.contentWindow.localStorage.setItem("mzbox-token", tok); } catch (_) {}
+          try { frame.contentWindow.localStorage.setItem("mzbox_token", tok); } catch (_) {}
+          try { frame.contentWindow.postMessage({ type: "mzbox-token", token: tok }, "*"); } catch (_) {}
+        }
+      } catch (e) { console.error(e); }
+    };
   } catch (e) {
     console.error(e);
     try { showToast("Не удалось открыть MZBOX"); } catch(_){}
