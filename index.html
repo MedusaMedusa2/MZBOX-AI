@@ -707,8 +707,7 @@ body.light .fin-rec b { color: #5c5640; }
 
 
 .dashboard { gap: 14px !important; }
-.finance-overview, .finance-overview.compact { gap: 12px !important; }
-.brief-dates { gap: 10px !important; }
+.finance-overview, .brief-dates { gap: 10px !important; }
 .fin-grid { gap: 14px !important; }
 .fin-metrics { gap: 12px !important; margin-bottom: 12px; }
 .fin-card { margin-bottom: 14px; }
@@ -1208,6 +1207,92 @@ body.rose .due-soon {
   margin-bottom: 12px;
 }
 
+
+/* Briefing finance one line */
+.brief-fin-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.brief-fin-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.brief-fin-item span {
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.brief-fin-item strong {
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.brief-fin-sep {
+  color: var(--line);
+  font-weight: 700;
+  flex: 0 0 auto;
+  padding-bottom: 2px;
+}
+/* Briefing depth */
+.briefing {
+  padding: 16px !important;
+  border: 1px solid var(--line) !important;
+  background: var(--panel) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+.briefing > .section-top,
+.briefing .brief-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.briefing h2 {
+  letter-spacing: 2px;
+  font-size: 13px;
+}
+#briefToday {
+  font-size: 12px;
+  color: var(--muted);
+}
+.briefing .section-label {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: var(--muted);
+}
+.brief-date {
+  background: var(--panel2) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  margin-bottom: 8px !important;
+}
+.finance-block {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+}
+
 </style>
 
 </head>
@@ -1241,19 +1326,12 @@ body.rose .due-soon {
     <div class="section-label">БЛИЖАЙШИЕ СОБЫТИЯ И ДЕДЛАЙНЫ</div>
     <div id="briefDates"></div>
 
-        <div class="finance-overview compact" id="financeOverview">
-      <div class="metric">
-        <span>Доход</span>
-        <strong id="totalIncome">0 ₽</strong>
-      </div>
-      <div class="metric">
-        <span>Расход</span>
-        <strong id="totalExpenses">0 ₽</strong>
-      </div>
-      <div class="metric">
-        <span>Остаток</span>
-        <strong id="balance">0 ₽</strong>
-      </div>
+    <div class="brief-fin-line" id="financeOverview">
+      <div class="brief-fin-item"><span>доход</span><strong id="totalIncome">0 ₽</strong></div>
+      <div class="brief-fin-sep">·</div>
+      <div class="brief-fin-item"><span>расход</span><strong id="totalExpenses">0 ₽</strong></div>
+      <div class="brief-fin-sep">·</div>
+      <div class="brief-fin-item"><span>остаток</span><strong id="balance">0 ₽</strong></div>
     </div>
     
     <div class="finance-block" id="briefTensionBlock">
@@ -1322,12 +1400,12 @@ body.rose .due-soon {
   <iframe id="mzboxFrame" class="mzbox-frame" title="MZBOX AI"></iframe>
 </div>
 
-<div id="archiveModal" class="archive-modal hidden" aria-hidden="true">
-  <div class="archive-sheet">
+<div id="archiveModal" class="archive-modal hidden" aria-hidden="true" onclick="if(event.target===this)closeArchiveView()">
+  <div class="archive-sheet" onclick="event.stopPropagation()">
     <h3 id="archiveModalTitle">Архив</h3>
     <div class="arch-grid" id="archiveModalGrid"></div>
     <div class="arch-temps" id="archiveModalTemps"></div>
-    <button type="button" class="ghost-btn arch-close" id="archiveModalClose" onclick="window.__injArchClose && window.__injArchClose(event)">Закрыть</button>
+    <button type="button" class="ghost-btn arch-close" id="archiveModalClose" onclick="event.preventDefault();event.stopPropagation();closeArchiveView();">Закрыть</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -1537,6 +1615,8 @@ function idSafe() {
 let data = loadData();
 try { seedDefaultEventsIfNeeded(); } catch (e) { console.error(e); }
 try { seedDefaultReflectionsIfNeeded(); } catch (e) { console.error(e); }
+try { seedDefaultAssetsIfNeeded(); } catch (e) { console.error(e); }
+try { seedDefaultNotesIfNeeded(); } catch (e) { console.error(e); }
 let currentSection = null;
 let editingId = null;
 let financeFormType = "Пассивный доход";
@@ -2110,12 +2190,12 @@ function getDefaultNotes() {
 function seedDefaultAssetsIfNeeded() {
   try {
     if (!Array.isArray(data.ASSETS)) data.ASSETS = [];
-    if (!localStorage.getItem("injectum_assets_seed_v1")) {
+    if (!localStorage.getItem("injectum_assets_seed_v2")) {
       if (data.ASSETS.length < 5) {
         data.ASSETS = getDefaultAssets();
         saveData();
       }
-      localStorage.setItem("injectum_assets_seed_v1", "1");
+      localStorage.setItem("injectum_assets_seed_v2", "1");
     } else if (!data.ASSETS.length) {
       data.ASSETS = getDefaultAssets();
       saveData();
@@ -2126,12 +2206,12 @@ function seedDefaultAssetsIfNeeded() {
 function seedDefaultNotesIfNeeded() {
   try {
     if (!Array.isArray(data.NOTES)) data.NOTES = [];
-    if (!localStorage.getItem("injectum_notes_seed_v1")) {
+    if (!localStorage.getItem("injectum_notes_seed_v2")) {
       if (data.NOTES.length < 3) {
         data.NOTES = getDefaultNotes();
         saveData();
       }
-      localStorage.setItem("injectum_notes_seed_v1", "1");
+      localStorage.setItem("injectum_notes_seed_v2", "1");
     } else if (!data.NOTES.length) {
       data.NOTES = getDefaultNotes();
       saveData();
@@ -2171,10 +2251,10 @@ function getDefaultReflections() {
 function seedDefaultReflectionsIfNeeded() {
   try {
     if (!Array.isArray(data.REFLECTION)) data.REFLECTION = [];
-    if (!localStorage.getItem("injectum_reflection_seed_v4")) {
+    if (!localStorage.getItem("injectum_reflection_seed_v5")) {
       data.REFLECTION = getDefaultReflections();
       saveData();
-      localStorage.setItem("injectum_reflection_seed_v4", "1");
+      localStorage.setItem("injectum_reflection_seed_v5", "1");
     } else if (!data.REFLECTION.length) {
       data.REFLECTION = getDefaultReflections();
       saveData();
@@ -3656,25 +3736,22 @@ function openMzboxModule() {
   try {
     frame.removeAttribute("sandbox");
     frame.removeAttribute("src");
-    // ensure token keys are readable by same-origin srcdoc
     var tok = "";
     try { tok = localStorage.getItem("mzbox-token") || localStorage.getItem("mzbox_token") || ""; } catch (_) {}
     if (tok) {
-      try {
-        localStorage.setItem("mzbox-token", tok);
-        localStorage.setItem("mzbox_token", tok);
-      } catch (_) {}
+      try { localStorage.setItem("mzbox-token", tok); } catch (_) {}
     }
-    frame.srcdoc = MZBOX_HTML;
-    frame.onload = function () {
-      try {
-        if (tok && frame.contentWindow) {
-          try { frame.contentWindow.localStorage.setItem("mzbox-token", tok); } catch (_) {}
-          try { frame.contentWindow.localStorage.setItem("mzbox_token", tok); } catch (_) {}
-          try { frame.contentWindow.postMessage({ type: "mzbox-token", token: tok }, "*"); } catch (_) {}
-        }
-      } catch (e) { console.error(e); }
-    };
+    var boot = "";
+    if (tok) {
+      boot = "<script>(function(){try{var t=" + JSON.stringify(tok) +
+        ";localStorage.setItem('mzbox-token',t);}catch(e){}})();<\/script>";
+    }
+    var src = MZBOX_HTML;
+    if (boot) {
+      if (src.indexOf("<head>") >= 0) src = src.replace("<head>", "<head>" + boot);
+      else src = boot + src;
+    }
+    frame.srcdoc = src;
   } catch (e) {
     console.error(e);
     try { showToast("Не удалось открыть MZBOX"); } catch(_){}
