@@ -1037,6 +1037,109 @@ button, a, .nav-card, .icon-btn-sq, .icon-btn, .small-btn, .brief-check, .word-c
 }
 .nav-card { pointer-events: auto !important; z-index: 5; }
 
+
+.author.sub-author {
+  margin-top: 4px;
+  opacity: 0.85;
+  font-size: 12px;
+}
+body.rose {
+  --bg: #000000;
+  --panel: #1a1216;
+  --panel2: #22181c;
+  --line: #3d2a32;
+  --text: #f7ecef;
+  --muted: #b89aa3;
+  --accent: #e8b4bc;
+  --green: #8fbf9a;
+  --red: #d9899a;
+  background: #000000 !important;
+}
+body.rose .nav-card,
+body.rose .briefing,
+body.rose .welcome-strip,
+body.rose .fin-card,
+body.rose .entry,
+body.rose .metric,
+body.rose .brief-date,
+body.rose .form-panel,
+body.rose .archive-item,
+body.rose .word-chip,
+body.rose .fin-chart-wrap {
+  background: #2a1c22 !important;
+  border-color: #4a3038 !important;
+  box-shadow: 0 8px 28px rgba(80, 20, 40, 0.25);
+}
+body.rose .nav-card .name,
+body.rose .entry-title { color: #f7ecef !important; }
+body.rose .icon-btn-sq.primary,
+body.rose .primary-btn {
+  background: #e8b4bc !important;
+  color: #1a1014 !important;
+  border-color: #e8b4bc !important;
+}
+body.rose .due-soon {
+  border-color: rgba(232, 180, 188, 0.55) !important;
+  background: rgba(232, 180, 188, 0.12) !important;
+}
+.plan-coco-card {
+  border-left: 3px solid var(--accent);
+}
+.plan-coco-card.done {
+  opacity: 0.55;
+}
+.plan-coco-card.done .entry-title {
+  text-decoration: line-through;
+}
+.cat-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  font-size: 12px;
+}
+.cat-chip button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+.cat-add-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.cat-add-row input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.archive-chart-img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  margin-top: 10px;
+  background: #0a0a0a;
+}
+
 </style>
 
 </head>
@@ -1138,6 +1241,7 @@ button, a, .nav-card, .icon-btn-sq, .icon-btn, .small-btn, .brief-check, .word-c
 <footer>
   <div class="footer-brand"><span class="copy">©</span> INJECTUM · 2026</div>
   <div class="author">Кутузов Дмитрий Владимирович</div>
+  <div class="author sub-author">Кутузова Ольга Денисовна</div>
 </footer>
 </div>
 
@@ -1197,6 +1301,13 @@ const sections = {
       { name: "title", label: "Мысль", type: "textarea", full: true, required: true }
     ]
   },
+  PLAN_COCOSA: {
+    fields: [
+      { name: "title", label: "План", type: "textarea", full: true, required: true },
+      { name: "scope", label: "Период", type: "select", options: ["День", "Месяц"], required: true },
+      { name: "date", label: "Дата", type: "date", required: true }
+    ]
+  },
   FINANCES: {
     fields: []
   }
@@ -1214,8 +1325,66 @@ const menu = [
   ["ASSETS", "02"],
   ["EVENTS", "03"],
   ["REFLECTION", "04"],
-  ["FINANCES", "05"]
+  ["FINANCES", "05"],
+  ["PLAN_COCOSA", "06"]
 ];
+
+function sectionLabel(key) {
+  if (key === "PLAN_COCOSA") return "PLAN COCOSA";
+  return key;
+}
+
+const DEFAULT_EXPENSE_CATS = ["БАЗА", "ТРАНСПОРТ", "ЛИЧНОЕ", "СЕМЬЯ", "КАПИТАЛ"];
+const EXPENSE_CATS_KEY = "injectum_expense_cats";
+
+function getExpenseCategories() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(EXPENSE_CATS_KEY) || "null");
+    if (Array.isArray(raw) && raw.length) {
+      return raw.map(x => String(x).trim().toUpperCase()).filter(Boolean);
+    }
+  } catch (_) {}
+  return DEFAULT_EXPENSE_CATS.slice();
+}
+
+function saveExpenseCategories(list) {
+  const clean = (list || []).map(x => String(x).trim().toUpperCase()).filter(Boolean);
+  const uniq = [];
+  clean.forEach(c => { if (!uniq.includes(c)) uniq.push(c); });
+  if (!uniq.length) uniq.push("БАЗА");
+  try { localStorage.setItem(EXPENSE_CATS_KEY, JSON.stringify(uniq)); } catch (_) {}
+  return uniq;
+}
+
+function addExpenseCategory(name) {
+  const n = String(name || "").trim().toUpperCase();
+  if (!n) return getExpenseCategories();
+  const list = getExpenseCategories();
+  if (!list.includes(n)) list.push(n);
+  return saveExpenseCategories(list);
+}
+
+function removeExpenseCategory(name) {
+  const n = String(name || "").trim().toUpperCase();
+  let list = getExpenseCategories().filter(c => c !== n);
+  if (!list.length) list = ["БАЗА"];
+  // remap expenses using removed category to БАЗА or first
+  const fallback = list[0];
+  (data.FINANCES || []).forEach(x => {
+    if (x && x.kind === "Расход" && String(x.expenseCategory || "").toUpperCase() === n) {
+      x.expenseCategory = fallback;
+    }
+  });
+  try { saveData(); } catch (_) {}
+  return saveExpenseCategories(list);
+}
+
+function expenseCatColor(name, index) {
+  const palette = ["#c45b52", "#d07060", "#b84a4a", "#e08a7a", "#9a3a3a", "#c47a8a", "#a85a6a", "#d49a9a"];
+  const cats = getExpenseCategories();
+  const i = cats.indexOf(String(name).toUpperCase());
+  return palette[(i >= 0 ? i : index) % palette.length];
+}
 
 function emptyData() {
   return {
@@ -1224,7 +1393,8 @@ function emptyData() {
     ASSETS: [],
     EVENTS: [],
     REFLECTION: [],
-    FINANCES: []
+    FINANCES: [],
+    PLAN_COCOSA: []
   };
 }
 
@@ -1242,6 +1412,7 @@ function loadData() {
           }
         }
       });
+      if (!Array.isArray(result.PLAN_COCOSA)) result.PLAN_COCOSA = [];
     }
     if (!parsed) {
       try {
@@ -1366,7 +1537,7 @@ function openSection(key) {
     editingId = null;
 
     var titleEl = document.getElementById("sectionTitle");
-    if (titleEl) titleEl.textContent = key;
+    if (titleEl) titleEl.textContent = sectionLabel(key);
 
     var searchInput = document.getElementById("searchInput");
     if (searchInput) searchInput.value = "";
@@ -1423,7 +1594,7 @@ function renderDashboard() {
     var count = data[key].length;
     button.innerHTML =
       '<span class="num">' + num + '</span>' +
-      '<span class="name">' + key + '</span>' +
+      '<span class="name">' + sectionLabel(key) + '</span>' +
       '<span class="count">' + count + '</span>';
     root.appendChild(button);
   });
@@ -1600,6 +1771,11 @@ function saveMonthArchives(list) {
   try { localStorage.setItem("injectum_month_archives", JSON.stringify(list)); } catch (_) {}
 }
 function createMonthArchive() {
+  let chartImage = "";
+  try {
+    const canvas = document.querySelector("#finChart");
+    if (canvas && canvas.toDataURL) chartImage = canvas.toDataURL("image/png");
+  } catch (_) {}
   const key = currentMonthKey(); // YYYY-MM
   const label = key.slice(5, 7) + "." + key.slice(0, 4); // MM.YYYY
   const list = getMonthArchives();
@@ -1633,6 +1809,7 @@ function createMonthArchive() {
     expenses,
     balance: income - expenses,
     permanentCount: permanent.length,
+    chartImage: chartImage,
     temporaryCount: temporary.length,
     tempItems: temporary.map(x => ({ title: x.title, amount: x.amount, source: x.source }))
   };
@@ -2122,10 +2299,10 @@ function drawFinanceSpecificFields(item = null) {
         name: "expenseCategory",
         label: "Раздел расхода",
         type: "select",
-        options: ["БАЗА", "ТРАНСПОРТ", "ЛИЧНОЕ", "СЕМЬЯ", "КАПИТАЛ"],
+        options: getExpenseCategories(),
         required: true
       },
-      item?.expenseCategory || "БАЗА"
+      item?.expenseCategory || getExpenseCategories()[0] || "БАЗА"
     );
     add(
       {
@@ -2224,6 +2401,9 @@ function getSub(item) {
   }
   if (currentSection === "ASSETS") return "";
   if (currentSection === "REFLECTION") return "";
+  if (currentSection === "PLAN_COCOSA") {
+    return [(item.scope || "День"), formatDate(item.date)].filter(Boolean).join(" · ");
+  }
   if (currentSection === "FINANCES") {
     let text = (item.kind || "") + " · " + formatMoney(item.amount);
     if (item.kind === "Расход") {
@@ -2570,10 +2750,15 @@ function renderEntries() {
   }
 
   let list = [...data[currentSection]];
-  if (currentSection === "NOTES") {
+  if (currentSection === "NOTES" || currentSection === "PLAN_COCOSA") {
     list.sort((a, b) => {
       const ad = a.date || "";
       const bd = b.date || "";
+      if (currentSection === "PLAN_COCOSA") {
+        const adone = a.done ? 1 : 0;
+        const bdone = b.done ? 1 : 0;
+        if (adone !== bdone) return adone - bdone;
+      }
       if (ad && bd) return ad.localeCompare(bd) || (a.title || "").localeCompare(b.title || "", "ru");
       if (ad && !bd) return -1;
       if (!ad && bd) return 1;
@@ -2590,9 +2775,29 @@ function renderEntries() {
   }
   list.forEach(item => {
     const row = document.createElement("div");
-    row.className = "entry" + (isDueSoon(item.date, 10, item) ? " due-soon" : "");
+    let cls = "entry" + (isDueSoon(item.date, 10, item) ? " due-soon" : "");
+    if (currentSection === "PLAN_COCOSA") {
+      cls += " plan-coco-card" + (item.done ? " done" : "");
+    }
+    row.className = cls;
     const main = document.createElement("div");
     main.className = "entry-main";
+    if (currentSection === "PLAN_COCOSA") {
+      const check = document.createElement("button");
+      check.type = "button";
+      check.className = "brief-check";
+      check.textContent = item.done ? "✓" : "○";
+      check.title = item.done ? "Снять" : "Выполнено";
+      check.addEventListener("click", function (e) {
+        e.stopPropagation();
+        item.done = !item.done;
+        const idx = data.PLAN_COCOSA.findIndex(function (x) { return x.id === item.id; });
+        if (idx >= 0) data.PLAN_COCOSA[idx].done = item.done;
+        saveData();
+        renderEntries();
+      });
+      main.appendChild(check);
+    }
     const title = document.createElement("div");
     title.className = "entry-title";
     title.textContent = item.title || "Без названия";
@@ -2751,16 +2956,21 @@ function openArchiveView(arch) {
     "<div><span>ОСТАТОК</span><b class=\"" + balClass + "\">" + formatMoney(arch.balance) + "</b></div>" +
     "<div><span>ЗАРПЛАТА</span><b>" + formatMoney(arch.salary || 0) + "</b></div>";
   const temps = document.getElementById("archiveModalTemps");
+  let htmlT = "";
+  if (arch.chartImage) {
+    htmlT += '<img class="archive-chart-img" alt="Диаграмма" src="' + arch.chartImage + '" />';
+  }
   const items = Array.isArray(arch.tempItems) ? arch.tempItems : [];
   if (!items.length) {
-    temps.innerHTML = "<div class=\"empty-inline\">Временных расходов не было</div>";
+    htmlT += "<div class=\"empty-inline\">Временных расходов не было</div>";
   } else {
-    temps.innerHTML = "<div class=\"section-label\" style=\"margin:8px 0\">ВРЕМЕННЫЕ РАСХОДЫ</div>" +
+    htmlT += "<div class=\"section-label\" style=\"margin:8px 0\">ВРЕМЕННЫЕ РАСХОДЫ</div>" +
       items.map(t =>
         "<div><span>" + escapeHTML(t.title || "") + (t.source ? " · " + escapeHTML(String(t.source)) : "") +
         "</span><b>" + formatMoney(t.amount) + "</b></div>"
       ).join("");
   }
+  temps.innerHTML = htmlT;
   modal.classList.remove("hidden");
   modal.setAttribute("aria-hidden", "false");
 }
@@ -2827,6 +3037,15 @@ function renderFinancesView() {
              <div class="row-actions"><button type="button" class="primary-btn" id="saveMonthSalary">Сохранить</button></div>
            </div>`
       }
+    </div>
+
+    <div class="fin-card">
+      <h3>РАЗДЕЛЫ РАСХОДОВ</h3>
+      <div class="cat-chip-row" id="expenseCatList"></div>
+      <div class="cat-add-row">
+        <input id="newExpenseCat" type="text" placeholder="Новый раздел" maxlength="24" />
+        <button type="button" class="primary-btn" id="addExpenseCatBtn">+</button>
+      </div>
     </div>
 
     <div class="fin-card">
@@ -2916,21 +3135,16 @@ function renderFinancesView() {
   }
 
   // Красные оттенки — расходы по разделам; зелёный — доход
-  const catColors = {
-    "БАЗА": "#c45b52",
-    "ТРАНСПОРТ": "#d07060",
-    "ЛИЧНОЕ": "#b84a4a",
-    "СЕМЬЯ": "#e08a7a",
-    "КАПИТАЛ": "#9a3a3a"
-  };
-  const catOrder = ["БАЗА", "ТРАНСПОРТ", "ЛИЧНОЕ", "СЕМЬЯ", "КАПИТАЛ"];
-  const catSums = { "БАЗА": 0, "ТРАНСПОРТ": 0, "ЛИЧНОЕ": 0, "СЕМЬЯ": 0, "КАПИТАЛ": 0 };
+  const catOrder = getExpenseCategories();
+  const catSums = {};
+  catOrder.forEach(c => { catSums[c] = 0; });
   getFinance("Расход").forEach(x => {
-    const c = catOrder.includes(x.expenseCategory) ? x.expenseCategory : "БАЗА";
-    catSums[c] += Number(x.amount) || 0;
+    let c = String(x.expenseCategory || "").toUpperCase();
+    if (!catSums.hasOwnProperty(c)) c = catOrder[0] || "БАЗА";
+    catSums[c] = (catSums[c] || 0) + (Number(x.amount) || 0);
   });
   const chartParts = catOrder
-    .map(c => ({ label: c, value: catSums[c], color: catColors[c] }))
+    .map((c, i) => ({ label: c, value: catSums[c] || 0, color: expenseCatColor(c, i) }))
     .filter(p => p.value > 0);
   if (income > 0) {
     chartParts.push({ label: "ДОХОД", value: income, color: "#2f8b5a" });
@@ -2952,7 +3166,46 @@ function renderFinancesView() {
     }
   });
 
+  
+  const catList = root.querySelector("#expenseCatList");
+  if (catList) {
+    catList.innerHTML = "";
+    getExpenseCategories().forEach(function (c) {
+      const chip = document.createElement("div");
+      chip.className = "cat-chip";
+      chip.innerHTML = "<span>" + escapeHTML(c) + "</span>";
+      const del = document.createElement("button");
+      del.type = "button";
+      del.textContent = "×";
+      del.title = "Удалить раздел";
+      del.addEventListener("click", function () {
+        if (!confirm("Удалить раздел " + c + "?")) return;
+        removeExpenseCategory(c);
+        renderFinancesView();
+        showToast("Раздел удалён");
+      });
+      chip.appendChild(del);
+      catList.appendChild(chip);
+    });
+  }
+  const addCatBtn = root.querySelector("#addExpenseCatBtn");
+  if (addCatBtn) {
+    addCatBtn.onclick = function () {
+      const inp = root.querySelector("#newExpenseCat");
+      const name = inp ? inp.value : "";
+      if (!String(name || "").trim()) {
+        showToast("Введите название");
+        return;
+      }
+      addExpenseCategory(name);
+      if (inp) inp.value = "";
+      renderFinancesView();
+      showToast("Раздел добавлен");
+    };
+  }
+
   const depList = root.querySelector("#finDepositList");
+
   if (!deposits.length) {
     depList.innerHTML = '<div class="empty-inline">Нет вкладов</div>';
   } else {
@@ -3005,29 +3258,39 @@ function renderFinancesView() {
 }
 
 function applyTheme(mode) {
-  const light = mode === "light";
-  document.body.classList.toggle("light", light);
-  document.body.classList.toggle("dark", !light);
+  const m = mode === "light" || mode === "rose" ? mode : "dark";
+  document.body.classList.remove("light", "dark", "rose");
+  document.body.classList.add(m === "dark" ? "dark" : m);
+  if (m === "dark") document.body.classList.remove("light", "rose");
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", light ? "#f3f3f1" : "#080808");
+  if (meta) {
+    meta.setAttribute("content", m === "light" ? "#f3f3f1" : "#000000");
+  }
   const btn = document.getElementById("themeBtn");
   if (btn) {
-    btn.textContent = light ? "◑" : "◐";
-    btn.title = light ? "Тёмная тема" : "Светлая тема";
+    btn.textContent = m === "light" ? "◑" : (m === "rose" ? "♡" : "◐");
+    btn.title = m === "light" ? "Розовая тема" : (m === "rose" ? "Тёмная тема" : "Светлая тема");
   }
-  try { localStorage.setItem(THEME_KEY, light ? "light" : "dark"); } catch (_) {}
+  try { localStorage.setItem(THEME_KEY, m); } catch (_) {}
 }
 function toggleTheme() {
-  applyTheme(document.body.classList.contains("light") ? "dark" : "light");
+  const cur = localStorage.getItem(THEME_KEY) || "dark";
+  const next = cur === "dark" ? "light" : (cur === "light" ? "rose" : "dark");
+  applyTheme(next);
 }
 try {
-  applyTheme(localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark");
+  (function(){
+  const t = localStorage.getItem(THEME_KEY) || "dark";
+  applyTheme(t === "light" || t === "rose" ? t : "dark");
+})();
 } catch (_) {
   applyTheme("dark");
 }
 
 
 function exportData() {
+  // include expense categories in payload via data shadow
+
   let mzToken = "", mzCache = null, mzWatch = null, mzTheme = "";
   try { mzToken = localStorage.getItem("mzbox-token") || ""; } catch (_) {}
   try { mzCache = JSON.parse(localStorage.getItem("mzbox-portfolio-cache") || "null"); } catch (_) {}
@@ -3041,6 +3304,7 @@ function exportData() {
     tension: tensionValue,
     monthSalary: getMonthSalaryMap(),
     monthArchives: getMonthArchives(),
+    expenseCategories: getExpenseCategories(),
     mzbox: { token: mzToken, portfolioCache: mzCache, watchlist: mzWatch, theme: mzTheme }
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -3074,6 +3338,9 @@ function importData(file) {
         try {
           localStorage.setItem(TENSION_KEY, String(tensionValue));
         } catch (_) {}
+      }
+      if (Array.isArray(parsed.expenseCategories)) {
+        try { saveExpenseCategories(parsed.expenseCategories); } catch (_) {}
       }
       if (Array.isArray(parsed.monthArchives)) {
         try { localStorage.setItem("injectum_month_archives", JSON.stringify(parsed.monthArchives)); } catch (_) {}
@@ -3263,7 +3530,10 @@ window.__injTheme = function (e) {
 })();
 
 try {
-  applyTheme(localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark");
+  (function(){
+  const t = localStorage.getItem(THEME_KEY) || "dark";
+  applyTheme(t === "light" || t === "rose" ? t : "dark");
+})();
 } catch (_) {}
 
 // Form + search (elements exist)
