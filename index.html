@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#080808">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>INJECTUM</title>
@@ -1004,6 +1004,39 @@ body.light {
   flex: 1 !important;
 }
 
+
+html, body {
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
+  overscroll-behavior: none;
+}
+button, a, .nav-card, .icon-btn-sq, .icon-btn, .small-btn, .brief-check, .word-chip {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-card {
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  pointer-events: auto !important;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#dashboard {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto !important;
+}
+
+
+.screen.active { display: block !important; }
+.section-actions, .section-actions button, .header-actions, .header-actions button {
+  position: relative;
+  z-index: 50;
+  pointer-events: auto !important;
+}
+.nav-card { pointer-events: auto !important; z-index: 5; }
+
 </style>
 
 </head>
@@ -1012,9 +1045,9 @@ body.light {
 <header>
   <div class="logo" id="logo">INJECTUM</div>
   <div class="header-actions">
-    <button class="small-btn" id="themeBtn" type="button" aria-label="Тема" title="Тема">◐</button>
-    <button class="small-btn" id="exportBtn" type="button">Экспорт</button>
-    <button class="small-btn" id="importBtn" type="button">Импорт</button>
+    <button class="small-btn" id="themeBtn" onclick="window.__injTheme && window.__injTheme(event)" type="button" aria-label="Тема" title="Тема">◐</button>
+    <button class="small-btn" id="exportBtn" onclick="window.__injExport && window.__injExport(event)" type="button">Экспорт</button>
+    <button class="small-btn" id="importBtn" onclick="window.__injImport && window.__injImport(event)" type="button">Импорт</button>
     <input type="file" id="importFile" accept=".json,application/json" class="hidden">
   </div>
 </header>
@@ -1074,10 +1107,10 @@ body.light {
   <div class="section-top">
     <h1 id="sectionTitle">NOTES</h1>
     <div class="section-actions">
-      <button class="icon-btn-sq" id="backBtn" type="button" aria-label="Назад">×</button>
-      <button class="icon-btn-sq" id="searchToggleBtn" type="button" aria-label="Поиск">⌕</button>
-      <button class="icon-btn-sq primary" id="addBtn" type="button" aria-label="Добавить">+</button>
-      <button class="icon-btn-sq hidden" id="sectionMzboxBtn" type="button" aria-label="MZBOX AI">MZBOX</button>
+      <button class="icon-btn-sq" id="backBtn" type="button" aria-label="Назад" onclick="window.__injBack && window.__injBack(event)">×</button>
+      <button class="icon-btn-sq" id="searchToggleBtn" type="button" aria-label="Поиск" onclick="window.__injSearch && window.__injSearch(event)">⌕</button>
+      <button class="icon-btn-sq primary" id="addBtn" type="button" aria-label="Добавить" onclick="window.__injAdd && window.__injAdd(event)">+</button>
+      <button class="icon-btn-sq hidden" id="sectionMzboxBtn" type="button" aria-label="MZBOX AI" onclick="window.__injMzbox && window.__injMzbox(event)">MZBOX</button>
     </div>
   </div>
 
@@ -1087,7 +1120,7 @@ body.light {
       <div class="form-grid" id="formFields"></div>
       <div class="form-actions">
         <button class="primary-btn" type="submit">Сохранить</button>
-        <button class="ghost-btn" type="button" id="cancelBtn">Отмена</button>
+        <button class="ghost-btn" type="button" id="cancelBtn" onclick="window.__injCancel && window.__injCancel(event)">Отмена</button>
       </div>
     </form>
   </div>
@@ -1111,7 +1144,7 @@ body.light {
 <div id="mzboxOverlay" class="mzbox-overlay hidden" aria-hidden="true">
   <div class="mzbox-overlay-bar">
     <div class="mzbox-overlay-title">MZBOX AI</div>
-    <button type="button" class="mzbox-overlay-close" id="mzboxCloseBtn" aria-label="Закрыть">✕</button>
+    <button type="button" class="mzbox-overlay-close" id="mzboxCloseBtn" onclick="window.__injMzboxClose && window.__injMzboxClose(event)" aria-label="Закрыть">✕</button>
   </div>
   <iframe id="mzboxFrame" class="mzbox-frame" title="MZBOX AI"></iframe>
 </div>
@@ -1253,8 +1286,8 @@ function idSafe() {
 }
 
 let data = loadData();
-seedDefaultEventsIfNeeded();
-seedDefaultReflectionsIfNeeded();
+try { seedDefaultEventsIfNeeded(); } catch (e) { console.error(e); }
+try { seedDefaultReflectionsIfNeeded(); } catch (e) { console.error(e); }
 let currentSection = null;
 let editingId = null;
 let financeFormType = "Пассивный доход";
@@ -1318,64 +1351,80 @@ function formatDate(value) {
 }
 
 function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(x => x.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  window.scrollTo({ top: 0, behavior: "auto" });
+  document.querySelectorAll(".screen").forEach(function (x) { x.classList.remove("active"); });
+  var el = document.getElementById(id);
+  if (el) el.classList.add("active");
+  try { window.scrollTo(0, 0); } catch (_) {}
 }
 
 function openSection(key) {
-  currentSection = key;
-  editingId = null;
-  document.getElementById("sectionTitle").textContent = key;
-  const searchInput = document.getElementById("searchInput");
-  if (searchInput) searchInput.value = "";
-  document.getElementById("searchToolbar")?.classList.add("hidden");
-  closeForm();
+  try {
+    if (!key) return;
+    if (!data || typeof data !== "object") data = emptyData();
+    if (!Array.isArray(data[key])) data[key] = [];
+    currentSection = key;
+    editingId = null;
 
-  const entriesEl = document.getElementById("entries");
-  const financesView = document.getElementById("financesView");
-  const toolbar = document.querySelector(".toolbar");
-  const addBtn = document.getElementById("addBtn");
+    var titleEl = document.getElementById("sectionTitle");
+    if (titleEl) titleEl.textContent = key;
 
-  const searchToggle = document.getElementById("searchToggleBtn");
-  const mzBtn = document.getElementById("sectionMzboxBtn");
-  if (key === "FINANCES") {
-    entriesEl.classList.add("hidden");
-    toolbar?.classList.add("hidden");
-    document.getElementById("searchToolbar")?.classList.add("hidden");
-    addBtn.classList.remove("hidden");
-    searchToggle?.classList.add("hidden");
-    mzBtn?.classList.remove("hidden");
-    financesView.classList.remove("hidden");
-    renderFinancesView();
-  } else {
-    entriesEl.classList.remove("hidden");
-    toolbar?.classList.add("hidden");
-    financesView.classList.add("hidden");
-    addBtn.classList.remove("hidden");
-    searchToggle?.classList.remove("hidden");
-    mzBtn?.classList.add("hidden");
-    renderEntries();
+    var searchInput = document.getElementById("searchInput");
+    if (searchInput) searchInput.value = "";
+    var searchToolbar = document.getElementById("searchToolbar");
+    if (searchToolbar) searchToolbar.classList.add("hidden");
+
+    try { closeForm(); } catch (_) {}
+
+    var entriesEl = document.getElementById("entries");
+    var financesView = document.getElementById("financesView");
+    var toolbar = document.querySelector(".toolbar");
+    var addBtn = document.getElementById("addBtn");
+    var searchToggle = document.getElementById("searchToggleBtn");
+    var mzBtn = document.getElementById("sectionMzboxBtn");
+
+    if (key === "FINANCES") {
+      if (entriesEl) entriesEl.classList.add("hidden");
+      if (toolbar) toolbar.classList.add("hidden");
+      if (searchToolbar) searchToolbar.classList.add("hidden");
+      if (addBtn) addBtn.classList.remove("hidden");
+      if (searchToggle) searchToggle.classList.add("hidden");
+      if (mzBtn) mzBtn.classList.remove("hidden");
+      if (financesView) financesView.classList.remove("hidden");
+      try { renderFinancesView(); } catch (e) { console.error(e); }
+    } else {
+      if (entriesEl) entriesEl.classList.remove("hidden");
+      if (toolbar) toolbar.classList.add("hidden");
+      if (financesView) financesView.classList.add("hidden");
+      if (addBtn) addBtn.classList.remove("hidden");
+      if (searchToggle) searchToggle.classList.remove("hidden");
+      if (mzBtn) mzBtn.classList.add("hidden");
+      try { renderEntries(); } catch (e) { console.error(e); }
+    }
+    showScreen("sectionScreen");
+  } catch (err) {
+    console.error("openSection", err);
+    try { showToast("Ошибка открытия"); } catch (_) {}
   }
-  showScreen("sectionScreen");
 }
 
 function renderDashboard() {
-  const root = document.getElementById("dashboard");
+  var root = document.getElementById("dashboard");
   if (!root) return;
   root.innerHTML = "";
   if (!data || typeof data !== "object") data = emptyData();
-  menu.forEach(([key, num]) => {
+  menu.forEach(function (pair) {
+    var key = pair[0], num = pair[1];
     if (!Array.isArray(data[key])) data[key] = [];
-    const button = document.createElement("button");
+    var button = document.createElement("button");
     button.type = "button";
     button.className = "nav-card";
-    const count = data[key].length;
+    button.setAttribute("data-section", key);
+    button.setAttribute("onclick", "window.__injOpen && window.__injOpen('" + key + "')");
+    var count = data[key].length;
     button.innerHTML =
       '<span class="num">' + num + '</span>' +
       '<span class="name">' + key + '</span>' +
       '<span class="count">' + count + '</span>';
-    button.addEventListener("click", () => openSection(key));
     root.appendChild(button);
   });
 }
@@ -1738,75 +1787,46 @@ function toggleDoneById(entryId, section) {
 
 
 function getDefaultReflections() {
-  const thoughts = [
-    ["ЦЕННОСТЬ — НЕ ДЕНЬГИ", "✅"],
-    ["ОБГОН СПРАВА — МИНУС", "🅾️"],
-    ["ВЕРНОСТЬ ЖЕНЕ — ПЛЮС", "✅"],
-    ["ПЛАНИРОВАНИЕ — ПЛЮС?", "⚠️"],
-    ["ПЛАНИРОВАНИЕ — ПЛЮС", "✅"],
-    ["АНИМЕ И ИГРЫ — ПЛЮС", "✅"],
-    ["ДЕВУШКА — ПОДДЕРЖКА", "✅"],
-    ["СЕРАЯ МАССА — МИНУС", "🅾️"],
-    ["СОСТЯЗАТЕЛЬ — МИНУС", "🅾️"],
-    ["ОРГАНИЗАЦИЯ — ПЛЮС", "✅"],
-    ["СПОКОЙСТВИЕ — ПЛЮС", "✅"],
-    ["ДРУЗЬЯ — ПОДДЕРЖКА", "✅"],
-    ["ИКОНА — ЦЕННОСТЬ", "✅"],
-    ["ПРОБЛЕМА РЕШАЕМА", "✅"],
-    ["СЧАСТЬЕ — ТИШИНА", "✅"],
-    ["MZBOX AI — ПЛЮС", "✅"],
-    ["ЗДОРОВЬЕ — ПЛЮС", "✅"],
-    ["ЗАВИСТЬ — МИНУС", "🅾️"],
-    ["МУЗЫКА — ПЛЮС", "✅"],
-    ["ПОЭЗИЯ — ПЛЮС", "✅"],
-    ["АРМИЯ — МИНУС", "🅾️"],
-    ["СЕМЬЯ — ПЛЮС", "✅"],
-    ["СИМ — ОПАСНО", "⚠️"]
-  ];
-  // Краткие формулировки-мысли
   const lines = [
-    "✅ Ценность — не в деньгах, а в выборе.",
-    "🅾️ Обгон справа — всегда минус.",
-    "✅ Верность жене — плюс без условий.",
-    "⚠️ Планирование — плюс? Только если живое.",
-    "✅ Планирование — плюс к ясности.",
-    "✅ Аниме и игры — плюс к отдыху ума.",
-    "✅ Девушка — опора, не декорация.",
-    "🅾️ Серая масса — минус для характера.",
-    "🅾️ Составитель чужих сценариев — минус.",
-    "✅ Организация — плюс к свободе.",
-    "✅ Спокойствие — плюс сильнее шума.",
-    "✅ Друзья — поддержка, не толпа.",
-    "✅ Икона — ценность, если честная.",
-    "✅ Проблема решаема — почти всегда.",
-    "✅ Счастье — в тишине, не в ленте.",
-    "✅ MZBOX AI — плюс к контролю.",
-    "✅ Здоровье — главный плюс.",
-    "🅾️ Зависть — минус, который ест.",
-    "✅ Музыка — плюс к состоянию.",
-    "✅ Поэзия — плюс к слову.",
-    "🅾️ Армия — минус, если ломает смысл.",
-    "✅ Семья — плюс, который держит.",
-    "⚠️ Сим — опасно: не смешивать роли."
+    "Ценность не в деньгах, а в выборе.",
+    "Обгон справа — всегда минус.",
+    "Верность жене — без условий.",
+    "План работает, только если живой.",
+    "Аниме и игры — отдых ума.",
+    "Девушка — опора, не декорация.",
+    "Серая масса размывает характер.",
+    "Чужие сценарии — не свой путь.",
+    "Порядок даёт свободу.",
+    "Спокойствие сильнее шума.",
+    "Друзья — поддержка, не толпа.",
+    "Икона ценна, если честная.",
+    "Почти любая проблема решаема.",
+    "Счастье ближе к тишине.",
+    "MZBOX AI — контроль без хаоса.",
+    "Здоровье важнее всего.",
+    "Зависть съедает изнутри.",
+    "Музыка выравнивает состояние.",
+    "Поэзия обостряет слово.",
+    "Армия не должна ломать смысл.",
+    "Семья держит.",
+    "Сим опасен смешением ролей."
   ];
-  return lines.map(title => ({
-    id: id(),
-    title,
-    updatedAt: new Date().toISOString()
-  }));
+  return lines.map(function (title) {
+    return {
+      id: id(),
+      title: title,
+      updatedAt: new Date().toISOString()
+    };
+  });
 }
 
 function seedDefaultReflectionsIfNeeded() {
   try {
     if (!Array.isArray(data.REFLECTION)) data.REFLECTION = [];
-    if (!localStorage.getItem("injectum_reflection_seed_v1")) {
-      if (data.REFLECTION.length <= 1) {
-        data.REFLECTION = getDefaultReflections();
-        saveData();
-      } else {
-        // merge nothing, just flag
-      }
-      localStorage.setItem("injectum_reflection_seed_v1", "1");
+    if (!localStorage.getItem("injectum_reflection_seed_v2")) {
+      data.REFLECTION = getDefaultReflections();
+      saveData();
+      localStorage.setItem("injectum_reflection_seed_v2", "1");
     } else if (!data.REFLECTION.length) {
       data.REFLECTION = getDefaultReflections();
       saveData();
@@ -1875,14 +1895,8 @@ function renderBriefing() {
     const t = x.eventType === "Другое" ? (x.eventTypeCustom || "") : (x.eventType || "");
     let title = t ? (t + " · " + x.title) : x.title;
     if ((x.eventType === "ДР" || t === "ДР") && x.birthYear) {
-      const now = new Date();
-      let years = now.getFullYear() - Number(x.birthYear);
-      const p = eventParts(x);
-      if (p) {
-        const had = (now.getMonth() + 1 > p.month) || (now.getMonth() + 1 === p.month && now.getDate() >= p.day);
-        if (!had) years -= 1;
-      }
-      if (years >= 0) title += " · " + years + " лет";
+      const age = birthdayAgeText(x, today);
+      if (age) title += " · " + age;
     }
     const dateStr = padDate(occ.getFullYear(), occ.getMonth() + 1, occ.getDate());
     upcoming.push({ kind: "event", id: x.id, title, date: dateStr, section: "EVENTS" });
@@ -2167,16 +2181,90 @@ function drawFinanceSpecificFields(item = null) {
   }
 }
 
-function openForm(item = null) {
-  editingId = item?.id || null;
-  const root = document.getElementById("formFields");
-  root.innerHTML = "";
+
+function birthdayAgeText(item, today) {
+  today = today || new Date();
+  if (!item || !item.birthYear) return "";
+  const by = Number(item.birthYear);
+  if (!by) return "";
+  const p = eventParts(item);
+  if (!p) return "";
+  const y = today.getFullYear();
+  const occ = new Date(y, p.month - 1, p.day);
+  occ.setHours(0, 0, 0, 0);
+  const t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  let ageNow = y - by;
+  if (t < occ) ageNow -= 1;
+  if (ageNow < 0) return "";
+  if (t < occ) return "сейчас " + ageNow + " · исполнится " + (ageNow + 1);
+  if (t.getTime() === occ.getTime()) return "исполняется " + (y - by);
+  return "сейчас " + ageNow;
+}
+
+function getSub(item) {
+  if (!item) return "";
+  if (currentSection === "NOTES") {
+    if (item.date) return "План · " + formatDate(item.date);
+    return "Заметка";
+  }
+  if (currentSection === "PLANS") {
+    return [formatDate(item.date), item.status || "В планах"].filter(Boolean).join(" · ");
+  }
+  if (currentSection === "EVENTS") {
+    const t = item.eventType === "Другое" ? (item.eventTypeCustom || "Другое") : (item.eventType || "");
+    const p = eventParts(item);
+    const ds = p
+      ? String(p.day).padStart(2, "0") + "." + String(p.month).padStart(2, "0")
+      : formatDate(item.date);
+    let age = "";
+    if ((item.eventType === "ДР" || t === "ДР") && item.birthYear) {
+      age = birthdayAgeText(item);
+    }
+    return [t, ds, age].filter(Boolean).join(" · ");
+  }
+  if (currentSection === "ASSETS") return "";
+  if (currentSection === "REFLECTION") return "";
   if (currentSection === "FINANCES") {
-    financeFormType = item?.kind || "Пассивный доход";
+    let text = (item.kind || "") + " · " + formatMoney(item.amount);
+    if (item.kind === "Расход") {
+      if (item.expenseCategory) text += " · " + item.expenseCategory;
+      text += isTemporaryExpense(item) ? " · временный" : " · постоянный";
+      if (item.source) text += " · " + item.source;
+    }
+    if (item.kind === "Вклад") {
+      text += " · " + (item.rate || 0) + "%";
+      const daily = depositDaily(item);
+      if (daily > 0) text += " · +" + formatMoney(daily) + "/день";
+    }
+    return text;
+  }
+  return "";
+}
+
+function closeForm() {
+  const panel = document.getElementById("formPanel");
+  if (panel) panel.classList.remove("open");
+  const addBtn = document.getElementById("addBtn");
+  if (addBtn) addBtn.classList.remove("hidden");
+  const form = document.getElementById("entryForm");
+  if (form) form.reset();
+  const fields = document.getElementById("formFields");
+  if (fields) fields.innerHTML = "";
+  editingId = null;
+}
+
+function openForm(item) {
+  item = item || null;
+  editingId = item && item.id ? item.id : null;
+  const root = document.getElementById("formFields");
+  if (!root) return;
+  root.innerHTML = "";
+
+  if (currentSection === "FINANCES") {
+    financeFormType = (item && item.kind) || "Пассивный доход";
     financeFields(item);
   } else if (currentSection === "ASSETS") {
     if (item) {
-      // single edit
       root.appendChild(createField(
         { name: "title", label: "Слово", type: "text", full: true, required: true },
         item.title || ""
@@ -2188,52 +2276,148 @@ function openForm(item = null) {
       ));
     }
   } else {
-    sections[currentSection].fields.forEach(field => {
-      root.appendChild(createField(field, item?.[field.name] ?? ""));
+    const sec = sections[currentSection];
+    if (!sec || !sec.fields) {
+      showToast("Раздел недоступен");
+      return;
+    }
+    sec.fields.forEach(function (field) {
+      root.appendChild(createField(field, item ? (item[field.name] ?? "") : ""));
     });
   }
-  document.getElementById("formTitle").textContent = item ? "✎" : "+";
-  document.getElementById("formPanel").classList.add("open");
-  document.getElementById("addBtn").classList.add("hidden");
+
+  // EVENTS: show custom type only for "Другое"
   if (currentSection === "EVENTS") {
-    const t = item.eventType === "Другое" ? (item.eventTypeCustom || "Другое") : (item.eventType || "");
-    const p = eventParts(item);
-    const ds = p
-      ? String(p.day).padStart(2, "0") + "." + String(p.month).padStart(2, "0")
-      : formatDate(item.date);
-    let age = "";
-    if ((item.eventType === "ДР" || t === "ДР") && item.birthYear) {
-      const now = new Date();
-      let years = now.getFullYear() - Number(item.birthYear);
-      if (p) {
-        const had = (now.getMonth() + 1 > p.month) || (now.getMonth() + 1 === p.month && now.getDate() >= p.day);
-        if (!had) years -= 1;
-      }
-      if (years >= 0) age = years + " лет";
+    const typeSel = root.querySelector('[name="eventType"]');
+    const customWrap = root.querySelector('[name="eventTypeCustom"]');
+    const wrap = customWrap ? customWrap.closest(".field") : null;
+    const syncType = function () {
+      if (!wrap) return;
+      wrap.style.display = (typeSel && typeSel.value === "Другое") ? "" : "none";
+    };
+    if (typeSel) {
+      typeSel.addEventListener("change", syncType);
+      syncType();
     }
-    return [t, ds, age].filter(Boolean).join(" · ");
   }
-  if (currentSection === "ASSETS") return "";
-  if (currentSection === "FINANCES") {
-    let text = `${item.kind} · ${formatMoney(item.amount)}`;
-    if (item.kind === "Расход") {
-      text += isTemporaryExpense(item) ? " · временный" : " · постоянный";
-      if (item.source) text += ` · из: ${item.source}`;
-    }
-    if (item.kind === "Вклад") {
-      text += ` · ${item.rate || 0}% · ${item.frequency || "Ежемесячно"}`;
-      const daily = depositDaily(item);
-      if (daily > 0) text += ` · +${formatMoney(daily)}/день`;
-    }
-    if (item.kind === "Инвестиции") {
-      const current = Number(item.current) || Number(item.amount) || 0;
-      const pnl = current - (Number(item.amount) || 0);
-      text += ` · тек. ${formatMoney(current)} · ${(pnl >= 0 ? "+" : "") + formatMoney(pnl)}`;
-    }
-    return text;
-  }
-  return "";
+
+  const titleEl = document.getElementById("formTitle");
+  if (titleEl) titleEl.textContent = item ? "✎" : "+";
+  const panel = document.getElementById("formPanel");
+  if (panel) panel.classList.add("open");
+  const addBtn = document.getElementById("addBtn");
+  if (addBtn) addBtn.classList.add("hidden");
+  try {
+    if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (_) {}
 }
+
+function saveEntry(event) {
+  if (event) event.preventDefault();
+  if (!currentSection) return;
+
+  const formEl = document.getElementById("entryForm");
+  if (!formEl) return;
+  const form = new FormData(formEl);
+  const entry = {
+    id: editingId || id(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (currentSection === "FINANCES") {
+    entry.kind = String(form.get("kind") || "");
+    entry.title = String(form.get("title") || "").trim();
+    entry.amount = Number(form.get("amount")) || 0;
+    if (!entry.title) {
+      showToast("Введите название");
+      return;
+    }
+    if (entry.kind === "Расход") {
+      entry.source = String(form.get("source") || "").trim();
+      entry.expenseCategory = String(form.get("expenseCategory") || "БАЗА").trim() || "БАЗА";
+      const mode = String(form.get("expenseMode") || "Постоянный");
+      entry.expenseMode = mode;
+      entry.temporary = mode === "Временный";
+    }
+    if (entry.kind === "Вклад") {
+      entry.rate = Number(form.get("rate")) || 0;
+      entry.frequency = String(form.get("frequency") || "Ежедневно");
+      entry.startDate = String(form.get("startDate") || "").trim();
+    }
+  } else if (currentSection === "ASSETS" && !editingId) {
+    const bulk = String(form.get("bulk") || "").trim();
+    if (!bulk) {
+      showToast("Введите слова");
+      return;
+    }
+    const n = addBulkWords("ASSETS", bulk);
+    saveData();
+    closeForm();
+    showToast(n ? ("Добавлено: " + n) : "Нечего добавлять");
+    renderEntries();
+    return;
+  } else {
+    const sec = sections[currentSection];
+    if (!sec) return;
+    sec.fields.forEach(function (f) {
+      entry[f.name] = String(form.get(f.name) || "").trim();
+    });
+    if (currentSection === "EVENTS") {
+      if (entry.eventType !== "Другое") entry.eventTypeCustom = "";
+      if (entry.eventType === "Другое" && !entry.eventTypeCustom) {
+        showToast("Укажите свой тип");
+        return;
+      }
+      const d = parseDate(entry.date);
+      if (d) {
+        entry.month = d.getMonth() + 1;
+        entry.day = d.getDate();
+        entry.recurring = true;
+      }
+      if (entry.doneForYear === undefined) entry.doneForYear = null;
+    }
+    if (currentSection === "ASSETS") {
+      if (!entry.title) {
+        showToast("Введите слово");
+        return;
+      }
+    }
+  }
+
+  if (!Array.isArray(data[currentSection])) data[currentSection] = [];
+
+  if (editingId) {
+    const index = data[currentSection].findIndex(function (x) { return x.id === editingId; });
+    if (index >= 0) {
+      entry.createdAt = data[currentSection][index].createdAt || entry.updatedAt;
+      // keep goal / done flags
+      if (data[currentSection][index].goal != null) entry.goal = data[currentSection][index].goal;
+      if (data[currentSection][index].doneForYear != null) entry.doneForYear = data[currentSection][index].doneForYear;
+      if (data[currentSection][index].seenYear != null) entry.seenYear = data[currentSection][index].seenYear;
+      if (data[currentSection][index].birthYear != null && entry.birthYear == null) {
+        entry.birthYear = data[currentSection][index].birthYear;
+      }
+      data[currentSection][index] = entry;
+    } else {
+      entry.createdAt = entry.updatedAt;
+      data[currentSection].push(entry);
+    }
+  } else {
+    entry.createdAt = entry.updatedAt;
+    data[currentSection].push(entry);
+  }
+
+  if (currentSection === "ASSETS") {
+    data.ASSETS = sortWordList(data.ASSETS);
+  }
+
+  saveData();
+  closeForm();
+  if (currentSection === "FINANCES") renderFinancesView();
+  else renderEntries();
+  showToast("Сохранено");
+}
+
 
 function sortWordList(list) {
   return [...list].sort(
@@ -2961,34 +3145,32 @@ const MZBOX_HTML = "<!doctype html>\n<html lang=\"ru\">\n<head>\n<meta charset=\
 
 
 
+
+
 function openMzboxModule() {
-  const overlay = document.getElementById("mzboxOverlay");
-  const frame = document.getElementById("mzboxFrame");
-  if (!overlay || !frame) {
-    showToast("Оверлей не найден");
-    return;
-  }
+  var overlay = document.getElementById("mzboxOverlay");
+  var frame = document.getElementById("mzboxFrame");
+  if (!overlay || !frame) { try { showToast("Оверлей не найден"); } catch(_){} return; }
   if (typeof MZBOX_HTML !== "string" || MZBOX_HTML.length < 5000) {
-    showToast("MZBOX не встроен");
+    try { showToast("MZBOX не встроен"); } catch(_){}
     return;
   }
   overlay.classList.remove("hidden");
   overlay.style.display = "flex";
   overlay.setAttribute("aria-hidden", "false");
   document.body.classList.add("mzbox-open");
-  // same-origin srcdoc → localStorage token works
   try {
     frame.removeAttribute("src");
     frame.srcdoc = MZBOX_HTML;
   } catch (e) {
     console.error(e);
-    showToast("Не удалось открыть MZBOX");
+    try { showToast("Не удалось открыть MZBOX"); } catch(_){}
   }
 }
 
 function closeMzboxModule() {
-  const overlay = document.getElementById("mzboxOverlay");
-  const frame = document.getElementById("mzboxFrame");
+  var overlay = document.getElementById("mzboxOverlay");
+  var frame = document.getElementById("mzboxFrame");
   if (overlay) {
     overlay.classList.add("hidden");
     overlay.style.display = "none";
@@ -3007,71 +3189,130 @@ function closeMzboxModule() {
   } catch (_) {}
 }
 
-// Event bindings
-document.getElementById("addBtn").addEventListener("click", () => openForm());
-document.getElementById("sectionMzboxBtn")?.addEventListener("click", openMzboxModule);
-document.getElementById("searchToggleBtn")?.addEventListener("click", () => {
-  const bar = document.getElementById("searchToolbar");
+// Global handlers for inline onclick (most reliable on iOS)
+window.__injOpen = function (key) {
+  try { openSection(key); } catch (e) { console.error(e); }
+};
+window.__injBack = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  try {
+    closeForm();
+    currentSection = null;
+    showScreen("home");
+    renderHome();
+  } catch (err) { console.error(err); }
+};
+window.__injAdd = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  try { openForm(); } catch (err) { console.error(err); }
+};
+window.__injCancel = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  try { closeForm(); } catch (err) { console.error(err); }
+};
+window.__injSearch = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  var bar = document.getElementById("searchToolbar");
   if (!bar) return;
   bar.classList.toggle("hidden");
   if (!bar.classList.contains("hidden")) {
-    document.getElementById("searchInput")?.focus();
+    var inp = document.getElementById("searchInput");
+    if (inp) inp.focus();
   } else {
-    const inp = document.getElementById("searchInput");
-    if (inp) { inp.value = ""; renderEntries(); }
+    var inp2 = document.getElementById("searchInput");
+    if (inp2) { inp2.value = ""; try { renderEntries(); } catch (_) {} }
   }
-});
-document.getElementById("cancelBtn").addEventListener("click", closeForm);
-document.getElementById("entryForm").addEventListener("submit", saveEntry);
-document.getElementById("searchInput").addEventListener("input", renderEntries);
-document.getElementById("backBtn").addEventListener("click", () => {
-  closeForm();
-  currentSection = null;
-  showScreen("home");
-  renderHome();
-});
-document.getElementById("exportBtn").addEventListener("click", exportData);
-document.getElementById("importBtn").addEventListener("click", () =>
-  document.getElementById("importFile").click()
-);
-document.getElementById("importFile").addEventListener("change", e => {
-  const file = e.target.files?.[0];
-  if (file) importData(file);
-  e.target.value = "";
-});
+};
+window.__injMzbox = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  openMzboxModule();
+};
+window.__injMzboxClose = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  closeMzboxModule();
+};
+window.__injExport = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  try { exportData(); } catch (err) { console.error(err); }
+};
+window.__injImport = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  var f = document.getElementById("importFile");
+  if (f) f.click();
+};
+window.__injTheme = function (e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  try { toggleTheme(); } catch (err) { console.error(err); }
+};
 
-
-
-document.getElementById("themeBtn")?.addEventListener("click", toggleTheme);
-document.getElementById("archiveModalClose")?.addEventListener("click", closeArchiveView);
-document.getElementById("archiveModal")?.addEventListener("click", e => {
-  if (e.target && e.target.id === "archiveModal") closeArchiveView();
-});
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") closeArchiveView();
-});
-document.getElementById("mzboxCloseBtn")?.addEventListener("click", closeMzboxModule);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    const overlay = document.getElementById("mzboxOverlay");
-    if (overlay && !overlay.classList.contains("hidden")) {
-      e.preventDefault();
-      closeMzboxModule();
+// Hide overlays on boot
+(function () {
+  try {
+    var mz = document.getElementById("mzboxOverlay");
+    if (mz) {
+      mz.classList.add("hidden");
+      mz.style.display = "none";
+      mz.setAttribute("aria-hidden", "true");
     }
+    var am = document.getElementById("archiveModal");
+    if (am) am.classList.add("hidden");
+    document.body.classList.remove("mzbox-open");
+    var fp = document.getElementById("formPanel");
+    if (fp) fp.classList.remove("open");
+  } catch (_) {}
+})();
+
+try {
+  applyTheme(localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark");
+} catch (_) {}
+
+// Form + search (elements exist)
+var entryForm = document.getElementById("entryForm");
+if (entryForm) {
+  entryForm.addEventListener("submit", function (e) {
+    try { saveEntry(e); } catch (err) { console.error(err); }
+  });
+}
+var searchInput = document.getElementById("searchInput");
+if (searchInput) {
+  searchInput.addEventListener("input", function () {
+    try { renderEntries(); } catch (err) { console.error(err); }
+  });
+}
+var importFile = document.getElementById("importFile");
+if (importFile) {
+  importFile.addEventListener("change", function (e) {
+    var file = e.target.files && e.target.files[0];
+    if (file) {
+      try { importData(file); } catch (err) { console.error(err); }
+    }
+    e.target.value = "";
+  });
+}
+
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  var overlay = document.getElementById("mzboxOverlay");
+  if (overlay && !overlay.classList.contains("hidden")) {
+    e.preventDefault();
+    closeMzboxModule();
+    return;
   }
+  try { closeArchiveView(); } catch (_) {}
 });
 
-renderHome();
-updateClock();
-setInterval(() => {
-  updateClock();
+try { renderHome(); } catch (e) { console.error("renderHome", e); }
+try { updateClock(); } catch (e) { console.error(e); }
+setInterval(function () {
+  try { updateClock(); } catch (_) {}
 }, 60000);
 
-// Refresh briefing / finances when returning to the page (e.g. after using MZBOX)
-document.addEventListener("visibilitychange", () => {
+document.addEventListener("visibilitychange", function () {
   if (document.visibilityState === "visible") {
-    renderHome();
-    if (currentSection === "FINANCES") renderFinancesView();
+    try { renderHome(); } catch (_) {}
+    if (currentSection === "FINANCES") {
+      try { renderFinancesView(); } catch (_) {}
+    }
   }
 });
 </script>
