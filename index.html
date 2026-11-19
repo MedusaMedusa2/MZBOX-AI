@@ -1693,34 +1693,47 @@ body.settings-open .app {
 }
 
 .brief-credit {
-  margin-top: 10px;
-  display: flex;
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 2px;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 10px 12px;
-  border: 1px solid rgba(196,125,118,0.35);
-  border-radius: var(--radius);
-  background: rgba(196,125,118,0.06);
+  text-align: left;
+  border: 1px solid rgba(196,125,118,0.32);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(196,125,118,0.12), var(--surface));
+  cursor: pointer;
 }
 .brief-credit.hidden { display: none !important; }
 .brief-credit-label {
+  grid-column: 1;
   font-size: 10px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--warn);
   font-weight: 650;
 }
+.brief-credit-sub {
+  grid-column: 1;
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .brief-credit-sum {
-  font-size: 14px;
-  font-weight: 650;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
   color: var(--warn);
   font-variant-numeric: tabular-nums;
-}
-.brief-credit-sub {
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-left: auto;
 }
 .credit-card h3 { color: var(--warn); }
 .credit-debt-line {
@@ -1754,6 +1767,113 @@ body.settings-open .app {
   font-size: 11px;
   color: var(--text-faint);
   line-height: 1.4;
+}
+body.hide-welcome #welcomeStrip { display: none !important; }
+#setHomeRow.settings-blocks,
+#setBlocksRow.settings-blocks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+#setHomeRow .block-toggle,
+#setBlocksRow .block-toggle {
+  width: 100%;
+  max-width: none;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  gap: 8px;
+  background: var(--surface);
+}
+#setHomeRow .block-toggle-left,
+#setBlocksRow .block-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+#setHomeRow .block-toggle-name,
+#setBlocksRow .block-toggle-name {
+  font-size: 12px;
+  white-space: normal;
+  color: inherit;
+}
+#setHomeRow .block-toggle-num,
+#setBlocksRow .block-toggle-num {
+  font-size: 12px;
+  letter-spacing: 0;
+  width: 14px;
+  color: var(--text-faint);
+}
+#setHomeRow .block-toggle.on .block-toggle-num,
+#setBlocksRow .block-toggle.on .block-toggle-num {
+  color: var(--accent);
+}
+#setHomeRow .block-toggle-mark,
+#setBlocksRow .block-toggle-mark {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--line-strong);
+  color: transparent;
+  font-size: 0;
+  letter-spacing: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+#setHomeRow .block-toggle.on,
+#setBlocksRow .block-toggle.on {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+}
+#setHomeRow .block-toggle.on .block-toggle-mark,
+#setBlocksRow .block-toggle.on .block-toggle-mark {
+  background: var(--accent);
+}
+.credit-debt-row .pay-mini {
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--text);
+  flex-shrink: 0;
+}
+.credit-pay {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.credit-pay.open { display: flex; }
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+footer .footer-brand,
+footer .author,
+footer .sub-author,
+footer .build-meta,
+#footerBrand,
+#footerAuthor1,
+#footerAuthor2,
+#footerBuild {
+  margin: 0 !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1.45 !important;
+  color: var(--text-faint) !important;
 }
 
 </style>
@@ -1797,6 +1917,7 @@ body.settings-open .app {
       <div class="brief-fin-sep">·</div>
       <div class="brief-fin-item"><span>остаток</span><strong id="balance">0 ₽</strong></div>
     </div>
+    <button type="button" class="brief-credit hidden" id="briefCreditLine"></button>
     <div class="brief-notes" id="briefNotesPanel"></div>
     
     <div class="finance-block" id="briefTensionBlock">
@@ -1850,10 +1971,9 @@ body.settings-open .app {
 </main>
 
 <footer>
-  <div class="footer-brand" id="footerBrand">© INJECTUM · 2026</div>
+  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.0</div>
   <div class="author" id="footerAuthor1">Кутузов Дмитрий Владимирович</div>
   <div class="author" id="footerAuthor2">Кутузова Ольга Денисовна</div>
-  <div class="build-meta" id="footerBuild">Сборка 19.11.2026 · v8.0</div>
 </footer>
 </div>
 
@@ -1896,13 +2016,8 @@ body.settings-open .app {
         </div>
         <label class="settings-label" for="setTimeZone">Часовой пояс</label>
         <select id="setTimeZone" class="settings-select">
-          <option value="Europe/Moscow">Москва (UTC+3)</option>
-          <option value="Europe/Samara">Самара (UTC+4)</option>
-          <option value="Asia/Yekaterinburg">Екатеринбург (UTC+5)</option>
-          <option value="Asia/Novosibirsk">Новосибирск (UTC+7)</option>
-          <option value="Asia/Vladivostok">Владивосток (UTC+10)</option>
-          <option value="Europe/Kaliningrad">Калининград (UTC+2)</option>
-          <option value="UTC">UTC</option>
+          <option value="Asia/Yekaterinburg">Москва</option>
+          <option value="Europe/Moscow">Екатеринбург</option>
         </select>
       </section>
 
@@ -1939,37 +2054,36 @@ body.settings-open .app {
 
       <section class="settings-block">
         <div class="settings-block-title">Главная</div>
-        <p class="settings-hint">Что показывать на главном экране.</p>
         <div class="settings-blocks" id="setHomeRow">
-          <label class="block-toggle on" id="labTension">
-            <input type="checkbox" id="setShowTension" checked>
+          <label class="block-toggle on" id="labWelcome">
+            <input type="checkbox" id="setShowWelcome" checked>
             <div class="block-toggle-left">
-              <span class="block-toggle-num">01</span>
-              <span class="block-toggle-name">Напряжённость</span>
+              <span class="block-toggle-num">1</span>
+              <span class="block-toggle-name">Приветствие</span>
+            </div>
+            <span class="block-toggle-mark">вкл</span>
+          </label>
+          <label class="block-toggle on" id="labQuote">
+            <input type="checkbox" id="setShowQuote" checked>
+            <div class="block-toggle-left">
+              <span class="block-toggle-num">2</span>
+              <span class="block-toggle-name">Цитата</span>
             </div>
             <span class="block-toggle-mark">вкл</span>
           </label>
           <label class="block-toggle on" id="labFinance">
             <input type="checkbox" id="setShowFinance" checked>
             <div class="block-toggle-left">
-              <span class="block-toggle-num">02</span>
-              <span class="block-toggle-name">Доход · расход · остаток</span>
+              <span class="block-toggle-num">3</span>
+              <span class="block-toggle-name">Финансы</span>
             </div>
             <span class="block-toggle-mark">вкл</span>
           </label>
-          <label class="block-toggle" id="labNotes">
-            <input type="checkbox" id="setShowBriefNotes">
+          <label class="block-toggle on" id="labTension">
+            <input type="checkbox" id="setShowTension" checked>
             <div class="block-toggle-left">
-              <span class="block-toggle-num">03</span>
-              <span class="block-toggle-name">Блок заметок</span>
-            </div>
-            <span class="block-toggle-mark">выкл</span>
-          </label>
-          <label class="block-toggle on" id="labQuote">
-            <input type="checkbox" id="setShowQuote" checked>
-            <div class="block-toggle-left">
-              <span class="block-toggle-num">04</span>
-              <span class="block-toggle-name">Цитата</span>
+              <span class="block-toggle-num">4</span>
+              <span class="block-toggle-name">Напряжённость</span>
             </div>
             <span class="block-toggle-mark">вкл</span>
           </label>
@@ -1978,7 +2092,6 @@ body.settings-open .app {
 
       <section class="settings-block">
         <div class="settings-block-title">Блоки на главной</div>
-        <p class="settings-hint">Отметьте, какие блоки показывать на главной.</p>
         <div class="settings-blocks" id="setBlocksRow"></div>
       </section>
 
@@ -1988,15 +2101,14 @@ body.settings-open .app {
           <button type="button" id="exportBtn" onclick="window.__injExport && window.__injExport(event)">Экспорт</button>
           <button type="button" id="importBtn" onclick="window.__injImport && window.__injImport(event)">Импорт</button>
         </div>
+        <button type="button" class="ghost-btn" id="setCopyHtml" style="width:100%;margin-top:10px;height:40px">Скопировать код</button>
         <button type="button" class="ghost-btn" id="setReloadApp" style="width:100%;margin-top:10px;height:40px">Обновить программное обеспечение</button>
-        <p class="settings-hint" style="margin-top:8px;margin-bottom:0">Перезагружает интерфейс. Записи и настройки сохраняются.</p>
       </section>
 
       <div class="settings-actions">
         <button type="button" class="primary-btn" id="setSaveBtn">Сохранить</button>
         <button type="button" class="ghost-btn" id="setResetBtn">Сбросить</button>
       </div>
-      <p class="settings-note">Сброс возвращает тему, акцент, плотность и имя. Записи не затрагиваются.</p>
       <button type="button" class="ghost-btn danger-btn" id="setWipeBtn">Удалить все данные</button>
       <div class="settings-egg">Одобрено кокосом</div>
     </div>
@@ -2023,12 +2135,17 @@ const DEFAULT_SETTINGS = {
   showFinanceStrip: true,
   showQuote: true,
   showBriefNotes: false,
+  showWelcome: true,
   hiddenBlocks: []
 };
 function loadSettings() {
   try {
     const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null");
-    if (raw && typeof raw === "object") return Object.assign({}, DEFAULT_SETTINGS, raw);
+    if (raw && typeof raw === "object") {
+      var merged = Object.assign({}, DEFAULT_SETTINGS, raw);
+      if (merged.timeZone !== "Europe/Moscow" && merged.timeZone !== "Asia/Yekaterinburg") merged.timeZone = "Europe/Moscow";
+      return merged;
+    }
   } catch (_) {}
   return Object.assign({}, DEFAULT_SETTINGS);
 }
@@ -2039,6 +2156,7 @@ let appSettings = loadSettings();
 function applySettings(s) {
   appSettings = Object.assign({}, DEFAULT_SETTINGS, s || appSettings);
   if (!Array.isArray(appSettings.hiddenBlocks)) appSettings.hiddenBlocks = [];
+  if (appSettings.timeZone !== "Europe/Moscow" && appSettings.timeZone !== "Asia/Yekaterinburg") appSettings.timeZone = "Europe/Moscow";
   const accent = appSettings.accent || DEFAULT_SETTINGS.accent;
   document.body.classList.remove("density-compact", "density-wide", "density-super");
   const dens = appSettings.density || "normal";
@@ -2055,6 +2173,7 @@ function applySettings(s) {
   document.body.classList.toggle("hide-finance-strip", appSettings.showFinanceStrip === false);
   document.body.classList.toggle("hide-quote", appSettings.showQuote === false);
   document.body.classList.toggle("show-brief-notes", appSettings.showBriefNotes === true);
+  document.body.classList.toggle("hide-welcome", appSettings.showWelcome === false);
   try { updateWelcomePanel(); } catch (_) {}
   try {
     if (typeof renderDashboard === "function") renderDashboard();
@@ -2092,8 +2211,8 @@ function openSettings() {
   if (st) st.checked = s.showTension !== false;
   var sf = document.getElementById("setShowFinance");
   if (sf) sf.checked = s.showFinanceStrip !== false;
-  var sn = document.getElementById("setShowBriefNotes");
-  if (sn) sn.checked = s.showBriefNotes === true;
+  var swel = document.getElementById("setShowWelcome");
+  if (swel) swel.checked = s.showWelcome !== false;
   var sq = document.getElementById("setShowQuote");
   if (sq) sq.checked = s.showQuote !== false;
   function syncHomeLab(id, on) {
@@ -2105,9 +2224,9 @@ function openSettings() {
   }
   syncHomeLab("labTension", st && st.checked);
   syncHomeLab("labFinance", sf && sf.checked);
-  syncHomeLab("labNotes", sn && sn.checked);
+  syncHomeLab("labWelcome", swel && swel.checked);
   syncHomeLab("labQuote", sq && sq.checked);
-  ["labTension","labFinance","labNotes","labQuote"].forEach(function (lid) {
+  ["labTension","labFinance","labWelcome","labQuote"].forEach(function (lid) {
     var lab = document.getElementById(lid);
     if (!lab || lab._bound) return;
     lab._bound = true;
@@ -2139,7 +2258,7 @@ function openSettings() {
       left.className = "block-toggle-left";
       var n = document.createElement("span");
       n.className = "block-toggle-num";
-      n.textContent = num;
+      n.textContent = String(parseInt(num, 10) || num);
       var sp = document.createElement("span");
       sp.className = "block-toggle-name";
       sp.textContent = typeof sectionLabel === "function" ? sectionLabel(key) : key;
@@ -2192,7 +2311,7 @@ function commitSettingsFromForm() {
     timeZone: tzEl && tzEl.value ? tzEl.value : "Europe/Moscow",
     showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
-    showBriefNotes: !!(document.getElementById("setShowBriefNotes") && document.getElementById("setShowBriefNotes").checked),
+    showWelcome: !!(document.getElementById("setShowWelcome") && document.getElementById("setShowWelcome").checked),
     showQuote: !!(document.getElementById("setShowQuote") && document.getElementById("setShowQuote").checked),
     hiddenBlocks: (function () {
       var out = [];
@@ -2268,8 +2387,7 @@ const menu = [
   ["REFLECTION", "04"],
   ["FINANCES", "05"],
   ["COCOS", "06"],
-  ["DEBTWISE", "07"],
-  ["WIP", "08"]
+  ["DEBTWISE", "07"]
 ];
 
 function sectionLabel(key) {
@@ -3544,7 +3662,13 @@ function renderBriefCreditLine() {
   el.classList.remove("hidden");
   var names = list.slice(0, 3).map(function (x) { return x.title || "Кредит"; }).join(" · ");
   if (list.length > 3) names += " +";
-  el.innerHTML = '<span class="brief-credit-label">Кредит</span><span class="brief-credit-sum">' + formatMoney(debt) + '</span><span class="brief-credit-sub">' + names + '</span>';
+  el.innerHTML = '<span class="brief-credit-label">Кредит</span><span class="brief-credit-sub">' + names + '</span><strong class="brief-credit-sum">' + formatMoney(debt) + '</strong>';
+  if (!el._payBound) {
+    el._payBound = true;
+    el.addEventListener("click", function () {
+      try { openSection("FINANCES"); } catch (_) {}
+    });
+  }
 }
 
 function renderBriefNotesPanel() {
@@ -4407,6 +4531,97 @@ function openArchiveViewSafe(arch) {
   }
 }
 
+function listPaySources() {
+  var list = [];
+  var key = currentMonthKey();
+  var salary = getMonthSalary(key);
+  if (salary != null && salary > 0) {
+    list.push({ id: "month-salary", title: "Зарплата месяца", group: "Доход", available: salary });
+  }
+  ["Зарплата", "Пассивный доход", "Вклад"].forEach(function (kind) {
+    getFinance(kind).forEach(function (x) {
+      var have = Number(x.amount) || 0;
+      if (have > 0) list.push({ id: x.id, title: x.title || kind, group: kind, available: have });
+    });
+  });
+  return list;
+}
+function payCreditAmount(creditId, sourceId, rawAmount) {
+  var pay = Math.round((Number(String(rawAmount || "").replace(/\s/g, "").replace(",", ".")) || 0) * 100) / 100;
+  if (!(pay > 0)) { showToast("Укажите сумму"); return; }
+  var credit = (data.FINANCES || []).find(function (x) { return x && x.id === creditId && x.kind === "Кредит"; });
+  if (!credit) { showToast("Кредит не найден"); return; }
+  var debt = Number(credit.amount) || 0;
+  if (pay > debt + 0.001) { showToast("Сумма больше остатка долга"); return; }
+  var sourceTitle = "";
+  if (sourceId === "month-salary") {
+    var month = currentMonthKey();
+    var have = getMonthSalary(month);
+    if (have == null) { showToast("Зарплата месяца не задана"); return; }
+    if (pay > have + 0.001) { showToast("На зарплате месяца меньше этой суммы"); return; }
+    setMonthSalary(month, Math.round((have - pay) * 100) / 100);
+    sourceTitle = "Зарплата месяца";
+  } else {
+    var src = (data.FINANCES || []).find(function (x) { return x && x.id === sourceId; });
+    if (!src) { showToast("Источник не найден"); return; }
+    var haveSrc = Number(src.amount) || 0;
+    if (pay > haveSrc + 0.001) { showToast("На источнике меньше этой суммы"); return; }
+    src.amount = Math.round((haveSrc - pay) * 100) / 100;
+    src.updatedAt = new Date().toISOString();
+    sourceTitle = (src.kind ? src.kind + " · " : "") + (src.title || "Источник");
+  }
+  credit.amount = Math.round((debt - pay) * 100) / 100;
+  credit.updatedAt = new Date().toISOString();
+  if (!Array.isArray(credit.payments)) credit.payments = [];
+  credit.payments.push({ id: id(), at: new Date().toISOString(), amount: pay, sourceId: sourceId, sourceTitle: sourceTitle });
+  saveData();
+  showToast("Списано " + formatMoney(pay));
+  renderFinancesView();
+}
+function bindCreditPays(root) {
+  if (!root) return;
+  var sources = listPaySources();
+  root.querySelectorAll("[data-src]").forEach(function (sel) {
+    sel.innerHTML = "";
+    if (!sources.length) {
+      var empty = document.createElement("option");
+      empty.value = "";
+      empty.textContent = "Нет источника";
+      sel.appendChild(empty);
+      return;
+    }
+    sources.forEach(function (s) {
+      var opt = document.createElement("option");
+      opt.value = s.id;
+      opt.textContent = s.group + " · " + s.title + " · " + formatMoney(s.available);
+      sel.appendChild(opt);
+    });
+  });
+  function byAttr(attr, value) {
+    return Array.prototype.find.call(root.querySelectorAll("[" + attr + "]"), function (el) {
+      return el.getAttribute(attr) === value;
+    });
+  }
+  root.querySelectorAll("[data-pay]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-pay");
+      var box = byAttr("data-box", id);
+      if (!box) return;
+      var was = box.classList.contains("open");
+      root.querySelectorAll(".credit-pay.open").forEach(function (el) { el.classList.remove("open"); });
+      if (!was) box.classList.add("open");
+    });
+  });
+  root.querySelectorAll("[data-do]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var cid = btn.getAttribute("data-do");
+      var sel = byAttr("data-src", cid);
+      var amt = byAttr("data-amt", cid);
+      payCreditAmount(cid, sel && sel.value, amt && amt.value);
+    });
+  });
+}
+
 function renderFinancesView() {
   const root = document.getElementById("financesView");
   if (!root) return;
@@ -4434,7 +4649,13 @@ function renderFinancesView() {
   try {
     creditDebtTotal = sumCreditDebt();
     var rows = getCreditDebts().map(function (x) {
-      return '<div class="credit-debt-row"><span>' + (x.title || "Кредит") + (x.note ? " · " + x.note : "") + '</span><b>' + formatMoney(x.amount) + '</b></div>';
+      var cid = escapeHTML(x.id);
+      return '<div class="credit-debt-row"><span>' + escapeHTML(x.title || "Кредит") + (x.note ? " · " + escapeHTML(x.note) : "") + '</span><b>' + formatMoney(x.amount) + '</b><button type="button" class="pay-mini" data-pay="' + cid + '">Списать</button></div>'
+        + '<div class="credit-pay" data-box="' + cid + '">'
+        + '<label class="dw-label">Откуда списать</label><select class="dw-input" data-src="' + cid + '"></select>'
+        + '<label class="dw-label">Сумма, ₽</label><input class="dw-input" data-amt="' + cid + '" inputmode="decimal" placeholder="0">'
+        + '<button type="button" class="primary-btn" data-do="' + cid + '">Списать</button>'
+        + '</div>';
     }).join("");
     if (!rows) {
       rows = '<div class="credit-debt-row"><span>Записей пока нет</span><b>—</b></div>';
@@ -4443,7 +4664,6 @@ function renderFinancesView() {
       + '<h3>КРЕДИТ · ДОЛГ</h3>'
       + '<div class="credit-debt-line"><span>К погашению</span><strong>' + formatMoney(creditDebtTotal) + '</strong></div>'
       + '<div class="credit-debt-list">' + rows + '</div>'
-      + '<p class="credit-hint">Добавьте запись «+» → вид «Кредит». Сумма — сколько должны. Не режет остаток месяца. Чтобы погасить — уменьшите сумму в записи.</p>'
       + '</div>';
   } catch (e) { console.error(e); }
 
@@ -4539,6 +4759,7 @@ function renderFinancesView() {
     });
   };
   bindSaveSalary();
+  bindCreditPays(root);
 
   const editSal = root.querySelector("#editMonthSalary");
   if (editSal) {
@@ -5173,6 +5394,45 @@ var hideAll = document.getElementById("setHideAllBlocks");
       applySettings(DEFAULT_SETTINGS);
       closeSettings();
       showToast("Настройки сброшены");
+    });
+  }
+  var copyHtmlBtn = document.getElementById("setCopyHtml");
+  if (copyHtmlBtn) {
+    copyHtmlBtn.addEventListener("click", function () {
+      copyHtmlBtn.disabled = true;
+      function finish(ok) {
+        copyHtmlBtn.disabled = false;
+        try { showToast(ok ? "Весь HTML скопирован" : "Не удалось скопировать код"); } catch (_) {}
+      }
+      function writeText(text) {
+        if (!text || !/<!doctype html>/i.test(String(text).slice(0, 240))) {
+          finish(false);
+          return;
+        }
+        function fallback() {
+          var area = document.createElement("textarea");
+          area.value = text;
+          area.setAttribute("readonly", "");
+          area.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0";
+          document.body.appendChild(area);
+          area.focus();
+          area.select();
+          var ok = false;
+          try { ok = document.execCommand("copy"); } catch (_) {}
+          area.remove();
+          finish(!!ok);
+        }
+        if (navigator.clipboard && window.isSecureContext && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { finish(true); }).catch(fallback);
+        } else {
+          fallback();
+        }
+      }
+      var selfUrl = /INJECTUM\.html/i.test(location.pathname) ? location.href : new URL("INJECTUM.html", location.href).href;
+      fetch(selfUrl, { cache: "no-store" }).then(function (res) {
+        if (!res.ok) throw new Error("load");
+        return res.text();
+      }).then(writeText).catch(function () { finish(false); });
     });
   }
   var reloadAppBtn = document.getElementById("setReloadApp");
