@@ -101,10 +101,10 @@ header {
 }
 .info-panel-glow { display: none; }
 .info-panel-inner {
-  padding: 18px var(--pad);
+  padding: 12px 10px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 .info-panel-meta {
   display: flex;
@@ -991,16 +991,22 @@ body.rose {
   text-transform: uppercase;
 }
 .info-greet {
-  font-size: clamp(15px, 4.2vw, 20px);
+  font-size: clamp(17px, 5vw, 22px);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
   font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
   color: var(--text);
 }
+.info-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.info-line .info-date,
+.info-line .info-city,
+.info-line .info-week { margin-left: auto; }
 .info-top {
   display: flex;
   align-items: flex-start;
@@ -1045,7 +1051,8 @@ body[data-look="aesthetic"] .fin-card {
   box-shadow: none;
 }
 body[data-look="aesthetic"] .info-panel,
-body[data-look="aesthetic"] .briefing { padding: 22px 18px; }
+body[data-look="aesthetic"] .briefing { padding: 0; }
+body[data-look="aesthetic"] .info-panel-inner { padding: 14px 12px; }
 body[data-look="aesthetic"] .entry {
   background: transparent;
   border: 0;
@@ -1967,16 +1974,17 @@ footer .build-meta,
 <section id="home" class="screen active">
 <div class="info-panel" id="welcomeStrip">
     <div class="info-panel-inner">
-      <div class="info-top">
-        <div class="info-main">
-          <div class="info-greet" id="homeGreet">—</div>
-          <div class="info-time" id="homeTime">--:--</div>
-        </div>
-        <div class="info-side">
-          <div class="info-week" id="homeWeek">—</div>
-          <div class="info-date" id="homeDate">—</div>
-          <div class="info-city" id="homeCity">Москва</div>
-        </div>
+      <div class="info-line">
+        <div class="info-greet" id="homeGreet">—</div>
+        <div class="info-week" id="homeWeek">—</div>
+      </div>
+      <div class="info-line">
+        <div class="info-time" id="homeTime">--:--</div>
+        <div class="info-date" id="homeDate">—</div>
+      </div>
+      <div class="info-line">
+        <span></span>
+        <div class="info-city" id="homeCity">Москва</div>
       </div>
       <div class="info-quote" id="homeQuote"></div>
     </div>
