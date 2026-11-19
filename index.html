@@ -1768,7 +1768,18 @@ body.settings-open .app {
   color: var(--text-faint);
   line-height: 1.4;
 }
-body.hide-welcome #welcomeStrip { display: none !important; }
+body[data-font], body[data-font] * { font-family: var(--font); }
+body[data-size="sm"] { font-size: 13px; }
+body[data-size="md"] { font-size: 15px; }
+body[data-size="lg"] { font-size: 17px; }
+body[data-size="lg"] .info-greet { font-size: 26px; }
+body[data-size="lg"] .info-time { font-size: 34px; }
+body[data-size="sm"] .info-greet { font-size: 20px; }
+body[data-size="sm"] .info-time { font-size: 24px; }
+.font-sans { font-family: "Liberation Sans", "DejaVu Sans", sans-serif !important; }
+.font-serif { font-family: "Liberation Serif", "Bitstream Charter", Georgia, serif !important; }
+.font-mono { font-family: "Liberation Mono", "DejaVu Sans Mono", monospace !important; }
+.font-narrow { font-family: "Liberation Sans Narrow", "Arial Narrow", sans-serif !important; }
 #setHomeRow.settings-blocks,
 #setBlocksRow.settings-blocks {
   display: grid;
@@ -2029,6 +2040,33 @@ footer .build-meta,
           <button type="button" data-theme="light">Светлая</button>
           <button type="button" data-theme="rose">Роза</button>
         </div>
+        <label class="settings-label">Шрифт всего текста</label>
+        <div class="settings-seg" id="setFont">
+          <button type="button" data-font="sans" class="on font-sans">Системный</button>
+          <button type="button" data-font="serif" class="font-serif">Антиква</button>
+          <button type="button" data-font="mono" class="font-mono">Моно</button>
+          <button type="button" data-font="narrow" class="font-narrow">Узкий</button>
+        </div>
+        <label class="settings-label">Размер</label>
+        <div class="settings-seg" id="setFontSize">
+          <button type="button" data-size="sm">Мелкий</button>
+          <button type="button" data-size="md" class="on">Обычный</button>
+          <button type="button" data-size="lg">Крупный</button>
+        </div>
+        <label class="settings-label">Цвет всего текста</label>
+        <div class="settings-colors" id="setTextColorRow">
+          <button type="button" class="swatch" data-color="#f0efe9" style="background:#f0efe9" title="Бумага"></button>
+          <button type="button" class="swatch" data-color="#e6d7c3" style="background:#e6d7c3" title="Тёплый"></button>
+          <button type="button" class="swatch" data-color="#d5dde6" style="background:#d5dde6" title="Холодный"></button>
+          <button type="button" class="swatch" data-color="#f3dfe4" style="background:#f3dfe4" title="Роза"></button>
+          <button type="button" class="swatch" data-color="#161616" style="background:#161616" title="Чернила"></button>
+          <button type="button" class="swatch" data-color="#3a3834" style="background:#3a3834" title="Графит"></button>
+        </div>
+        <div class="settings-color-custom">
+          <input type="color" id="setTextColor" value="#f0efe9" aria-label="Свой цвет текста">
+          <span>Свой цвет</span>
+          <button type="button" class="ghost-btn" id="setTextColorReset" style="height:32px;padding:0 10px">Как в теме</button>
+        </div>
         <label class="settings-label">Акцент</label>
         <div class="settings-colors" id="setColorRow">
           <button type="button" class="swatch" data-color="#c8c2b0" style="background:#c8c2b0" title="Кость"></button>
@@ -2131,6 +2169,9 @@ const DEFAULT_SETTINGS = {
   theme: "dark",
   timeFormat: "24",
   timeZone: "Europe/Moscow",
+  font: "sans",
+  fontSize: "md",
+  textColor: "",
   showTension: true,
   showFinanceStrip: true,
   showQuote: true,
@@ -2157,6 +2198,25 @@ function applySettings(s) {
   appSettings = Object.assign({}, DEFAULT_SETTINGS, s || appSettings);
   if (!Array.isArray(appSettings.hiddenBlocks)) appSettings.hiddenBlocks = [];
   if (appSettings.timeZone !== "Europe/Moscow" && appSettings.timeZone !== "Asia/Yekaterinburg") appSettings.timeZone = "Europe/Moscow";
+  if (appSettings.font !== "serif" && appSettings.font !== "mono" && appSettings.font !== "narrow") appSettings.font = "sans";
+  if (appSettings.fontSize !== "sm" && appSettings.fontSize !== "lg") appSettings.fontSize = "md";
+  var fontStacks = {
+    sans: '"Liberation Sans", "DejaVu Sans", "Segoe UI", sans-serif',
+    serif: '"Liberation Serif", "Bitstream Charter", "DejaVu Serif", Georgia, serif',
+    mono: '"Liberation Mono", "DejaVu Sans Mono", "Courier 10 Pitch", monospace',
+    narrow: '"Liberation Sans Narrow", "Arial Narrow", sans-serif'
+  };
+  document.body.setAttribute("data-font", appSettings.font);
+  document.body.setAttribute("data-size", appSettings.fontSize);
+  document.documentElement.style.setProperty("--font", fontStacks[appSettings.font]);
+  document.body.style.setProperty("--font", fontStacks[appSettings.font]);
+  if (appSettings.textColor) {
+    document.documentElement.style.setProperty("--text", appSettings.textColor);
+    document.body.style.setProperty("--text", appSettings.textColor);
+  } else {
+    document.documentElement.style.removeProperty("--text");
+    document.body.style.removeProperty("--text");
+  }
   const accent = appSettings.accent || DEFAULT_SETTINGS.accent;
   document.body.classList.remove("density-compact", "density-wide", "density-super");
   const dens = appSettings.density || "normal";
@@ -2199,6 +2259,21 @@ function openSettings() {
   document.querySelectorAll("#setDensity button").forEach(function (btn) {
     btn.classList.toggle("on", btn.getAttribute("data-density") === (s.density || "normal"));
   });
+  document.querySelectorAll("#setFont button").forEach(function (btn) {
+    btn.classList.toggle("on", btn.getAttribute("data-font") === (s.font || "sans"));
+  });
+  document.querySelectorAll("#setFontSize button").forEach(function (btn) {
+    btn.classList.toggle("on", btn.getAttribute("data-size") === (s.fontSize || "md"));
+  });
+  var ink = s.textColor || "";
+  document.querySelectorAll("#setTextColorRow .swatch").forEach(function (btn) {
+    btn.classList.toggle("on", !!ink && (btn.getAttribute("data-color") || "").toLowerCase() === String(ink).toLowerCase());
+  });
+  var inkInput = document.getElementById("setTextColor");
+  if (inkInput) {
+    inkInput.value = ink || "#f0efe9";
+    inkInput.dataset.picked = ink && !document.querySelector("#setTextColorRow .swatch.on") ? "1" : "";
+  }
   document.querySelectorAll("#setThemeMode button").forEach(function (btn) {
     btn.classList.toggle("on", btn.getAttribute("data-theme") === (s.theme || "dark"));
   });
@@ -2301,6 +2376,13 @@ function commitSettingsFromForm() {
   const themeBtn = document.querySelector("#setThemeMode button.on");
   const tfBtn = document.querySelector("#setTimeFormat button.on");
   const tzEl = document.getElementById("setTimeZone");
+  const fontBtn = document.querySelector("#setFont button.on");
+  const sizeBtn = document.querySelector("#setFontSize button.on");
+  const inkOn = document.querySelector("#setTextColorRow .swatch.on");
+  const inkInput = document.getElementById("setTextColor");
+  var textColor = "";
+  if (inkOn) textColor = inkOn.getAttribute("data-color") || "";
+  else if (inkInput && inkInput.dataset.picked === "1") textColor = inkInput.value || "";
   const next = {
     displayName: (name && name.value.trim()) || DEFAULT_SETTINGS.displayName,
     city: (city && city.value.trim()) || DEFAULT_SETTINGS.city,
@@ -2309,6 +2391,9 @@ function commitSettingsFromForm() {
     theme: themeBtn ? themeBtn.getAttribute("data-theme") : "dark",
     timeFormat: tfBtn ? tfBtn.getAttribute("data-tf") : "24",
     timeZone: tzEl && tzEl.value ? tzEl.value : "Europe/Moscow",
+    font: fontBtn ? fontBtn.getAttribute("data-font") : "sans",
+    fontSize: sizeBtn ? sizeBtn.getAttribute("data-size") : "md",
+    textColor: textColor,
     showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
     showWelcome: !!(document.getElementById("setShowWelcome") && document.getElementById("setShowWelcome").checked),
@@ -5370,6 +5455,46 @@ try { renderHome(); } catch (e) { console.error("renderHome", e); }
       if (!btn) return;
       tfmt.querySelectorAll("button").forEach(function (x) { x.classList.remove("on"); });
       btn.classList.add("on");
+    });
+  }
+  function bindSeg(id) {
+    var row = document.getElementById(id);
+    if (!row) return;
+    row.addEventListener("click", function (e) {
+      var btn = e.target.closest("button");
+      if (!btn || !row.contains(btn)) return;
+      row.querySelectorAll("button").forEach(function (x) { x.classList.remove("on"); });
+      btn.classList.add("on");
+    });
+  }
+  bindSeg("setFont");
+  bindSeg("setFontSize");
+  var inkRow = document.getElementById("setTextColorRow");
+  if (inkRow) {
+    inkRow.addEventListener("click", function (e) {
+      var btn = e.target.closest(".swatch");
+      if (!btn) return;
+      inkRow.querySelectorAll(".swatch").forEach(function (x) { x.classList.remove("on"); });
+      btn.classList.add("on");
+      var picker = document.getElementById("setTextColor");
+      if (picker) {
+        picker.value = btn.getAttribute("data-color") || "#f0efe9";
+        picker.dataset.picked = "";
+      }
+    });
+  }
+  var inkPicker = document.getElementById("setTextColor");
+  if (inkPicker) {
+    inkPicker.addEventListener("input", function () {
+      inkPicker.dataset.picked = "1";
+      document.querySelectorAll("#setTextColorRow .swatch").forEach(function (x) { x.classList.remove("on"); });
+    });
+  }
+  var inkReset = document.getElementById("setTextColorReset");
+  if (inkReset) {
+    inkReset.addEventListener("click", function () {
+      document.querySelectorAll("#setTextColorRow .swatch").forEach(function (x) { x.classList.remove("on"); });
+      if (inkPicker) inkPicker.dataset.picked = "";
     });
   }
   const saveBtn = document.getElementById("setSaveBtn");
