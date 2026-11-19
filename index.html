@@ -1924,6 +1924,8 @@ body.settings-open .app {
           <button type="button" id="exportBtn" onclick="window.__injExport && window.__injExport(event)">Экспорт</button>
           <button type="button" id="importBtn" onclick="window.__injImport && window.__injImport(event)">Импорт</button>
         </div>
+        <button type="button" class="ghost-btn" id="setReloadApp" style="width:100%;margin-top:10px;height:40px">Обновить программное обеспечение</button>
+        <p class="settings-hint" style="margin-top:8px;margin-bottom:0">Перезагружает интерфейс. Записи и настройки сохраняются.</p>
       </section>
 
       <div class="settings-actions">
@@ -5025,6 +5027,23 @@ var hideAll = document.getElementById("setHideAllBlocks");
       applySettings(DEFAULT_SETTINGS);
       closeSettings();
       showToast("Настройки сброшены");
+    });
+  }
+  var reloadAppBtn = document.getElementById("setReloadApp");
+  if (reloadAppBtn) {
+    reloadAppBtn.addEventListener("click", function () {
+      try { closeSettings(); } catch (_) {}
+      try { showToast("Обновление…"); } catch (_) {}
+      setTimeout(function () {
+        try {
+          // Полная перезагрузка страницы; localStorage (данные) не трогаем
+          var url = new URL(window.location.href);
+          url.searchParams.set("v", String(Date.now()));
+          window.location.replace(url.toString());
+        } catch (_) {
+          window.location.reload();
+        }
+      }, 180);
     });
   }
   const wipeBtn = document.getElementById("setWipeBtn");
