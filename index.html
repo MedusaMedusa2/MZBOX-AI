@@ -1313,20 +1313,26 @@ footer .footer-brand {
 }
 .settings-actions { margin-top: 4px; }
 .settings-confirm {
-  display: flex;
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 12px 0;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface-2);
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0,0,0,.55);
 }
-.settings-confirm p { margin: 0; font-size: 14px; }
-.settings-confirm div { display: flex; gap: 6px; }
-.settings-confirm button { height: 36px; padding: 0 14px; }
-.settings-confirm.hidden { display: none; }
+.settings-confirm.on { display: flex; }
+.settings-confirm .settings-confirm-box {
+  width: min(320px, 100%);
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.settings-confirm p { margin: 0 0 12px; font-size: 15px; }
+.settings-confirm div { display: flex; gap: 8px; }
+.settings-confirm button { flex: 1; height: 40px; }
 .settings-note { margin-top: 10px; }
 
 
@@ -1831,6 +1837,17 @@ footer .build-meta,
   color: var(--text-faint) !important;
 }
 
+.info-panel,
+.briefing,
+.nav-card,
+.entry,
+.fin-card,
+.line-card,
+.settings-block {
+  border-width: var(--frame, 1px) !important;
+  border-style: solid !important;
+  border-color: var(--frame-color, var(--line)) !important;
+}
 </style>
 
 </head>
@@ -2053,6 +2070,25 @@ footer .build-meta,
           <button type="button" data-corners="soft" class="on">Мягкие</button>
           <button type="button" data-corners="round">Круглые</button>
         </div>
+        <label class="settings-label">Границы плашек</label>
+        <div class="settings-seg" id="setFrame">
+          <button type="button" data-frame="0">Нет</button>
+          <button type="button" data-frame="1" class="on">1</button>
+          <button type="button" data-frame="2">2</button>
+          <button type="button" data-frame="3">3</button>
+        </div>
+        <div class="settings-colors" id="setFrameColorRow">
+          <button type="button" class="swatch on" data-color="" title="Как в теме" style="background:transparent;border:1px solid var(--line)"></button>
+          <button type="button" class="swatch" data-color="#3a3a3a" style="background:#3a3a3a" title="Графит"></button>
+          <button type="button" class="swatch" data-color="#c8c2b0" style="background:#c8c2b0" title="Кость"></button>
+          <button type="button" class="swatch" data-color="#f0efe9" style="background:#f0efe9" title="Светлый"></button>
+          <button type="button" class="swatch" data-color="#7aab90" style="background:#7aab90" title="Зелёный"></button>
+          <button type="button" class="swatch" data-color="#c47d76" style="background:#c47d76" title="Терракота"></button>
+        </div>
+        <div class="settings-color-custom">
+          <input type="color" id="setFrameColor" value="#3a3a3a" aria-label="Цвет границы">
+          <span>Свой цвет границы</span>
+        </div>
         <label class="settings-label">Плотность</label>
         <div class="settings-seg" id="setDensity">
           <button type="button" data-density="compact">Компакт</button>
@@ -2114,11 +2150,13 @@ footer .build-meta,
         <button type="button" class="ghost-btn" id="setReloadApp" style="width:100%;margin-top:10px;height:40px">Обновить программное обеспечение</button>
       </section>
 
-      <div id="settingsConfirm" class="settings-confirm hidden">
-        <p>Сохранить настройки?</p>
-        <div>
-          <button type="button" class="primary-btn" id="setConfirmYes">Да</button>
-          <button type="button" class="ghost-btn" id="setConfirmNo">Нет</button>
+      <div id="settingsConfirm" class="settings-confirm">
+        <div class="settings-confirm-box">
+          <p>Сохранить настройки?</p>
+          <div>
+            <button type="button" class="primary-btn" id="setConfirmYes">Да</button>
+            <button type="button" class="ghost-btn" id="setConfirmNo">Нет</button>
+          </div>
         </div>
       </div>
       <div class="settings-actions">
@@ -2152,6 +2190,8 @@ const DEFAULT_SETTINGS = {
   textColor: "",
   notify: false,
   cardCorner: "soft",
+  frameWidth: 1,
+  frameColor: "",
   showTension: true,
   showFinanceStrip: true,
   showQuote: true,
@@ -2205,6 +2245,18 @@ function applySettings(s) {
     narrow: '"Liberation Sans Narrow", "Arial Narrow", sans-serif'
   };
   if (appSettings.cardCorner !== "sharp" && appSettings.cardCorner !== "round") appSettings.cardCorner = "soft";
+  var frame = Number(appSettings.frameWidth);
+  if (frame !== 0 && frame !== 2 && frame !== 3) frame = 1;
+  appSettings.frameWidth = frame;
+  document.documentElement.style.setProperty("--frame", frame + "px");
+  document.body.style.setProperty("--frame", frame + "px");
+  if (appSettings.frameColor) {
+    document.documentElement.style.setProperty("--frame-color", appSettings.frameColor);
+    document.body.style.setProperty("--frame-color", appSettings.frameColor);
+  } else {
+    document.documentElement.style.removeProperty("--frame-color");
+    document.body.style.removeProperty("--frame-color");
+  }
   document.body.setAttribute("data-corners", appSettings.cardCorner);
   document.body.setAttribute("data-font", appSettings.font);
   document.body.setAttribute("data-size", appSettings.fontSize);
@@ -2263,6 +2315,18 @@ function openSettings() {
   document.querySelectorAll("#setCorners button").forEach(function (btn) {
     btn.classList.toggle("on", btn.getAttribute("data-corners") === (s.cardCorner || "soft"));
   });
+  document.querySelectorAll("#setFrame button").forEach(function (btn) {
+    btn.classList.toggle("on", String(btn.getAttribute("data-frame")) === String(s.frameWidth == null ? 1 : s.frameWidth));
+  });
+  var frameInk = s.frameColor || "";
+  document.querySelectorAll("#setFrameColorRow .swatch").forEach(function (btn) {
+    btn.classList.toggle("on", (btn.getAttribute("data-color") || "") === frameInk);
+  });
+  var frameInput = document.getElementById("setFrameColor");
+  if (frameInput) {
+    frameInput.value = frameInk || "#3a3a3a";
+    frameInput.dataset.picked = frameInk && !document.querySelector("#setFrameColorRow .swatch.on") ? "1" : "";
+  }
   var ink = s.textColor || "";
   document.querySelectorAll("#setTextColorRow .swatch").forEach(function (btn) {
     btn.classList.toggle("on", !!ink && (btn.getAttribute("data-color") || "").toLowerCase() === String(ink).toLowerCase());
@@ -2359,7 +2423,7 @@ function openSettings() {
   settingsLive = false;
   settingsBaseline = readSettingsFromForm();
   var confirmBar = document.getElementById("settingsConfirm");
-  if (confirmBar) confirmBar.classList.add("hidden");
+  if (confirmBar) confirmBar.classList.remove("on");
   settingsLive = true;
 }
 var settingsLive = false;
@@ -2391,6 +2455,14 @@ function readSettingsFromForm() {
     textColor: textColor,
     notify: !!(appSettings && appSettings.notify),
     cardCorner: (function () { var b = document.querySelector("#setCorners button.on"); return b ? b.getAttribute("data-corners") : "soft"; })(),
+    frameWidth: (function () { var b = document.querySelector("#setFrame button.on"); return b ? Number(b.getAttribute("data-frame")) : 1; })(),
+    frameColor: (function () {
+      var on = document.querySelector("#setFrameColorRow .swatch.on");
+      var input = document.getElementById("setFrameColor");
+      if (on) return on.getAttribute("data-color") || "";
+      if (input && input.dataset.picked === "1") return input.value || "";
+      return "";
+    })(),
     showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
     showWelcome: !!(document.getElementById("setShowWelcome") && document.getElementById("setShowWelcome").checked),
@@ -2422,12 +2494,12 @@ function requestCloseSettings() {
     return;
   }
   var bar = document.getElementById("settingsConfirm");
-  if (bar) bar.classList.remove("hidden");
+  if (bar) bar.classList.add("on");
 }
 function closeSettings() {
   settingsLive = false;
   var bar = document.getElementById("settingsConfirm");
-  if (bar) bar.classList.add("hidden");
+  if (bar) bar.classList.remove("on");
   const modal = document.getElementById("settingsModal");
   if (!modal) return;
   modal.classList.add("hidden");
@@ -5686,7 +5758,8 @@ function onNotifyClick() {
   bindSeg("setFont");
   bindSeg("setFontSize");
   bindSeg("setCorners");
-  var settingsSheet = document.querySelector(".settings-sheet");
+  bindSeg("setFrame");
+  var settingsSheet = document.querySelector("#settingsModal .settings-sheet");
   if (settingsSheet && !settingsSheet.dataset.live) {
     settingsSheet.dataset.live = "1";
     settingsSheet.addEventListener("input", function () { previewSettings(); });
@@ -5735,6 +5808,28 @@ function onNotifyClick() {
     inkReset.addEventListener("click", function () {
       document.querySelectorAll("#setTextColorRow .swatch").forEach(function (x) { x.classList.remove("on"); });
       if (inkPicker) inkPicker.dataset.picked = "";
+    });
+  }
+  var frameRow = document.getElementById("setFrameColorRow");
+  if (frameRow) {
+    frameRow.addEventListener("click", function (e) {
+      var btn = e.target.closest(".swatch");
+      if (!btn) return;
+      frameRow.querySelectorAll(".swatch").forEach(function (x) { x.classList.remove("on"); });
+      btn.classList.add("on");
+      var picker = document.getElementById("setFrameColor");
+      if (picker) {
+        var color = btn.getAttribute("data-color") || "";
+        if (color) picker.value = color;
+        picker.dataset.picked = "";
+      }
+    });
+  }
+  var framePicker = document.getElementById("setFrameColor");
+  if (framePicker) {
+    framePicker.addEventListener("input", function () {
+      framePicker.dataset.picked = "1";
+      document.querySelectorAll("#setFrameColorRow .swatch").forEach(function (x) { x.classList.remove("on"); });
     });
   }
   const saveBtn = document.getElementById("setSaveBtn");
