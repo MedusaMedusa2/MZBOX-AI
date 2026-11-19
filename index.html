@@ -991,7 +991,11 @@ body.rose {
   text-transform: uppercase;
 }
 .info-greet {
-  font-size: 20px;
+  font-size: clamp(15px, 4.2vw, 20px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.25;
@@ -1010,7 +1014,7 @@ body.rose {
   gap: 4px;
   text-align: right;
 }
-.info-main { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
+.info-main { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
 .info-main .info-greet, .info-main .info-time { margin: 0; }
 body[data-corners="sharp"] { --radius: 2px; --radius-lg: 2px; }
 body[data-corners="round"] { --radius: 18px; --radius-lg: 26px; }
@@ -1020,15 +1024,35 @@ body[data-look="minimal"] .nav-card,
 body[data-look="minimal"] .entry,
 body[data-look="minimal"] .fin-card {
   background: transparent;
-  box-shadow: none;
+  border-color: transparent;
+  box-shadow: inset 0 -1px 0 var(--line);
 }
 body[data-look="soft"] .info-panel,
 body[data-look="soft"] .briefing,
 body[data-look="soft"] .nav-card,
+body[data-look="soft"] .entry,
 body[data-look="soft"] .fin-card {
-  border-color: transparent;
-  box-shadow: 0 10px 28px rgba(0,0,0,.32);
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  box-shadow: 0 16px 36px rgba(0,0,0,.45);
 }
+body[data-look="aesthetic"] .info-panel,
+body[data-look="aesthetic"] .briefing,
+body[data-look="aesthetic"] .nav-card,
+body[data-look="aesthetic"] .fin-card {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  box-shadow: none;
+}
+body[data-look="aesthetic"] .info-panel,
+body[data-look="aesthetic"] .briefing { padding: 22px 18px; }
+body[data-look="aesthetic"] .entry {
+  background: transparent;
+  border: 0;
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--text) 12%, transparent);
+}
+.info-week { margin: 0; font-size: 14px; line-height: 1.2; color: var(--text); }
+.info-date { margin: 0; font-size: 12px; line-height: 1.35; color: var(--text-dim); text-align: right; }
 .info-time {
   margin: 0;
   line-height: 1;
@@ -1249,6 +1273,8 @@ body[data-look="soft"] .fin-card {
   display: flex;
   gap: 6px;
 }
+#setLook { flex-wrap: wrap; }
+#setLook button { flex: 1 1 calc(50% - 6px); }
 .settings-seg button {
   flex: 1;
   height: 36px;
@@ -1947,7 +1973,8 @@ footer .build-meta,
           <div class="info-time" id="homeTime">--:--</div>
         </div>
         <div class="info-side">
-          <div class="info-kicker" id="homePlace">—</div>
+          <div class="info-week" id="homeWeek">—</div>
+          <div class="info-date" id="homeDate">—</div>
           <div class="info-city" id="homeCity">Москва</div>
         </div>
       </div>
@@ -2055,10 +2082,10 @@ footer .build-meta,
     </div>
     <div class="settings-body">
       <ul class="news-list">
-        <li>Приветствие сверху, время под ним. Справа по-прежнему дата и город.</li>
+        <li>Приветствие в одну строку. Справа день недели, ниже дата и год, затем город.</li>
         <li>Дата убрана из брифинга: она уже есть в информационной плашке.</li>
         <li>Уведомление по записи приходит один раз за 7 дней, один раз за день и один раз в сам день.</li>
-        <li>В настройках можно менять углы плашек и их вид: минимум, обычно или мягко.</li>
+        <li>Углы плашек настраиваются. Вид плашек теперь виден сразу: минимум, обычно, мягко и эстетик.</li>
       </ul>
     </div>
   </div>
@@ -2159,6 +2186,7 @@ footer .build-meta,
           <button type="button" data-look="minimal">Минимум</button>
           <button type="button" data-look="plain" class="on">Обычно</button>
           <button type="button" data-look="soft">Мягко</button>
+          <button type="button" data-look="aesthetic">Эстетик</button>
         </div>
         <label class="settings-label">Плотность</label>
         <div class="settings-seg" id="setDensity">
@@ -2288,7 +2316,7 @@ function applySettings(s) {
     narrow: '"Liberation Sans Narrow", "Arial Narrow", sans-serif'
   };
   if (appSettings.cardCorner !== "sharp" && appSettings.cardCorner !== "round") appSettings.cardCorner = "soft";
-  if (appSettings.cardLook !== "minimal" && appSettings.cardLook !== "soft") appSettings.cardLook = "plain";
+  if (appSettings.cardLook !== "minimal" && appSettings.cardLook !== "soft" && appSettings.cardLook !== "aesthetic") appSettings.cardLook = "plain";
   document.body.setAttribute("data-corners", appSettings.cardCorner);
   document.body.setAttribute("data-look", appSettings.cardLook);
   document.body.setAttribute("data-font", appSettings.font);
@@ -5247,7 +5275,7 @@ function updateWelcomePanel(){
   const now = new Date();
   const hour = now.getHours();
   const t = document.getElementById("homeTime");
-  const p = document.getElementById("homePlace");
+  const p = document.getElementById("homeWeek");
   const g = document.getElementById("homeGreet");
   const q = document.getElementById("homeQuote");
   if (t) {
@@ -5265,9 +5293,23 @@ function updateWelcomePanel(){
     }
   }
   if (p) {
-    const weekday = new Intl.DateTimeFormat("ru-RU",{weekday:"long"}).format(now).toUpperCase();
-    const day = new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"long"}).format(now).toUpperCase();
-    p.textContent = weekday + ", " + day;
+    var tz = (appSettings && appSettings.timeZone) || "Europe/Moscow";
+    var weekday = "—";
+    var dayMonth = "";
+    var year = String(now.getFullYear());
+    try {
+      weekday = new Intl.DateTimeFormat("ru-RU", { weekday: "long", timeZone: tz }).format(now);
+      dayMonth = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", timeZone: tz }).format(now);
+      year = new Intl.DateTimeFormat("ru-RU", { year: "numeric", timeZone: tz }).format(now);
+    } catch (_) {
+      weekday = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(now);
+      dayMonth = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" }).format(now);
+    }
+    weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+    var weekEl = p;
+    var dateEl = document.getElementById("homeDate");
+    if (weekEl) weekEl.textContent = weekday;
+    if (dateEl) dateEl.textContent = dayMonth + " · " + year;
   }
   if (g) {
     let greet = "Добрый день";
