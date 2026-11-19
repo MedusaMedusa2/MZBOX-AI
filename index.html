@@ -1545,6 +1545,152 @@ body.density-super footer { margin-top: 20px; padding-top: 10px; }
 body.density-super .settings-sheet { padding: 12px; }
 body.density-super .settings-block { padding: 10px; margin-bottom: 8px; }
 
+
+body.hide-tension #briefTensionBlock { display: none !important; }
+body.hide-finance-strip #financeOverview { display: none !important; }
+body.hide-quote .info-quote { display: none !important; }
+body:not(.show-brief-notes) #briefNotesPanel { display: none !important; }
+body.show-brief-notes #briefNotesPanel { display: block; }
+.brief-notes {
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  padding: 10px 12px;
+}
+.brief-notes-title {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+  margin-bottom: 8px;
+  font-weight: 650;
+}
+.brief-note-row {
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+}
+.brief-note-row:last-child { border-bottom: 0; }
+.brief-notes-empty { font-size: 12px; color: var(--text-faint); }
+.settings-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text);
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.settings-check:last-of-type { border-bottom: 0; }
+.settings-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+.settings-check span { flex: 1; color: var(--text-dim); }
+.settings-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.settings-blocks .settings-check { padding: 9px 0; }
+
+
+body.settings-open {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+body.settings-open .app {
+  pointer-events: none;
+}
+.settings-modal {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: none;
+}
+.settings-sheet {
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  max-height: min(88vh, 720px);
+}
+.settings-hint {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+.settings-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.block-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+}
+.block-toggle.on {
+  border-color: rgba(200,194,176,0.35);
+  background: var(--surface-2);
+}
+.block-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.block-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.block-toggle-num {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+.block-toggle-name {
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.block-toggle-mark {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  flex-shrink: 0;
+}
+.block-toggle.on .block-toggle-mark {
+  color: var(--accent);
+}
+
+
+.settings-egg {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  opacity: 0.55;
+  user-select: none;
+}
 </style>
 
 </head>
@@ -1577,7 +1723,6 @@ body.density-super .settings-block { padding: 10px; margin-bottom: 8px; }
       <span id="briefToday">—</span>
     </div>
 
-    <div class="section-label">РЯДОМ</div>
     <div id="briefDates"></div>
 
     <div class="brief-fin-line" id="financeOverview">
@@ -1587,6 +1732,7 @@ body.density-super .settings-block { padding: 10px; margin-bottom: 8px; }
       <div class="brief-fin-sep">·</div>
       <div class="brief-fin-item"><span>остаток</span><strong id="balance">0 ₽</strong></div>
     </div>
+    <div class="brief-notes" id="briefNotesPanel"></div>
     
     <div class="finance-block" id="briefTensionBlock">
       <div class="finance-block-title">
@@ -1640,10 +1786,10 @@ body.density-super .settings-block { padding: 10px; margin-bottom: 8px; }
 </main>
 
 <footer>
-  <div class="footer-brand"><span class="copy">©</span> INJECTUM · 2026</div>
-  <div class="author">Кутузов Дмитрий Владимирович</div>
-  <div class="author">Кутузова Ольга Денисовна</div>
-  <div class="build-meta">Сборка 19.11.2026 · v8.0</div>
+  <div class="footer-brand" id="footerBrand">© INJECTUM · 2026</div>
+  <div class="author" id="footerAuthor1">Кутузов Дмитрий Владимирович</div>
+  <div class="author" id="footerAuthor2">Кутузова Ольга Денисовна</div>
+  <div class="build-meta" id="footerBuild">Сборка 19.11.2026 · v8.0</div>
 </footer>
 </div>
 
@@ -1728,6 +1874,51 @@ body.density-super .settings-block { padding: 10px; margin-bottom: 8px; }
       </section>
 
       <section class="settings-block">
+        <div class="settings-block-title">Главная</div>
+        <p class="settings-hint">Что показывать на главном экране.</p>
+        <div class="settings-blocks" id="setHomeRow">
+          <label class="block-toggle on" id="labTension">
+            <input type="checkbox" id="setShowTension" checked>
+            <div class="block-toggle-left">
+              <span class="block-toggle-num">01</span>
+              <span class="block-toggle-name">Напряжённость</span>
+            </div>
+            <span class="block-toggle-mark">вкл</span>
+          </label>
+          <label class="block-toggle on" id="labFinance">
+            <input type="checkbox" id="setShowFinance" checked>
+            <div class="block-toggle-left">
+              <span class="block-toggle-num">02</span>
+              <span class="block-toggle-name">Доход · расход · остаток</span>
+            </div>
+            <span class="block-toggle-mark">вкл</span>
+          </label>
+          <label class="block-toggle" id="labNotes">
+            <input type="checkbox" id="setShowBriefNotes">
+            <div class="block-toggle-left">
+              <span class="block-toggle-num">03</span>
+              <span class="block-toggle-name">Блок заметок</span>
+            </div>
+            <span class="block-toggle-mark">выкл</span>
+          </label>
+          <label class="block-toggle on" id="labQuote">
+            <input type="checkbox" id="setShowQuote" checked>
+            <div class="block-toggle-left">
+              <span class="block-toggle-num">04</span>
+              <span class="block-toggle-name">Цитата</span>
+            </div>
+            <span class="block-toggle-mark">вкл</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-block">
+        <div class="settings-block-title">Блоки на главной</div>
+        <p class="settings-hint">Отметьте, какие блоки показывать на главной.</p>
+        <div class="settings-blocks" id="setBlocksRow"></div>
+      </section>
+
+      <section class="settings-block">
         <div class="settings-block-title">Данные</div>
         <div class="settings-seg" id="setDataRow">
           <button type="button" id="exportBtn" onclick="window.__injExport && window.__injExport(event)">Экспорт</button>
@@ -1741,6 +1932,7 @@ body.density-super .settings-block { padding: 10px; margin-bottom: 8px; }
       </div>
       <p class="settings-note">Сброс возвращает тему, акцент, плотность и имя. Записи не затрагиваются.</p>
       <button type="button" class="ghost-btn danger-btn" id="setWipeBtn">Удалить все данные</button>
+      <div class="settings-egg">Одобрено кокосом</div>
     </div>
   </div>
 </div>
@@ -1760,7 +1952,12 @@ const DEFAULT_SETTINGS = {
   density: "normal",
   theme: "dark",
   timeFormat: "24",
-  timeZone: "Europe/Moscow"
+  timeZone: "Europe/Moscow",
+  showTension: true,
+  showFinanceStrip: true,
+  showQuote: true,
+  showBriefNotes: false,
+  hiddenBlocks: []
 };
 function loadSettings() {
   try {
@@ -1775,8 +1972,8 @@ function saveSettings(s) {
 let appSettings = loadSettings();
 function applySettings(s) {
   appSettings = Object.assign({}, DEFAULT_SETTINGS, s || appSettings);
+  if (!Array.isArray(appSettings.hiddenBlocks)) appSettings.hiddenBlocks = [];
   const accent = appSettings.accent || DEFAULT_SETTINGS.accent;
-  try { document.documentElement.style.setProperty("--accent", accent); } catch (_) {}
   document.body.classList.remove("density-compact", "density-wide", "density-super");
   const dens = appSettings.density || "normal";
   if (dens === "compact") document.body.classList.add("density-compact");
@@ -1784,8 +1981,21 @@ function applySettings(s) {
   if (appSettings.theme) {
     try { applyTheme(appSettings.theme); } catch (_) {}
   }
-  try { document.documentElement.style.setProperty("--accent", accent); } catch (_) {}
+  try {
+    document.documentElement.style.setProperty("--accent", accent);
+    document.body.style.setProperty("--accent", accent);
+  } catch (_) {}
+  document.body.classList.toggle("hide-tension", appSettings.showTension === false);
+  document.body.classList.toggle("hide-finance-strip", appSettings.showFinanceStrip === false);
+  document.body.classList.toggle("hide-quote", appSettings.showQuote === false);
+  document.body.classList.toggle("show-brief-notes", appSettings.showBriefNotes === true);
   try { updateWelcomePanel(); } catch (_) {}
+  try {
+    if (typeof renderDashboard === "function") renderDashboard();
+  } catch (_) {}
+  try {
+    if (typeof renderBriefNotesPanel === "function") renderBriefNotesPanel();
+  } catch (_) {}
 }
 function openSettings() {
   const modal = document.getElementById("settingsModal");
@@ -1812,9 +2022,81 @@ function openSettings() {
   });
   var tz = document.getElementById("setTimeZone");
   if (tz) tz.value = s.timeZone || "Europe/Moscow";
+  var st = document.getElementById("setShowTension");
+  if (st) st.checked = s.showTension !== false;
+  var sf = document.getElementById("setShowFinance");
+  if (sf) sf.checked = s.showFinanceStrip !== false;
+  var sn = document.getElementById("setShowBriefNotes");
+  if (sn) sn.checked = s.showBriefNotes === true;
+  var sq = document.getElementById("setShowQuote");
+  if (sq) sq.checked = s.showQuote !== false;
+  function syncHomeLab(id, on) {
+    var lab = document.getElementById(id);
+    if (!lab) return;
+    lab.classList.toggle("on", !!on);
+    var mark = lab.querySelector(".block-toggle-mark");
+    if (mark) mark.textContent = on ? "вкл" : "выкл";
+  }
+  syncHomeLab("labTension", st && st.checked);
+  syncHomeLab("labFinance", sf && sf.checked);
+  syncHomeLab("labNotes", sn && sn.checked);
+  syncHomeLab("labQuote", sq && sq.checked);
+  ["labTension","labFinance","labNotes","labQuote"].forEach(function (lid) {
+    var lab = document.getElementById(lid);
+    if (!lab || lab._bound) return;
+    lab._bound = true;
+    var cb = lab.querySelector("input");
+    if (!cb) return;
+    cb.addEventListener("change", function () {
+      lab.classList.toggle("on", cb.checked);
+      var mark = lab.querySelector(".block-toggle-mark");
+      if (mark) mark.textContent = cb.checked ? "вкл" : "выкл";
+    });
+  });
+  var row = document.getElementById("setBlocksRow");
+  if (row) {
+    row.innerHTML = "";
+    var hidden = Array.isArray(s.hiddenBlocks) ? s.hiddenBlocks : [];
+    (typeof menu !== "undefined" ? menu : []).forEach(function (pair) {
+      var key = pair[0];
+      var num = pair[1];
+      var lab = document.createElement("label");
+      lab.className = "block-toggle" + (hidden.indexOf(key) === -1 ? " on" : "");
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = hidden.indexOf(key) === -1;
+      cb.setAttribute("data-block", key);
+      cb.addEventListener("change", function () {
+        lab.classList.toggle("on", cb.checked);
+      });
+      var left = document.createElement("div");
+      left.className = "block-toggle-left";
+      var n = document.createElement("span");
+      n.className = "block-toggle-num";
+      n.textContent = num;
+      var sp = document.createElement("span");
+      sp.className = "block-toggle-name";
+      sp.textContent = typeof sectionLabel === "function" ? sectionLabel(key) : key;
+      left.appendChild(n);
+      left.appendChild(sp);
+      var mark = document.createElement("span");
+      mark.className = "block-toggle-mark";
+      mark.textContent = cb.checked ? "вкл" : "выкл";
+      cb.addEventListener("change", function () {
+        mark.textContent = cb.checked ? "вкл" : "выкл";
+      });
+      lab.appendChild(cb);
+      lab.appendChild(left);
+      lab.appendChild(mark);
+      row.appendChild(lab);
+    });
+  }
   modal.classList.remove("hidden");
   modal.style.display = "flex";
   modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("settings-open");
+  document.body.style.overflow = "hidden";
+  document.documentElement.style.overflow = "hidden";
 }
 function closeSettings() {
   const modal = document.getElementById("settingsModal");
@@ -1822,6 +2104,9 @@ function closeSettings() {
   modal.classList.add("hidden");
   modal.style.display = "none";
   modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("settings-open");
+  document.body.style.overflow = "";
+  document.documentElement.style.overflow = "";
 }
 function commitSettingsFromForm() {
   const name = document.getElementById("setDisplayName");
@@ -1838,7 +2123,18 @@ function commitSettingsFromForm() {
     density: densBtn ? densBtn.getAttribute("data-density") : "normal",
     theme: themeBtn ? themeBtn.getAttribute("data-theme") : "dark",
     timeFormat: tfBtn ? tfBtn.getAttribute("data-tf") : "24",
-    timeZone: tzEl && tzEl.value ? tzEl.value : "Europe/Moscow"
+    timeZone: tzEl && tzEl.value ? tzEl.value : "Europe/Moscow",
+    showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
+    showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
+    showBriefNotes: !!(document.getElementById("setShowBriefNotes") && document.getElementById("setShowBriefNotes").checked),
+    showQuote: !!(document.getElementById("setShowQuote") && document.getElementById("setShowQuote").checked),
+    hiddenBlocks: (function () {
+      var out = [];
+      document.querySelectorAll("#setBlocksRow input[data-block]").forEach(function (cb) {
+        if (!cb.checked) out.push(cb.getAttribute("data-block"));
+      });
+      return out;
+    })()
   };
   saveSettings(next);
   applySettings(next);
@@ -2415,8 +2711,10 @@ function renderDashboard() {
   if (!root) return;
   root.innerHTML = "";
   if (!data || typeof data !== "object") data = emptyData();
+  var hiddenBlocks = (appSettings && Array.isArray(appSettings.hiddenBlocks)) ? appSettings.hiddenBlocks : [];
   menu.forEach(function (pair) {
     var key = pair[0], num = pair[1];
+    if (hiddenBlocks.indexOf(key) !== -1) return;
     if (!Array.isArray(data[key])) data[key] = [];
     var button = document.createElement("button");
     button.type = "button";
@@ -3114,6 +3412,24 @@ function renderBriefing() {
 
   // Tension
   refreshTensionLive();
+  try { renderBriefNotesPanel(); } catch (_) {}
+}
+
+function renderBriefNotesPanel() {
+  var panel = document.getElementById("briefNotesPanel");
+  if (!panel) return;
+  if (!(appSettings && appSettings.showBriefNotes)) {
+    panel.innerHTML = "";
+    return;
+  }
+  var list = (data.NOTES || []).filter(function (x) { return x && x.title; }).slice(0, 6);
+  if (!list.length) {
+    panel.innerHTML = '<div class="brief-notes-empty">Нет заметок</div>';
+    return;
+  }
+  panel.innerHTML = '<div class="brief-notes-title">ЗАМЕТКИ</div>' + list.map(function (x) {
+    return '<div class="brief-note-row">' + String(x.title).replace(/</g, "&lt;") + '</div>';
+  }).join("");
 }
 
 function refreshTensionLive() {
@@ -4689,6 +5005,18 @@ try { renderHome(); } catch (e) { console.error("renderHome", e); }
   }
   const saveBtn = document.getElementById("setSaveBtn");
   if (saveBtn) saveBtn.addEventListener("click", function () { commitSettingsFromForm(); });
+var hideAll = document.getElementById("setHideAllBlocks");
+  if (hideAll) {
+    hideAll.addEventListener("click", function () {
+      document.querySelectorAll("#setBlocksRow input[data-block]").forEach(function (cb) { cb.checked = false; });
+    });
+  }
+  var showAll = document.getElementById("setShowAllBlocks");
+  if (showAll) {
+    showAll.addEventListener("click", function () {
+      document.querySelectorAll("#setBlocksRow input[data-block]").forEach(function (cb) { cb.checked = true; });
+    });
+  }
   const resetBtn = document.getElementById("setResetBtn");
   if (resetBtn) {
     resetBtn.addEventListener("click", function () {
