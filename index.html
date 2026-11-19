@@ -1227,6 +1227,60 @@ footer .footer-brand {
   opacity: 0.85;
 }
 
+
+.settings-kicker {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+.settings-top h3 {
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  text-transform: none;
+}
+.settings-block {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.settings-block-title {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 10px;
+  font-weight: 650;
+}
+.settings-block .settings-label:first-of-type { margin-top: 0; }
+.swatch {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+}
+.swatch.on {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+.settings-actions { margin-top: 4px; }
+.settings-note { margin-top: 10px; }
+
+
+.icon-btn-sq.hidden { display: none !important; }
+#sectionMzboxBtn {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+.form-panel h3 { color: var(--text); letter-spacing: 0.08em; }
+.entry-actions button:active { border-color: var(--accent); color: var(--accent); }
+.small-btn {
+  width: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 </style>
 
 </head>
@@ -1347,73 +1401,65 @@ footer .footer-brand {
 <div id="settingsModal" class="settings-modal hidden" aria-hidden="true" onclick="if(event.target===this)window.__injSettingsClose&&window.__injSettingsClose()">
   <div class="settings-sheet" onclick="event.stopPropagation()">
     <div class="settings-top">
-      <h3>НАСТРОЙКИ</h3>
-      <button type="button" class="icon-btn-sq" onclick="window.__injSettingsClose&&window.__injSettingsClose()">×</button>
+      <div>
+        <div class="settings-kicker">INJECTUM</div>
+        <h3>Настройки</h3>
+      </div>
+      <button type="button" class="icon-btn-sq" onclick="window.__injSettingsClose&&window.__injSettingsClose()" aria-label="Закрыть">×</button>
     </div>
     <div class="settings-body">
-      <label class="settings-label">Имя в приветствии</label>
-      <input type="text" id="setDisplayName" maxlength="40" placeholder="Дмитрий">
+      <section class="settings-block">
+        <div class="settings-block-title">Профиль</div>
+        <label class="settings-label" for="setDisplayName">Имя в приветствии</label>
+        <input type="text" id="setDisplayName" maxlength="40" placeholder="Дмитрий" autocomplete="name">
+        <label class="settings-label" for="setCity">Город</label>
+        <input type="text" id="setCity" maxlength="40" placeholder="Москва" autocomplete="address-level2">
+      </section>
 
-      <label class="settings-label">Город</label>
-      <input type="text" id="setCity" maxlength="40" placeholder="Москва">
+      <section class="settings-block">
+        <div class="settings-block-title">Оформление</div>
+        <label class="settings-label">Тема</label>
+        <div class="settings-seg" id="setThemeMode">
+          <button type="button" data-theme="dark" class="on">Тёмная</button>
+          <button type="button" data-theme="light">Светлая</button>
+          <button type="button" data-theme="rose">Роза</button>
+        </div>
+        <label class="settings-label">Акцент</label>
+        <div class="settings-colors" id="setColorRow">
+          <button type="button" class="swatch" data-color="#c8c2b0" style="background:#c8c2b0" title="Кость"></button>
+          <button type="button" class="swatch" data-color="#8fbf9a" style="background:#8fbf9a" title="Зелёный"></button>
+          <button type="button" class="swatch" data-color="#7aa2c4" style="background:#7aa2c4" title="Сталь"></button>
+          <button type="button" class="swatch" data-color="#c47d76" style="background:#c47d76" title="Терракота"></button>
+          <button type="button" class="swatch" data-color="#e0b7bf" style="background:#e0b7bf" title="Роза"></button>
+          <button type="button" class="swatch" data-color="#d4c35a" style="background:#d4c35a" title="Лайм"></button>
+          <button type="button" class="swatch" data-color="#a78bfa" style="background:#a78bfa" title="Фиолет"></button>
+          <button type="button" class="swatch" data-color="#f0efe9" style="background:#f0efe9" title="Светлый"></button>
+        </div>
+        <div class="settings-color-custom">
+          <input type="color" id="setAccentCustom" value="#c8c2b0" aria-label="Свой акцент">
+          <span>Свой акцент</span>
+        </div>
+        <label class="settings-label">Плотность</label>
+        <div class="settings-seg" id="setDensity">
+          <button type="button" data-density="compact">Компакт</button>
+          <button type="button" data-density="normal" class="on">Обычный</button>
+          <button type="button" data-density="wide">Свободный</button>
+        </div>
+      </section>
 
-      <label class="settings-label">Тема</label>
-      <div class="settings-seg" id="setThemeMode">
-        <button type="button" data-theme="dark" class="on">Тёмная</button>
-        <button type="button" data-theme="light">Светлая</button>
-        <button type="button" data-theme="rose">Роза</button>
-      </div>
-
-      <label class="settings-label">Акцент</label>
-      <div class="settings-colors" id="setColorRow">
-        <button type="button" class="swatch" data-color="#c8c2b0" style="background:#c8c2b0" title="Кость"></button>
-        <button type="button" class="swatch" data-color="#8fbf9a" style="background:#8fbf9a" title="Зелёный"></button>
-        <button type="button" class="swatch" data-color="#7aa2c4" style="background:#7aa2c4" title="Сталь"></button>
-        <button type="button" class="swatch" data-color="#c47d76" style="background:#c47d76" title="Терракота"></button>
-        <button type="button" class="swatch" data-color="#e0b7bf" style="background:#e0b7bf" title="Роза"></button>
-        <button type="button" class="swatch" data-color="#d4c35a" style="background:#d4c35a" title="Лайм"></button>
-        <button type="button" class="swatch" data-color="#a78bfa" style="background:#a78bfa" title="Фиолет"></button>
-        <button type="button" class="swatch" data-color="#ffffff" style="background:#ffffff" title="Белый"></button>
-      </div>
-      <div class="settings-color-custom">
-        <input type="color" id="setAccentCustom" value="#c8c2b0">
-        <span>Свой акцент</span>
-      </div>
-
-      <label class="settings-label">Цвет плашек</label>
-      <div class="settings-colors" id="setSurfaceRow">
-        <button type="button" class="swatch" data-surface="#0a0a0a" style="background:#0a0a0a" title="Чёрный"></button>
-        <button type="button" class="swatch" data-surface="#111111" style="background:#111111" title="Графит"></button>
-        <button type="button" class="swatch" data-surface="#141414" style="background:#141414" title="Уголь"></button>
-        <button type="button" class="swatch" data-surface="#161616" style="background:#161616" title="Пепел"></button>
-        <button type="button" class="swatch" data-surface="#140f12" style="background:#140f12" title="Тёмная роза"></button>
-        <button type="button" class="swatch" data-surface="#0f1412" style="background:#0f1412" title="Хвоя"></button>
-        <button type="button" class="swatch" data-surface="#0f1218" style="background:#0f1218" title="Ночь"></button>
-        <button type="button" class="swatch" data-surface="#1a1a1a" style="background:#1a1a1a" title="Серый"></button>
-      </div>
-      <div class="settings-color-custom">
-        <input type="color" id="setSurfaceCustom" value="#0a0a0a">
-        <span>Свой цвет плашек</span>
-      </div>
-
-      <label class="settings-label">Плотность интерфейса</label>
-      <div class="settings-seg" id="setDensity">
-        <button type="button" data-density="compact">Компакт</button>
-        <button type="button" data-density="normal" class="on">Обычный</button>
-        <button type="button" data-density="wide">Свободный</button>
-      </div>
-
-      <label class="settings-label">Данные</label>
-      <div class="settings-seg" id="setDataRow">
-        <button type="button" id="exportBtn" onclick="window.__injExport && window.__injExport(event)">Экспорт</button>
-        <button type="button" id="importBtn" onclick="window.__injImport && window.__injImport(event)">Импорт</button>
-      </div>
+      <section class="settings-block">
+        <div class="settings-block-title">Данные</div>
+        <div class="settings-seg" id="setDataRow">
+          <button type="button" id="exportBtn" onclick="window.__injExport && window.__injExport(event)">Экспорт</button>
+          <button type="button" id="importBtn" onclick="window.__injImport && window.__injImport(event)">Импорт</button>
+        </div>
+      </section>
 
       <div class="settings-actions">
         <button type="button" class="primary-btn" id="setSaveBtn">Сохранить</button>
         <button type="button" class="ghost-btn" id="setResetBtn">Сбросить</button>
       </div>
-      <p class="settings-note">Сброс вернёт тему, цвета, плотность и имя по умолчанию. Записи не удаляются.</p>
+      <p class="settings-note">Сброс возвращает тему, акцент, плотность и имя. Записи не затрагиваются.</p>
       <button type="button" class="ghost-btn danger-btn" id="setWipeBtn">Удалить все данные</button>
     </div>
   </div>
@@ -1431,7 +1477,6 @@ const DEFAULT_SETTINGS = {
   displayName: "Дмитрий",
   city: "Москва",
   accent: "#c8c2b0",
-  surface: "#0a0a0a",
   density: "normal",
   theme: "dark"
 };
@@ -1449,29 +1494,15 @@ let appSettings = loadSettings();
 function applySettings(s) {
   appSettings = Object.assign({}, DEFAULT_SETTINGS, s || appSettings);
   const accent = appSettings.accent || DEFAULT_SETTINGS.accent;
-  const surface = appSettings.surface || DEFAULT_SETTINGS.surface;
-  try {
-    document.documentElement.style.setProperty("--accent", accent);
-    document.documentElement.style.setProperty("--surface", surface);
-    // derive surface-2 slightly lifted
-    document.documentElement.style.setProperty("--surface-2", surface);
-  } catch (_) {}
-  document.body.classList.remove("density-compact", "density-normal", "density-wide");
+  try { document.documentElement.style.setProperty("--accent", accent); } catch (_) {}
+  document.body.classList.remove("density-compact", "density-wide");
   const dens = appSettings.density || "normal";
   if (dens === "compact") document.body.classList.add("density-compact");
   else if (dens === "wide") document.body.classList.add("density-wide");
-  // normal = no extra class (original look)
   if (appSettings.theme) {
     try { applyTheme(appSettings.theme); } catch (_) {}
   }
-  // re-apply surface after theme (theme sets vars via body classes)
-  try {
-    if (appSettings.theme !== "light") {
-      document.documentElement.style.setProperty("--surface", surface);
-      document.documentElement.style.setProperty("--surface-2", surface);
-    }
-    document.documentElement.style.setProperty("--accent", accent);
-  } catch (_) {}
+  try { document.documentElement.style.setProperty("--accent", accent); } catch (_) {}
   try { updateWelcomePanel(); } catch (_) {}
 }
 function openSettings() {
@@ -1485,13 +1516,8 @@ function openSettings() {
   if (name) name.value = s.displayName || "";
   if (city) city.value = s.city || "";
   if (custom) custom.value = s.accent || "#c8c2b0";
-  const surfaceCustom = document.getElementById("setSurfaceCustom");
-  if (surfaceCustom) surfaceCustom.value = s.surface || "#0a0a0a";
   document.querySelectorAll("#setColorRow .swatch").forEach(function (btn) {
     btn.classList.toggle("on", (btn.getAttribute("data-color") || "").toLowerCase() === String(s.accent || "").toLowerCase());
-  });
-  document.querySelectorAll("#setSurfaceRow .swatch").forEach(function (btn) {
-    btn.classList.toggle("on", (btn.getAttribute("data-surface") || "").toLowerCase() === String(s.surface || "").toLowerCase());
   });
   document.querySelectorAll("#setDensity button").forEach(function (btn) {
     btn.classList.toggle("on", btn.getAttribute("data-density") === (s.density || "normal"));
@@ -1514,14 +1540,12 @@ function commitSettingsFromForm() {
   const name = document.getElementById("setDisplayName");
   const city = document.getElementById("setCity");
   const custom = document.getElementById("setAccentCustom");
-  const surfaceCustom = document.getElementById("setSurfaceCustom");
   const densBtn = document.querySelector("#setDensity button.on");
   const themeBtn = document.querySelector("#setThemeMode button.on");
   const next = {
     displayName: (name && name.value.trim()) || DEFAULT_SETTINGS.displayName,
     city: (city && city.value.trim()) || DEFAULT_SETTINGS.city,
     accent: (custom && custom.value) || appSettings.accent || DEFAULT_SETTINGS.accent,
-    surface: (surfaceCustom && surfaceCustom.value) || appSettings.surface || DEFAULT_SETTINGS.surface,
     density: densBtn ? densBtn.getAttribute("data-density") : "normal",
     theme: themeBtn ? themeBtn.getAttribute("data-theme") : "dark"
   };
@@ -4076,24 +4100,6 @@ try { renderHome(); } catch (e) { console.error("renderHome", e); }
   if (custom) {
     custom.addEventListener("input", function () {
       document.querySelectorAll("#setColorRow .swatch").forEach(function (x) { x.classList.remove("on"); });
-    });
-  }
-  const surfaceRow = document.getElementById("setSurfaceRow");
-  if (surfaceRow) {
-    surfaceRow.addEventListener("click", function (e) {
-      const btn = e.target.closest(".swatch");
-      if (!btn) return;
-      surfaceRow.querySelectorAll(".swatch").forEach(function (x) { x.classList.remove("on"); });
-      btn.classList.add("on");
-      const c = btn.getAttribute("data-surface");
-      const sc = document.getElementById("setSurfaceCustom");
-      if (sc && c) sc.value = c;
-    });
-  }
-  const surfaceCustom = document.getElementById("setSurfaceCustom");
-  if (surfaceCustom) {
-    surfaceCustom.addEventListener("input", function () {
-      document.querySelectorAll("#setSurfaceRow .swatch").forEach(function (x) { x.classList.remove("on"); });
     });
   }
   const dens = document.getElementById("setDensity");
