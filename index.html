@@ -1010,7 +1010,25 @@ body.rose {
   gap: 4px;
   text-align: right;
 }
-.info-side .info-kicker { margin: 0; }
+.info-main { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
+.info-main .info-greet, .info-main .info-time { margin: 0; }
+body[data-corners="sharp"] { --radius: 2px; --radius-lg: 2px; }
+body[data-corners="round"] { --radius: 18px; --radius-lg: 26px; }
+body[data-look="minimal"] .info-panel,
+body[data-look="minimal"] .briefing,
+body[data-look="minimal"] .nav-card,
+body[data-look="minimal"] .entry,
+body[data-look="minimal"] .fin-card {
+  background: transparent;
+  box-shadow: none;
+}
+body[data-look="soft"] .info-panel,
+body[data-look="soft"] .briefing,
+body[data-look="soft"] .nav-card,
+body[data-look="soft"] .fin-card {
+  border-color: transparent;
+  box-shadow: 0 10px 28px rgba(0,0,0,.32);
+}
 .info-time {
   margin: 0;
   line-height: 1;
@@ -1924,20 +1942,21 @@ footer .build-meta,
 <div class="info-panel" id="welcomeStrip">
     <div class="info-panel-inner">
       <div class="info-top">
-        <div class="info-time" id="homeTime">--:--</div>
+        <div class="info-main">
+          <div class="info-greet" id="homeGreet">—</div>
+          <div class="info-time" id="homeTime">--:--</div>
+        </div>
         <div class="info-side">
           <div class="info-kicker" id="homePlace">—</div>
           <div class="info-city" id="homeCity">Москва</div>
         </div>
       </div>
-      <div class="info-greet" id="homeGreet">—</div>
       <div class="info-quote" id="homeQuote"></div>
     </div>
   </div>
   <div class="briefing">
     <div class="brief-top">
       <h2>BRIEFING</h2>
-      <span id="briefToday">—</span>
     </div>
 
     <div id="briefDates"></div>
@@ -2003,7 +2022,7 @@ footer .build-meta,
 </main>
 
 <footer>
-  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.1</div>
+  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.2</div>
   <div class="author" id="footerAuthor1">Кутузов Дмитрий Владимирович</div>
   <div class="author" id="footerAuthor2">Кутузова Ольга Денисовна</div>
 </footer>
@@ -2029,16 +2048,17 @@ footer .build-meta,
   <div class="settings-sheet" onclick="event.stopPropagation()">
     <div class="settings-top">
       <div>
-        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.1</div>
+        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.2</div>
         <h3>Что нового</h3>
       </div>
       <button type="button" class="icon-btn-sq" id="newsClose" aria-label="Закрыть">×</button>
     </div>
     <div class="settings-body">
       <ul class="news-list">
-        <li>Время в приветствии перенесено в левый верхний угол плашки.</li>
-        <li>Заметки сортируются от самой длинной к самой короткой.</li>
-        <li>В настройках кнопка «Разрешить». Уведомление приходит в день события, заметки, дедлайна и любого плана, а также за 7 дней.</li>
+        <li>Приветствие сверху, время под ним. Справа по-прежнему дата и город.</li>
+        <li>Дата убрана из брифинга: она уже есть в информационной плашке.</li>
+        <li>Уведомление по записи приходит один раз за 7 дней, один раз за день и один раз в сам день.</li>
+        <li>В настройках можно менять углы плашек и их вид: минимум, обычно или мягко.</li>
       </ul>
     </div>
   </div>
@@ -2073,7 +2093,7 @@ footer .build-meta,
 
       <section class="settings-block">
         <div class="settings-block-title">Уведомления</div>
-        <p class="settings-hint">В день и за 7 дней: события, заметки, дедлайны и планы.</p>
+        <p class="settings-hint">За 7 дней, за день и в день. Каждая запись — один раз на каждый срок.</p>
         <button type="button" class="primary-btn" id="setNotifyBtn" style="width:100%;height:40px">Разрешить</button>
         <p class="settings-hint" id="setNotifyState"></p>
       </section>
@@ -2127,6 +2147,18 @@ footer .build-meta,
         <div class="settings-color-custom">
           <input type="color" id="setAccentCustom" value="#c8c2b0" aria-label="Свой акцент">
           <span>Свой акцент</span>
+        </div>
+        <label class="settings-label">Углы плашек</label>
+        <div class="settings-seg" id="setCorners">
+          <button type="button" data-corners="sharp">Прямые</button>
+          <button type="button" data-corners="soft" class="on">Мягкие</button>
+          <button type="button" data-corners="round">Круглые</button>
+        </div>
+        <label class="settings-label">Вид плашек</label>
+        <div class="settings-seg" id="setLook">
+          <button type="button" data-look="minimal">Минимум</button>
+          <button type="button" data-look="plain" class="on">Обычно</button>
+          <button type="button" data-look="soft">Мягко</button>
         </div>
         <label class="settings-label">Плотность</label>
         <div class="settings-seg" id="setDensity">
@@ -2219,6 +2251,8 @@ const DEFAULT_SETTINGS = {
   fontSize: "md",
   textColor: "",
   notify: false,
+  cardCorner: "soft",
+  cardLook: "plain",
   showTension: true,
   showFinanceStrip: true,
   showQuote: true,
@@ -2253,6 +2287,10 @@ function applySettings(s) {
     mono: '"Liberation Mono", "DejaVu Sans Mono", "Courier 10 Pitch", monospace',
     narrow: '"Liberation Sans Narrow", "Arial Narrow", sans-serif'
   };
+  if (appSettings.cardCorner !== "sharp" && appSettings.cardCorner !== "round") appSettings.cardCorner = "soft";
+  if (appSettings.cardLook !== "minimal" && appSettings.cardLook !== "soft") appSettings.cardLook = "plain";
+  document.body.setAttribute("data-corners", appSettings.cardCorner);
+  document.body.setAttribute("data-look", appSettings.cardLook);
   document.body.setAttribute("data-font", appSettings.font);
   document.body.setAttribute("data-size", appSettings.fontSize);
   document.documentElement.style.setProperty("--font", fontStacks[appSettings.font]);
@@ -2311,6 +2349,12 @@ function openSettings() {
   });
   document.querySelectorAll("#setFontSize button").forEach(function (btn) {
     btn.classList.toggle("on", btn.getAttribute("data-size") === (s.fontSize || "md"));
+  });
+  document.querySelectorAll("#setCorners button").forEach(function (btn) {
+    btn.classList.toggle("on", btn.getAttribute("data-corners") === (s.cardCorner || "soft"));
+  });
+  document.querySelectorAll("#setLook button").forEach(function (btn) {
+    btn.classList.toggle("on", btn.getAttribute("data-look") === (s.cardLook || "plain"));
   });
   var ink = s.textColor || "";
   document.querySelectorAll("#setTextColorRow .swatch").forEach(function (btn) {
@@ -2443,6 +2487,8 @@ function commitSettingsFromForm() {
     fontSize: sizeBtn ? sizeBtn.getAttribute("data-size") : "md",
     textColor: textColor,
     notify: !!(appSettings && appSettings.notify),
+    cardCorner: (function () { var b = document.querySelector("#setCorners button.on"); return b ? b.getAttribute("data-corners") : "soft"; })(),
+    cardLook: (function () { var b = document.querySelector("#setLook button.on"); return b ? b.getAttribute("data-look") : "plain"; })(),
     showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
     showWelcome: !!(document.getElementById("setShowWelcome") && document.getElementById("setShowWelcome").checked),
@@ -5469,7 +5515,6 @@ setInterval(function () {
 }, 15 * 60 * 1000);
 
 function closeNews() {
-  try { localStorage.setItem("injectum_release_seen", "9.1"); } catch (_) {}
   var modal = document.getElementById("newsModal");
   if (!modal) return;
   modal.classList.add("hidden");
@@ -5477,7 +5522,10 @@ function closeNews() {
   modal.setAttribute("aria-hidden", "true");
 }
 function maybeNews() {
-  try { if (localStorage.getItem("injectum_release_seen") === "9.1") return; } catch (_) {}
+  var show = false;
+  try { show = sessionStorage.getItem("injectum_show_news") === "1"; } catch (_) {}
+  if (!show) return;
+  try { sessionStorage.removeItem("injectum_show_news"); } catch (_) {}
   var modal = document.getElementById("newsModal");
   if (!modal) return;
   modal.classList.remove("hidden");
@@ -5501,9 +5549,11 @@ function noticeDiff(target, today) {
 }
 function pushNotice(out, id, when, today, label) {
   var days = noticeDiff(when, today);
-  if (days !== 0 && days !== 7) return;
+  var slot = days === 7 ? "week" : days === 1 ? "eve" : days === 0 ? "day" : "";
+  if (!slot) return;
   var date = when.getFullYear() + "-" + String(when.getMonth() + 1).padStart(2, "0") + "-" + String(when.getDate()).padStart(2, "0");
-  out.push({ key: id + "|" + date + "|" + (days === 0 ? "day" : "week"), body: (days === 0 ? "Сегодня" : "Через 7 дней") + " · " + label });
+  var whenLabel = slot === "week" ? "Через 7 дней" : slot === "eve" ? "Завтра" : "Сегодня";
+  out.push({ key: id + "|" + date + "|" + slot, body: whenLabel + " · " + label });
 }
 function dueNotices() {
   var today = noticeDay(appSettings && appSettings.timeZone);
@@ -5548,14 +5598,19 @@ function deliverNotices() {
   } catch (_) {}
   var have = {};
   sent.forEach(function (k) { have[k] = true; });
+  if (!window.__injSeen) window.__injSeen = {};
   var changed = false;
   notices.forEach(function (n) {
-    if (have[n.key]) return;
+    if (have[n.key] || window.__injSeen[n.key]) return;
+    window.__injSeen[n.key] = true;
+    have[n.key] = true;
+    changed = true;
     try {
       new Notification("INJECTUM", { body: n.body, tag: n.key });
-      have[n.key] = true;
-      changed = true;
-    } catch (_) {}
+    } catch (_) {
+      delete window.__injSeen[n.key];
+      delete have[n.key];
+    }
   });
   if (!changed) return;
   try { localStorage.setItem("injectum_notices_v1", JSON.stringify(Object.keys(have).slice(-400))); } catch (_) {}
@@ -5679,6 +5734,8 @@ function onNotifyClick() {
   }
   bindSeg("setFont");
   bindSeg("setFontSize");
+  bindSeg("setCorners");
+  bindSeg("setLook");
   var inkRow = document.getElementById("setTextColorRow");
   if (inkRow) {
     inkRow.addEventListener("click", function (e) {
@@ -5774,6 +5831,7 @@ var hideAll = document.getElementById("setHideAllBlocks");
   if (reloadAppBtn) {
     reloadAppBtn.addEventListener("click", function () {
       try { closeSettings(); } catch (_) {}
+      try { sessionStorage.setItem("injectum_show_news", "1"); } catch (_) {}
       try { showToast("Обновление…"); } catch (_) {}
       setTimeout(function () {
         try {
