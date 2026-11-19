@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#080808">
+<meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>INJECTUM</title>
 
@@ -11,8 +11,8 @@
 
 :root {
   --bg: #000000;
-  --surface: #0a0a0a;
-  --surface-2: #111111;
+  --surface: #000000;
+  --surface-2: #000000;
   --line: #222222;
   --line-strong: #333333;
   --text: #f0efe9;
@@ -29,8 +29,9 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
-  background: var(--bg);
+  background: #000000;
   color: var(--text);
+  color-scheme: dark;
   font: 14px/1.45 var(--font);
   -webkit-text-size-adjust: 100%;
   touch-action: manipulation;
@@ -906,6 +907,8 @@ body.light {
   --bg: #f3f2ee;
   --surface: #ffffff;
   --surface-2: #f7f6f2;
+  background: #f3f2ee;
+  color-scheme: light;
   --line: #e2e0d8;
   --line-strong: #c9c6ba;
   --text: #161616;
@@ -1144,8 +1147,21 @@ body[data-corners="round"] { --radius: 18px; --radius-lg: 26px; }
 .settings-colors {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
 }
+.frame-row { flex-wrap: nowrap; margin-top: 8px; }
+.frame-row input[type="color"] {
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  overflow: hidden;
+}
+.swatch[data-color=""] { background: transparent; border-color: var(--line); }
 .swatch {
   width: 28px;
   height: 28px;
@@ -1842,8 +1858,7 @@ footer .build-meta,
 .nav-card,
 .entry,
 .fin-card,
-.line-card,
-.settings-block {
+.line-card {
   border-width: var(--frame, 1px) !important;
   border-style: solid !important;
   border-color: var(--frame-color, var(--line)) !important;
@@ -2077,17 +2092,14 @@ footer .build-meta,
           <button type="button" data-frame="2">2</button>
           <button type="button" data-frame="3">3</button>
         </div>
-        <div class="settings-colors" id="setFrameColorRow">
-          <button type="button" class="swatch on" data-color="" title="Как в теме" style="background:transparent;border:1px solid var(--line)"></button>
+        <div class="settings-colors frame-row" id="setFrameColorRow">
+          <button type="button" class="swatch on" data-color="" title="Как в теме"></button>
           <button type="button" class="swatch" data-color="#3a3a3a" style="background:#3a3a3a" title="Графит"></button>
           <button type="button" class="swatch" data-color="#c8c2b0" style="background:#c8c2b0" title="Кость"></button>
           <button type="button" class="swatch" data-color="#f0efe9" style="background:#f0efe9" title="Светлый"></button>
           <button type="button" class="swatch" data-color="#7aab90" style="background:#7aab90" title="Зелёный"></button>
           <button type="button" class="swatch" data-color="#c47d76" style="background:#c47d76" title="Терракота"></button>
-        </div>
-        <div class="settings-color-custom">
           <input type="color" id="setFrameColor" value="#3a3a3a" aria-label="Цвет границы">
-          <span>Свой цвет границы</span>
         </div>
         <label class="settings-label">Плотность</label>
         <div class="settings-seg" id="setDensity">
