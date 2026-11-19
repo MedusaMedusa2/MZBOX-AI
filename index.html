@@ -1691,6 +1691,71 @@ body.settings-open .app {
   opacity: 0.55;
   user-select: none;
 }
+
+.brief-credit {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid rgba(196,125,118,0.35);
+  border-radius: var(--radius);
+  background: rgba(196,125,118,0.06);
+}
+.brief-credit.hidden { display: none !important; }
+.brief-credit-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warn);
+  font-weight: 650;
+}
+.brief-credit-sum {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--warn);
+  font-variant-numeric: tabular-nums;
+}
+.brief-credit-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+.credit-card h3 { color: var(--warn); }
+.credit-debt-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.credit-debt-line span {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.credit-debt-line strong {
+  font-size: 18px;
+  color: var(--warn);
+  font-variant-numeric: tabular-nums;
+}
+.credit-debt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+.credit-debt-row span { color: var(--text-dim); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.credit-debt-row b { font-variant-numeric: tabular-nums; color: var(--text); }
+.credit-hint {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-faint);
+  line-height: 1.4;
+}
+
 </style>
 
 </head>
@@ -1748,7 +1813,6 @@ body.settings-open .app {
     </div>
 </div>
 
-  <div class="section-label section-label-center">БЛОКИ</div>
   <div class="dashboard" id="dashboard"></div>
 </section>
 
@@ -2193,7 +2257,8 @@ const financeTypes = [
   "Пассивный доход",
   "Зарплата",
   "Расход",
-  "Вклад"
+  "Вклад",
+  "Кредит"
 ];
 
 const menu = [
@@ -2755,6 +2820,12 @@ function sumPermanentExpenses() {
 function sumTemporaryExpenses() {
   return getTemporaryExpenses().reduce((s, x) => s + (Number(x.amount) || 0), 0);
 }
+function getCreditDebts() {
+  return getFinance("Кредит").filter(function (x) { return (Number(x.amount) || 0) > 0; });
+}
+function sumCreditDebt() {
+  return getCreditDebts().reduce(function (s, x) { return s + (Number(x.amount) || 0); }, 0);
+}
 
 
 function addLine(root, title, value, extra = "") {
@@ -2784,6 +2855,13 @@ function depositDaily(item) {
   return amount * rate / 100 / 365;
 }
 
+function depositMonthlyInterest(item) {
+  const amount = Number(item.amount) || 0;
+  const rate = Number(item.rate) || 0;
+  if (!(amount > 0) || !(rate > 0)) return 0;
+  return amount * rate / 100 / 12;
+}
+
 function depositStartDate(item) {
   const raw = item.startDate || (item.createdAt ? String(item.createdAt).slice(0, 10) : "");
   const d = parseDate(raw);
@@ -2794,17 +2872,56 @@ function depositStartDate(item) {
 }
 
 function depositAccrued(item) {
-  const daily = depositDaily(item);
-  if (!(daily > 0)) return 0;
+  const amount = Number(item.amount) || 0;
+  const rate = Number(item.rate) || 0;
+  if (!(amount > 0) || !(rate > 0)) return 0;
   const start = depositStartDate(item);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  if ((item.frequency || "Ежедневно") === "Ежемесячно") {
+    const months = (today.getFullYear() - start.getFullYear()) * 12 + (today.getMonth() - start.getMonth());
+    const full = Math.max(0, months);
+    const dim = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const dayPart = Math.min(today.getDate(), dim) / dim;
+    return depositMonthlyInterest(item) * (full + dayPart);
+  }
   const days = Math.max(0, Math.round((today - start) / 86400000));
-  return daily * days;
+  return depositDaily(item) * days;
 }
 
 function depositEffectiveAmount(item) {
   return (Number(item.amount) || 0) + depositAccrued(item);
+}
+
+function depositInterestThisMonth(item, refDate) {
+  refDate = refDate || new Date();
+  const amount = Number(item.amount) || 0;
+  const rate = Number(item.rate) || 0;
+  if (!(amount > 0) || !(rate > 0)) return 0;
+  const start = depositStartDate(item);
+  const y = refDate.getFullYear();
+  const m = refDate.getMonth();
+  const monthStart = new Date(y, m, 1);
+  monthStart.setHours(0, 0, 0, 0);
+  const monthEnd = new Date(y, m + 1, 0);
+  monthEnd.setHours(0, 0, 0, 0);
+  const today = new Date(refDate);
+  today.setHours(0, 0, 0, 0);
+  const from = start > monthStart ? start : monthStart;
+  const to = today < monthEnd ? today : monthEnd;
+  if (to < from) return 0;
+  const daysInMonth = monthEnd.getDate();
+  const elapsed = Math.max(0, Math.round((to - from) / 86400000) + 1);
+  if ((item.frequency || "Ежедневно") === "Ежемесячно") {
+    return depositMonthlyInterest(item) * (elapsed / daysInMonth);
+  }
+  return depositDaily(item) * elapsed;
+}
+
+function sumDepositInterestThisMonth(refDate) {
+  return getFinance("Вклад").reduce(function (s, x) {
+    return s + depositInterestThisMonth(x, refDate);
+  }, 0);
 }
 
 function autoTensionFromMzbox() {
@@ -2921,14 +3038,11 @@ function createMonthArchive() {
   const passive = sumFinance("Пассивный доход");
   const deposits = getFinance("Вклад");
   const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-  const depositMonth = deposits.reduce((s, x) => {
-    const daily = depositDaily(x);
-    if (!daily) return s;
-    if ((x.frequency || "Ежедневно") === "Ежемесячно")
-      return s + (Number(x.amount) || 0) * (Number(x.rate) || 0) / 100 / 12;
-    return s + daily * daysInMonth;
-  }, 0);
+  const depositMonth = sumDepositInterestThisMonth();
+  const depositPrincipal = deposits.reduce(function (s, x) { return s + (Number(x.amount) || 0); }, 0);
   const income = (salary || 0) + passive + depositMonth;
+  const totalHad = (salary || 0) + passive + depositPrincipal;
+  const totalBecamePrep = true;
   const expenses = permanent.reduce((s, x) => s + (Number(x.amount) || 0), 0)
     + temporary.reduce((s, x) => s + (Number(x.amount) || 0), 0);
   const archive = {
@@ -2940,6 +3054,10 @@ function createMonthArchive() {
     income,
     expenses,
     balance: income - expenses,
+    depositInterest: typeof depositMonth !== "undefined" ? depositMonth : 0,
+    depositPrincipal: typeof depositPrincipal !== "undefined" ? depositPrincipal : 0,
+    totalHad: typeof totalHad !== "undefined" ? totalHad : ((salary || 0) + passive),
+    totalBecame: (typeof totalHad !== "undefined" ? totalHad : ((salary || 0) + passive)) + (typeof depositMonth !== "undefined" ? depositMonth : 0) - expenses,
     permanentCount: permanent.length,
     chartImage: chartImage,
     temporaryCount: temporary.length,
@@ -3383,13 +3501,7 @@ function renderBriefing() {
   const salary = monthSal != null ? monthSal : salaryEntries;
   const deposits = getFinance("Вклад");
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const depositMonth = deposits.reduce((s, x) => {
-    const daily = depositDaily(x);
-    if (!daily) return s;
-    const freq = x.frequency || "Ежедневно";
-    if (freq === "Ежемесячно") return s + (Number(x.amount) || 0) * (Number(x.rate) || 0) / 100 / 12;
-    return s + daily * daysInMonth;
-  }, 0);
+  const depositMonth = sumDepositInterestThisMonth();
   const income = passive + salary + depositMonth;
   const permanent = sumPermanentExpenses();
   const temporary = sumTemporaryExpenses();
@@ -3406,6 +3518,8 @@ function renderBriefing() {
     elBal.className = balance >= 0 ? "positive" : "negative";
   }
 
+  try { renderBriefCreditLine(); } catch (_) {}
+
   // hide legacy metric nodes if present
   ["passiveTotal", "salaryTotal", "depositTotalBrief"].forEach(id => {
     const el = document.getElementById(id);
@@ -3415,6 +3529,22 @@ function renderBriefing() {
   // Tension
   refreshTensionLive();
   try { renderBriefNotesPanel(); } catch (_) {}
+}
+
+function renderBriefCreditLine() {
+  var el = document.getElementById("briefCreditLine");
+  if (!el) return;
+  var debt = sumCreditDebt();
+  var list = getCreditDebts();
+  if (!(debt > 0) || !list.length) {
+    el.innerHTML = "";
+    el.classList.add("hidden");
+    return;
+  }
+  el.classList.remove("hidden");
+  var names = list.slice(0, 3).map(function (x) { return x.title || "Кредит"; }).join(" · ");
+  if (list.length > 3) names += " +";
+  el.innerHTML = '<span class="brief-credit-label">Кредит</span><span class="brief-credit-sum">' + formatMoney(debt) + '</span><span class="brief-credit-sub">' + names + '</span>';
 }
 
 function renderBriefNotesPanel() {
@@ -4238,7 +4368,9 @@ function openArchiveView(arch) {
     "<div><span>ДОХОД</span><b>" + formatMoney(arch.income) + "</b></div>" +
     "<div><span>РАСХОД</span><b>" + formatMoney(arch.expenses) + "</b></div>" +
     "<div><span>ОСТАТОК</span><b class=\"" + balClass + "\">" + formatMoney(arch.balance) + "</b></div>" +
-    "<div><span>ЗАРПЛАТА</span><b>" + formatMoney(arch.salary || 0) + "</b></div>";
+    "<div><span>ЗАРПЛАТА</span><b>" + formatMoney(arch.salary || 0) + "</b></div>" +
+    "<div><span>БЫЛО</span><b>" + formatMoney(arch.totalHad != null ? arch.totalHad : (arch.salary || 0)) + "</b></div>" +
+    "<div><span>СТАЛО</span><b class=\"" + ((Number(arch.totalBecame) >= 0) ? "positive" : "negative") + "\">" + formatMoney(arch.totalBecame != null ? arch.totalBecame : arch.balance) + "</b></div>";
   const temps = document.getElementById("archiveModalTemps");
   let htmlT = "";
   if (arch.chartImage) {
@@ -4284,13 +4416,7 @@ function renderFinancesView() {
   const deposits = getFinance("Вклад");
   const depositDailyTotal = deposits.reduce((s, x) => s + depositDaily(x), 0);
   const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-  const depositMonth = deposits.reduce((s, x) => {
-    const daily = depositDaily(x);
-    if (!daily) return s;
-    if ((x.frequency || "Ежедневно") === "Ежемесячно")
-      return s + (Number(x.amount) || 0) * (Number(x.rate) || 0) / 100 / 12;
-    return s + daily * daysInMonth;
-  }, 0);
+  const depositMonth = sumDepositInterestThisMonth();
   const passive = sumFinance("Пассивный доход");
   const permanent = sumPermanentExpenses();
   const temporary = sumTemporaryExpenses();
@@ -4302,6 +4428,24 @@ function renderFinancesView() {
   const fillColor = tensionColor(tensionValue);
   const monthLabel = new Intl.DateTimeFormat("ru-RU", { month: "long", year: "numeric" }).format(new Date());
   const archives = getMonthArchives();
+
+    var creditDebtTotal = 0;
+  var creditHtml = "";
+  try {
+    creditDebtTotal = sumCreditDebt();
+    var rows = getCreditDebts().map(function (x) {
+      return '<div class="credit-debt-row"><span>' + (x.title || "Кредит") + (x.note ? " · " + x.note : "") + '</span><b>' + formatMoney(x.amount) + '</b></div>';
+    }).join("");
+    if (!rows) {
+      rows = '<div class="credit-debt-row"><span>Записей пока нет</span><b>—</b></div>';
+    }
+    creditHtml = '<div class="fin-card credit-card">'
+      + '<h3>КРЕДИТ · ДОЛГ</h3>'
+      + '<div class="credit-debt-line"><span>К погашению</span><strong>' + formatMoney(creditDebtTotal) + '</strong></div>'
+      + '<div class="credit-debt-list">' + rows + '</div>'
+      + '<p class="credit-hint">Добавьте запись «+» → вид «Кредит». Сумма — сколько должны. Не режет остаток месяца. Чтобы погасить — уменьшите сумму в записи.</p>'
+      + '</div>';
+  } catch (e) { console.error(e); }
 
   root.innerHTML = `
     <div class="fin-card month-salary-card">
@@ -4315,7 +4459,7 @@ function renderFinancesView() {
         <div class="month-stat"><span>Расход</span><strong>${formatMoney(expenses)}</strong></div>
         <div class="month-stat"><span>Остаток</span><strong class="${balance >= 0 ? "positive" : "negative"}">${formatMoney(balance)}</strong></div>
         <div class="month-stat"><span>Отложить</span><strong>${formatMoney(saveRec)}</strong></div>
-        <div class="month-stat"><span>Вклады / день</span><strong class="positive">+${formatMoney(depositDailyTotal)}</strong></div>
+        <div class="month-stat"><span>Вклады % (накоплено)</span><strong class="positive">+${formatMoney(depositMonth)}</strong></div>
       </div>
       ${monthSalary == null
         ? `<div class="month-salary-form">
@@ -4340,6 +4484,8 @@ function renderFinancesView() {
            </div>`
       }
     </div>
+
+    ${creditHtml}
 
     <div class="fin-card">
       <h3>РАЗДЕЛЫ РАСХОДОВ</h3>
