@@ -997,12 +997,31 @@ body.rose {
   line-height: 1.25;
   color: var(--text);
 }
-.info-meta-row {
+.info-top {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 2px;
+}
+.info-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: right;
+}
+.info-side .info-kicker { margin: 0; }
+.info-time {
+  margin: 0;
+  line-height: 1;
+}
+.news-list { margin: 4px 0 8px; padding: 0 2px; list-style: none; }
+.news-list li {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.45;
 }
 .info-time {
   font-size: 28px;
@@ -1904,12 +1923,14 @@ footer .build-meta,
 <section id="home" class="screen active">
 <div class="info-panel" id="welcomeStrip">
     <div class="info-panel-inner">
-      <div class="info-kicker" id="homePlace">—</div>
-      <div class="info-greet" id="homeGreet">—</div>
-      <div class="info-meta-row">
+      <div class="info-top">
         <div class="info-time" id="homeTime">--:--</div>
-        <div class="info-city" id="homeCity">Москва</div>
+        <div class="info-side">
+          <div class="info-kicker" id="homePlace">—</div>
+          <div class="info-city" id="homeCity">Москва</div>
+        </div>
       </div>
+      <div class="info-greet" id="homeGreet">—</div>
       <div class="info-quote" id="homeQuote"></div>
     </div>
   </div>
@@ -1982,7 +2003,7 @@ footer .build-meta,
 </main>
 
 <footer>
-  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.0</div>
+  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.1</div>
   <div class="author" id="footerAuthor1">Кутузов Дмитрий Владимирович</div>
   <div class="author" id="footerAuthor2">Кутузова Ольга Денисовна</div>
 </footer>
@@ -2002,6 +2023,24 @@ footer .build-meta,
     <div class="arch-grid" id="archiveModalGrid"></div>
     <div class="arch-temps" id="archiveModalTemps"></div>
     <button type="button" class="ghost-btn arch-close" id="archiveModalClose" onclick="event.preventDefault();event.stopPropagation();closeArchiveView();">Закрыть</button>
+  </div>
+</div>
+<div id="newsModal" class="settings-modal hidden" aria-hidden="true" onclick="if(event.target===this)closeNews()">
+  <div class="settings-sheet" onclick="event.stopPropagation()">
+    <div class="settings-top">
+      <div>
+        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.1</div>
+        <h3>Что нового</h3>
+      </div>
+      <button type="button" class="icon-btn-sq" id="newsClose" aria-label="Закрыть">×</button>
+    </div>
+    <div class="settings-body">
+      <ul class="news-list">
+        <li>Время в приветствии перенесено в левый верхний угол плашки.</li>
+        <li>Заметки сортируются от самой длинной к самой короткой.</li>
+        <li>В настройках кнопка «Разрешить». Уведомление приходит в день события, заметки, дедлайна и любого плана, а также за 7 дней.</li>
+      </ul>
+    </div>
   </div>
 </div>
 <div id="settingsModal" class="settings-modal hidden" aria-hidden="true" onclick="if(event.target===this)window.__injSettingsClose&&window.__injSettingsClose()">
@@ -2030,6 +2069,13 @@ footer .build-meta,
           <option value="Asia/Yekaterinburg">Москва</option>
           <option value="Europe/Moscow">Екатеринбург</option>
         </select>
+      </section>
+
+      <section class="settings-block">
+        <div class="settings-block-title">Уведомления</div>
+        <p class="settings-hint">В день и за 7 дней: события, заметки, дедлайны и планы.</p>
+        <button type="button" class="primary-btn" id="setNotifyBtn" style="width:100%;height:40px">Разрешить</button>
+        <p class="settings-hint" id="setNotifyState"></p>
       </section>
 
       <section class="settings-block">
@@ -2172,6 +2218,7 @@ const DEFAULT_SETTINGS = {
   font: "sans",
   fontSize: "md",
   textColor: "",
+  notify: false,
   showTension: true,
   showFinanceStrip: true,
   showQuote: true,
@@ -2355,6 +2402,7 @@ function openSettings() {
   modal.style.display = "flex";
   modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("settings-open");
+  try { refreshNotifyBtn(); } catch (_) {}
   document.body.style.overflow = "hidden";
   document.documentElement.style.overflow = "hidden";
 }
@@ -2394,6 +2442,7 @@ function commitSettingsFromForm() {
     font: fontBtn ? fontBtn.getAttribute("data-font") : "sans",
     fontSize: sizeBtn ? sizeBtn.getAttribute("data-size") : "md",
     textColor: textColor,
+    notify: !!(appSettings && appSettings.notify),
     showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
     showWelcome: !!(document.getElementById("setShowWelcome") && document.getElementById("setShowWelcome").checked),
@@ -4358,7 +4407,9 @@ function renderEntries() {
   }
 
   let list = [...data[currentSection]];
-  if (currentSection === "NOTES" || currentSection === "COCOS") {
+  if (currentSection === "NOTES") {
+    list.sort((a, b) => (String(b.title || "").length - String(a.title || "").length) || String(a.title || "").localeCompare(String(b.title || ""), "ru"));
+  } else if (currentSection === "COCOS") {
     list.sort((a, b) => {
       const ad = a.date || "";
       const bd = b.date || "";
@@ -5410,8 +5461,167 @@ document.addEventListener("keydown", function (e) {
 
 try { applySettings(loadSettings()); } catch (e) { console.error(e); }
 try { renderHome(); } catch (e) { console.error("renderHome", e); }
+try { refreshNotifyBtn(); } catch (_) {}
+try { maybeNews(); } catch (_) {}
+try { if (appSettings && appSettings.notify) deliverNotices(); } catch (_) {}
+setInterval(function () {
+  try { if (appSettings && appSettings.notify) deliverNotices(); } catch (_) {}
+}, 15 * 60 * 1000);
+
+function closeNews() {
+  try { localStorage.setItem("injectum_release_seen", "9.1"); } catch (_) {}
+  var modal = document.getElementById("newsModal");
+  if (!modal) return;
+  modal.classList.add("hidden");
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+}
+function maybeNews() {
+  try { if (localStorage.getItem("injectum_release_seen") === "9.1") return; } catch (_) {}
+  var modal = document.getElementById("newsModal");
+  if (!modal) return;
+  modal.classList.remove("hidden");
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+}
+function noticeDay(timeZone) {
+  try {
+    var stamp = new Intl.DateTimeFormat("en-CA", { timeZone: timeZone || "Europe/Moscow", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    var p = stamp.split("-").map(Number);
+    return new Date(p[0], p[1] - 1, p[2]);
+  } catch (_) {
+    var n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  }
+}
+function noticeDiff(target, today) {
+  var a = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+  var b = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.round((a.getTime() - b.getTime()) / 86400000);
+}
+function pushNotice(out, id, when, today, label) {
+  var days = noticeDiff(when, today);
+  if (days !== 0 && days !== 7) return;
+  var date = when.getFullYear() + "-" + String(when.getMonth() + 1).padStart(2, "0") + "-" + String(when.getDate()).padStart(2, "0");
+  out.push({ key: id + "|" + date + "|" + (days === 0 ? "day" : "week"), body: (days === 0 ? "Сегодня" : "Через 7 дней") + " · " + label });
+}
+function dueNotices() {
+  var today = noticeDay(appSettings && appSettings.timeZone);
+  var out = [];
+  (data.EVENTS || []).forEach(function (ev) {
+    var month = Number(ev.month);
+    var day = Number(ev.day);
+    if (!(month && day) && ev.date) {
+      var parts = String(ev.date).split("-").map(Number);
+      month = parts[1];
+      day = parts[2];
+    }
+    if (!(month && day)) return;
+    var when = new Date(today.getFullYear(), month - 1, day);
+    if (noticeDiff(when, today) < 0) when = new Date(today.getFullYear() + 1, month - 1, day);
+    if (Number(ev.doneForYear) === when.getFullYear()) return;
+    var type = ev.eventType === "Другое" ? (ev.eventTypeCustom || "Событие") : (ev.eventType || "Событие");
+    pushNotice(out, "ev:" + ev.id, when, today, type + " · " + (ev.title || "Событие"));
+  });
+  (data.NOTES || []).forEach(function (note) {
+    if (!note.date || note.doneForYear) return;
+    var p = String(note.date).split("-").map(Number);
+    if (p.length !== 3) return;
+    pushNotice(out, "note:" + note.id, new Date(p[0], p[1] - 1, p[2]), today, "Дедлайн · " + (note.title || "Заметка"));
+  });
+  (data.COCOS || []).forEach(function (coco) {
+    if (!coco.date || coco.done) return;
+    var p = String(coco.date).split("-").map(Number);
+    if (p.length !== 3) return;
+    pushNotice(out, "coco:" + coco.id, new Date(p[0], p[1] - 1, p[2]), today, "План · " + (coco.title || "COCOS"));
+  });
+  return out;
+}
+function deliverNotices() {
+  if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
+  if (!(appSettings && appSettings.notify)) return;
+  var notices = dueNotices();
+  var sent = [];
+  try {
+    var raw = JSON.parse(localStorage.getItem("injectum_notices_v1") || "[]");
+    if (Array.isArray(raw)) sent = raw.filter(function (x) { return typeof x === "string"; });
+  } catch (_) {}
+  var have = {};
+  sent.forEach(function (k) { have[k] = true; });
+  var changed = false;
+  notices.forEach(function (n) {
+    if (have[n.key]) return;
+    try {
+      new Notification("INJECTUM", { body: n.body, tag: n.key });
+      have[n.key] = true;
+      changed = true;
+    } catch (_) {}
+  });
+  if (!changed) return;
+  try { localStorage.setItem("injectum_notices_v1", JSON.stringify(Object.keys(have).slice(-400))); } catch (_) {}
+}
+function refreshNotifyBtn() {
+  var btn = document.getElementById("setNotifyBtn");
+  var state = document.getElementById("setNotifyState");
+  if (!btn) return;
+  var perm = typeof Notification === "undefined" ? "no" : Notification.permission;
+  if (perm === "no") {
+    btn.disabled = true;
+    btn.textContent = "Разрешить";
+    if (state) state.textContent = "Этот браузер не умеет уведомления.";
+    return;
+  }
+  if (perm === "denied") {
+    btn.disabled = true;
+    btn.textContent = "Разрешить";
+    if (state) state.textContent = "Браузер запретил уведомления.";
+    return;
+  }
+  btn.disabled = false;
+  if (perm === "granted" && appSettings && appSettings.notify) {
+    btn.textContent = "Выключить";
+    if (state) state.textContent = "Уведомления включены.";
+  } else {
+    btn.textContent = "Разрешить";
+    if (state) state.textContent = "";
+  }
+}
+function onNotifyClick() {
+  if (typeof Notification === "undefined") {
+    showToast("Браузер не поддерживает уведомления");
+    refreshNotifyBtn();
+    return;
+  }
+  if (Notification.permission === "granted" && appSettings && appSettings.notify) {
+    appSettings.notify = false;
+    saveSettings(appSettings);
+    refreshNotifyBtn();
+    showToast("Уведомления выключены");
+    return;
+  }
+  var ask = Notification.permission === "default" ? Notification.requestPermission() : Promise.resolve(Notification.permission);
+  Promise.resolve(ask).then(function (perm) {
+    if (perm !== "granted") {
+      showToast("Уведомления запрещены");
+      refreshNotifyBtn();
+      return;
+    }
+    appSettings.notify = true;
+    saveSettings(appSettings);
+    applySettings(appSettings);
+    deliverNotices();
+    refreshNotifyBtn();
+    showToast("Уведомления включены");
+  }).catch(function () {
+    showToast("Не удалось запросить уведомления");
+  });
+}
 
 (function bindSettingsUi() {
+  var newsClose = document.getElementById("newsClose");
+  if (newsClose) newsClose.addEventListener("click", function () { closeNews(); });
+  var notifyBtn = document.getElementById("setNotifyBtn");
+  if (notifyBtn) notifyBtn.addEventListener("click", function () { onNotifyClick(); });
   const colorRow = document.getElementById("setColorRow");
   if (colorRow) {
     colorRow.addEventListener("click", function (e) {
