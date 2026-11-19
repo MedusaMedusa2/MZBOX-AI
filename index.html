@@ -966,61 +966,6 @@ body.rose {
 .info-line .info-week { margin-left: auto; }
 body[data-corners="sharp"] { --radius: 2px; --radius-lg: 2px; }
 body[data-corners="round"] { --radius: 18px; --radius-lg: 26px; }
-body[data-look="minimal"] .info-panel,
-body[data-look="minimal"] .briefing,
-body[data-look="minimal"] .nav-card,
-body[data-look="minimal"] .entry,
-body[data-look="minimal"] .fin-card {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: inset 0 -1px 0 var(--line);
-}
-body[data-look="soft"] .info-panel,
-body[data-look="soft"] .briefing,
-body[data-look="soft"] .nav-card,
-body[data-look="soft"] .entry,
-body[data-look="soft"] .fin-card {
-  background: var(--surface-2);
-  border-color: var(--line-strong);
-  box-shadow: 0 16px 36px rgba(0,0,0,.45);
-}
-body[data-look="aesthetic"] .info-panel,
-body[data-look="aesthetic"] .briefing,
-body[data-look="aesthetic"] .nav-card,
-body[data-look="aesthetic"] .fin-card {
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
-  box-shadow: none;
-}
-body[data-look="aesthetic"] .info-panel,
-body[data-look="aesthetic"] .briefing { padding: 0; }
-body[data-look="aesthetic"] .info-panel-inner { padding: 14px 12px; }
-body[data-look="aesthetic"] .entry {
-  background: transparent;
-  border: 0;
-  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--text) 12%, transparent);
-}
-body[data-look="glass"] {
-  background:
-    radial-gradient(90% 50% at 0% 0%, color-mix(in srgb, var(--accent) 32%, transparent), transparent 52%),
-    radial-gradient(70% 45% at 100% 8%, rgba(150, 186, 255, 0.2), transparent 48%),
-    #000;
-}
-body[data-look="glass"] .info-panel,
-body[data-look="glass"] .briefing,
-body[data-look="glass"] .nav-card,
-body[data-look="glass"] .entry,
-body[data-look="glass"] .fin-card,
-body[data-look="glass"] .line-card,
-body[data-look="glass"] .settings-block,
-body[data-look="glass"] .settings-sheet,
-body[data-look="glass"] .block-toggle {
-  background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.05) 46%, rgba(255,255,255,.08));
-  border-color: rgba(255,255,255,.34);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.48), 0 12px 32px rgba(0,0,0,.28);
-  backdrop-filter: blur(22px) saturate(1.7);
-  -webkit-backdrop-filter: blur(22px) saturate(1.7);
-}
 .line-card { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 10px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .line-index, .line-meta { flex: none; color: var(--text-dim); font-size: 11px; letter-spacing: 0.08em; }
 .line-text { flex: 1; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1229,8 +1174,6 @@ body[data-look="glass"] .block-toggle {
   display: flex;
   gap: 6px;
 }
-#setLook { flex-wrap: wrap; }
-#setLook button { flex: 1 1 calc(50% - 6px); }
 .settings-seg button {
   flex: 1;
   height: 36px;
@@ -1369,6 +1312,21 @@ footer .footer-brand {
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
 }
 .settings-actions { margin-top: 4px; }
+.settings-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.settings-confirm p { margin: 0; font-size: 14px; }
+.settings-confirm div { display: flex; gap: 6px; }
+.settings-confirm button { height: 36px; padding: 0 14px; }
+.settings-confirm.hidden { display: none; }
 .settings-note { margin-top: 10px; }
 
 
@@ -1967,7 +1925,7 @@ footer .build-meta,
 </main>
 
 <footer>
-  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.5</div>
+  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.6</div>
   <div class="author" id="footerAuthor1">Кутузов Дмитрий Владимирович</div>
   <div class="author" id="footerAuthor2">Кутузова Ольга Денисовна</div>
 </footer>
@@ -1993,14 +1951,15 @@ footer .build-meta,
   <div class="settings-sheet" onclick="event.stopPropagation()">
     <div class="settings-top">
       <div>
-        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.5</div>
+        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.6</div>
         <h3>Что нового</h3>
       </div>
       <button type="button" class="icon-btn-sq" id="newsClose" aria-label="Закрыть">×</button>
     </div>
     <div class="settings-body">
       <ul class="news-list">
-        <li>Вид плашек «Стекло»: полупрозрачные плашки с размытием, как жидкое стекло на новых айфонах.</li>
+        <li>Вид плашек убран.</li>
+        <li>Настройки применяются сразу. Вопрос о сохранении только если что-то менялось.</li>
       </ul>
     </div>
   </div>
@@ -2094,14 +2053,6 @@ footer .build-meta,
           <button type="button" data-corners="soft" class="on">Мягкие</button>
           <button type="button" data-corners="round">Круглые</button>
         </div>
-        <label class="settings-label">Вид плашек</label>
-        <div class="settings-seg" id="setLook">
-          <button type="button" data-look="minimal">Минимум</button>
-          <button type="button" data-look="plain" class="on">Обычно</button>
-          <button type="button" data-look="soft">Мягко</button>
-          <button type="button" data-look="aesthetic">Эстетик</button>
-          <button type="button" data-look="glass">Стекло</button>
-        </div>
         <label class="settings-label">Плотность</label>
         <div class="settings-seg" id="setDensity">
           <button type="button" data-density="compact">Компакт</button>
@@ -2163,6 +2114,13 @@ footer .build-meta,
         <button type="button" class="ghost-btn" id="setReloadApp" style="width:100%;margin-top:10px;height:40px">Обновить программное обеспечение</button>
       </section>
 
+      <div id="settingsConfirm" class="settings-confirm hidden">
+        <p>Сохранить настройки?</p>
+        <div>
+          <button type="button" class="primary-btn" id="setConfirmYes">Да</button>
+          <button type="button" class="ghost-btn" id="setConfirmNo">Нет</button>
+        </div>
+      </div>
       <div class="settings-actions">
         <button type="button" class="primary-btn" id="setSaveBtn">Сохранить</button>
         <button type="button" class="ghost-btn" id="setResetBtn">Сбросить</button>
@@ -2194,7 +2152,6 @@ const DEFAULT_SETTINGS = {
   textColor: "",
   notify: false,
   cardCorner: "soft",
-  cardLook: "plain",
   showTension: true,
   showFinanceStrip: true,
   showQuote: true,
@@ -2248,9 +2205,7 @@ function applySettings(s) {
     narrow: '"Liberation Sans Narrow", "Arial Narrow", sans-serif'
   };
   if (appSettings.cardCorner !== "sharp" && appSettings.cardCorner !== "round") appSettings.cardCorner = "soft";
-  if (appSettings.cardLook !== "minimal" && appSettings.cardLook !== "soft" && appSettings.cardLook !== "aesthetic" && appSettings.cardLook !== "glass") appSettings.cardLook = "plain";
   document.body.setAttribute("data-corners", appSettings.cardCorner);
-  document.body.setAttribute("data-look", appSettings.cardLook);
   document.body.setAttribute("data-font", appSettings.font);
   document.body.setAttribute("data-size", appSettings.fontSize);
   document.documentElement.style.setProperty("--font", fontStacks[appSettings.font]);
@@ -2307,9 +2262,6 @@ function openSettings() {
   });
   document.querySelectorAll("#setCorners button").forEach(function (btn) {
     btn.classList.toggle("on", btn.getAttribute("data-corners") === (s.cardCorner || "soft"));
-  });
-  document.querySelectorAll("#setLook button").forEach(function (btn) {
-    btn.classList.toggle("on", btn.getAttribute("data-look") === (s.cardLook || "plain"));
   });
   var ink = s.textColor || "";
   document.querySelectorAll("#setTextColorRow .swatch").forEach(function (btn) {
@@ -2404,18 +2356,15 @@ function openSettings() {
   try { refreshNotifyBtn(); } catch (_) {}
   document.body.style.overflow = "hidden";
   document.documentElement.style.overflow = "hidden";
+  settingsLive = false;
+  settingsBaseline = readSettingsFromForm();
+  var confirmBar = document.getElementById("settingsConfirm");
+  if (confirmBar) confirmBar.classList.add("hidden");
+  settingsLive = true;
 }
-function closeSettings() {
-  const modal = document.getElementById("settingsModal");
-  if (!modal) return;
-  modal.classList.add("hidden");
-  modal.style.display = "none";
-  modal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("settings-open");
-  document.body.style.overflow = "";
-  document.documentElement.style.overflow = "";
-}
-function commitSettingsFromForm() {
+var settingsLive = false;
+var settingsBaseline = null;
+function readSettingsFromForm() {
   const name = document.getElementById("setDisplayName");
   const custom = document.getElementById("setAccentCustom");
   const densBtn = document.querySelector("#setDensity button.on");
@@ -2429,10 +2378,10 @@ function commitSettingsFromForm() {
   var textColor = "";
   if (inkOn) textColor = inkOn.getAttribute("data-color") || "";
   else if (inkInput && inkInput.dataset.picked === "1") textColor = inkInput.value || "";
-  const next = {
+  return {
     displayName: (name && name.value.trim()) || DEFAULT_SETTINGS.displayName,
     city: (appSettings && appSettings.city) || DEFAULT_SETTINGS.city,
-    accent: (custom && custom.value) || appSettings.accent || DEFAULT_SETTINGS.accent,
+    accent: (custom && custom.value) || (appSettings && appSettings.accent) || DEFAULT_SETTINGS.accent,
     density: densBtn ? densBtn.getAttribute("data-density") : "normal",
     theme: themeBtn ? themeBtn.getAttribute("data-theme") : "dark",
     timeFormat: tfBtn ? tfBtn.getAttribute("data-tf") : "24",
@@ -2442,7 +2391,6 @@ function commitSettingsFromForm() {
     textColor: textColor,
     notify: !!(appSettings && appSettings.notify),
     cardCorner: (function () { var b = document.querySelector("#setCorners button.on"); return b ? b.getAttribute("data-corners") : "soft"; })(),
-    cardLook: (function () { var b = document.querySelector("#setLook button.on"); return b ? b.getAttribute("data-look") : "plain"; })(),
     showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
     showWelcome: !!(document.getElementById("setShowWelcome") && document.getElementById("setShowWelcome").checked),
@@ -2452,9 +2400,45 @@ function commitSettingsFromForm() {
       document.querySelectorAll("#setBlocksRow input[data-block]").forEach(function (cb) {
         if (!cb.checked) out.push(cb.getAttribute("data-block"));
       });
-      return out;
+      return out.sort();
     })()
   };
+}
+function settingsSame(a, b) {
+  if (!a || !b) return false;
+  var left = Object.assign({}, a, { hiddenBlocks: (a.hiddenBlocks || []).slice().sort() });
+  var right = Object.assign({}, b, { hiddenBlocks: (b.hiddenBlocks || []).slice().sort() });
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+function previewSettings() {
+  if (!settingsLive) return;
+  var next = readSettingsFromForm();
+  saveSettings(next);
+  applySettings(next);
+}
+function requestCloseSettings() {
+  if (!settingsBaseline || settingsSame(readSettingsFromForm(), settingsBaseline)) {
+    closeSettings();
+    return;
+  }
+  var bar = document.getElementById("settingsConfirm");
+  if (bar) bar.classList.remove("hidden");
+}
+function closeSettings() {
+  settingsLive = false;
+  var bar = document.getElementById("settingsConfirm");
+  if (bar) bar.classList.add("hidden");
+  const modal = document.getElementById("settingsModal");
+  if (!modal) return;
+  modal.classList.add("hidden");
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("settings-open");
+  document.body.style.overflow = "";
+  document.documentElement.style.overflow = "";
+}
+function commitSettingsFromForm() {
+  var next = readSettingsFromForm();
   saveSettings(next);
   applySettings(next);
   closeSettings();
@@ -5410,7 +5394,7 @@ window.__injSettings = function (e) {
 };
 window.__injSettingsClose = function (e) {
   if (e) { e.preventDefault(); e.stopPropagation(); }
-  try { closeSettings(); } catch (err) { console.error(err); }
+  try { requestCloseSettings(); } catch (err) { console.error(err); }
 };
 
 // Hide overlays on boot
@@ -5702,7 +5686,29 @@ function onNotifyClick() {
   bindSeg("setFont");
   bindSeg("setFontSize");
   bindSeg("setCorners");
-  bindSeg("setLook");
+  var settingsSheet = document.querySelector(".settings-sheet");
+  if (settingsSheet && !settingsSheet.dataset.live) {
+    settingsSheet.dataset.live = "1";
+    settingsSheet.addEventListener("input", function () { previewSettings(); });
+    settingsSheet.addEventListener("change", function () { previewSettings(); });
+    settingsSheet.addEventListener("click", function (e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      if (btn.closest("#settingsConfirm") || btn.id === "setSaveBtn" || btn.id === "setResetBtn" || btn.id === "setCopyHtml" || btn.id === "setReloadApp" || btn.id === "setWipeBtn" || btn.getAttribute("aria-label") === "Закрыть") return;
+      setTimeout(previewSettings, 0);
+    });
+  }
+  var yesBtn = document.getElementById("setConfirmYes");
+  var noBtn = document.getElementById("setConfirmNo");
+  if (yesBtn) yesBtn.addEventListener("click", function () { commitSettingsFromForm(); });
+  if (noBtn) noBtn.addEventListener("click", function () {
+    settingsLive = false;
+    if (settingsBaseline) {
+      saveSettings(settingsBaseline);
+      applySettings(settingsBaseline);
+    }
+    closeSettings();
+  });
   var inkRow = document.getElementById("setTextColorRow");
   if (inkRow) {
     inkRow.addEventListener("click", function (e) {
