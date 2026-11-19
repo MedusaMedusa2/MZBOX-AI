@@ -850,7 +850,6 @@ body.light {
   --text: #161616;
   --text-dim: #6a685f;
   --text-faint: #9a978c;
-  --accent: #5c5748;
   --ok: #2f6f52;
   --warn: #a14a42;
 }
@@ -872,7 +871,6 @@ body.rose {
   --text: #f6ecef;
   --text-dim: #b59aa3;
   --text-faint: #7a6570;
-  --accent: #e0b7bf;
   --ok: #8fbf9a;
   --warn: #d9899a;
 }
@@ -1281,6 +1279,63 @@ footer .footer-brand {
   justify-content: center;
 }
 
+
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.live-dot.on {
+  background: var(--ok);
+  box-shadow: 0 0 0 3px rgba(122,171,144,0.18);
+}
+.tension-title { display: inline-flex; align-items: center; }
+.tension-sub {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+.logo { color: var(--accent); }
+.brief-top h2 { color: var(--accent); }
+.section-label { color: var(--text-faint); }
+.section-label-center { color: var(--accent); opacity: 0.85; }
+.nav-card:active { border-color: var(--accent); }
+.icon-btn-sq.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #111;
+}
+body.light .icon-btn-sq.primary { color: #111; }
+.primary-btn {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #111;
+}
+body.light .primary-btn { color: #111; }
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.search-toolbar input:focus,
+#searchInput:focus,
+.month-salary-row input:focus,
+.settings-body input[type="text"]:focus {
+  border-color: var(--accent);
+}
+.info-kicker { color: var(--accent); }
+.info-quote cite { color: var(--accent); opacity: 0.85; }
+.brief-check:active { border-color: var(--accent); color: var(--accent); }
+.settings-seg button.on {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.word-chip.goal { border-color: var(--accent); color: var(--accent); }
+.toast { background: var(--accent); color: #111; }
+
 </style>
 
 </head>
@@ -1326,7 +1381,7 @@ footer .footer-brand {
     
     <div class="finance-block" id="briefTensionBlock">
       <div class="finance-block-title">
-        <span>НАПРЯЖЁННОСТЬ</span>
+        <span class="tension-title"><i class="live-dot" id="briefTensionLive"></i>НАПРЯЖЁННОСТЬ</span>
         <span id="briefTensionLabel">—</span>
       </div>
       <div class="tension-wrap">
@@ -1995,10 +2050,10 @@ function depositEffectiveAmount(item) {
 function autoTensionFromMzbox() {
   const mz = readMzboxSummary();
   if (!mz || !(mz.cost > 0)) return null;
-  // +10% к портфелю → 0% напряжённости; -10% → 100%; 0% → 50%
+  // Как в MZBOX: mzTension = 50 - pct*10
+  // +5% → 0%, 0% → 50%, -5% → 100%
   const pct = (mz.pnl / mz.cost) * 100;
-  const t = (10 - pct) * 5;
-  return Math.max(0, Math.min(100, t));
+  return Math.max(0, Math.min(100, 50 - pct * 10));
 }
 
 
@@ -2592,18 +2647,28 @@ function renderBriefing() {
   });
 
   // Tension
+  refreshTensionLive();
+}
+
+function refreshTensionLive() {
   const autoT = autoTensionFromMzbox();
-  if (autoT != null) {
+  const live = autoT != null;
+  if (live) {
     tensionValue = autoT;
     try { localStorage.setItem(TENSION_KEY, String(tensionValue)); } catch (_) {}
   }
   const tFill = document.getElementById("briefTensionFill");
   const tLabel = document.getElementById("briefTensionLabel");
+  const tDot = document.getElementById("briefTensionLive");
   if (tFill) {
     tFill.style.width = tensionValue + "%";
     tFill.style.background = tensionColor(tensionValue);
   }
   if (tLabel) tLabel.textContent = Math.round(tensionValue) + "%";
+  if (tDot) {
+    const mz = readMzboxSummary();
+    tDot.classList.toggle("on", !!(mz && mz.cost > 0));
+  }
 }
 
 
@@ -4153,6 +4218,9 @@ try { updateClock(); } catch (e) { console.error(e); }
 setInterval(function () {
   try { updateClock(); } catch (_) {}
 }, 60000);
+setInterval(function () {
+  try { refreshTensionLive(); } catch (_) {}
+}, 12000);
 
 document.addEventListener("visibilitychange", function () {
   if (document.visibilityState === "visible") {
