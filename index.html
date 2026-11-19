@@ -1058,7 +1058,13 @@ body[data-look="aesthetic"] .entry {
   border: 0;
   box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--text) 12%, transparent);
 }
-.info-week { margin: 0; font-size: 14px; line-height: 1.2; color: var(--text); }
+.note-card { padding: 14px 14px 8px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); margin-bottom: 10px; }
+.note-card.planned { background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+.note-meta, .reflect-foot span { color: var(--text-dim); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+.note-body { margin: 8px 0; font-size: 16px; line-height: 1.45; white-space: pre-wrap; }
+.reflect { padding: 2px 2px 12px; margin-bottom: 10px; border-bottom: 1px solid var(--line); }
+.reflect-text { margin: 0; font-family: "Liberation Serif", Georgia, serif; font-size: 20px; line-height: 1.4; }
+.reflect-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
 .info-date { margin: 0; font-size: 12px; line-height: 1.35; color: var(--text-dim); text-align: right; }
 .info-time {
   margin: 0;
@@ -1982,10 +1988,6 @@ footer .build-meta,
         <div class="info-time" id="homeTime">--:--</div>
         <div class="info-date" id="homeDate">—</div>
       </div>
-      <div class="info-line">
-        <span></span>
-        <div class="info-city" id="homeCity">Москва</div>
-      </div>
       <div class="info-quote" id="homeQuote"></div>
     </div>
   </div>
@@ -2057,7 +2059,7 @@ footer .build-meta,
 </main>
 
 <footer>
-  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.2</div>
+  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.3</div>
   <div class="author" id="footerAuthor1">Кутузов Дмитрий Владимирович</div>
   <div class="author" id="footerAuthor2">Кутузова Ольга Денисовна</div>
 </footer>
@@ -2083,17 +2085,16 @@ footer .build-meta,
   <div class="settings-sheet" onclick="event.stopPropagation()">
     <div class="settings-top">
       <div>
-        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.2</div>
+        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.3</div>
         <h3>Что нового</h3>
       </div>
       <button type="button" class="icon-btn-sq" id="newsClose" aria-label="Закрыть">×</button>
     </div>
     <div class="settings-body">
       <ul class="news-list">
-        <li>Приветствие в одну строку. Справа день недели, ниже дата и год, затем город.</li>
-        <li>Дата убрана из брифинга: она уже есть в информационной плашке.</li>
-        <li>Уведомление по записи приходит один раз за 7 дней, один раз за день и один раз в сам день.</li>
-        <li>Углы плашек настраиваются. Вид плашек теперь виден сразу: минимум, обычно, мягко и эстетик.</li>
+        <li>Город убран из настроек и с информационной плашки.</li>
+        <li>При смене темы текст, который сливался с фоном, остаётся читаемым.</li>
+        <li>Заметки открываются карточками, рефлексия — отдельной лентой мыслей.</li>
       </ul>
     </div>
   </div>
@@ -2112,8 +2113,6 @@ footer .build-meta,
         <div class="settings-block-title">Профиль</div>
         <label class="settings-label" for="setDisplayName">Имя в приветствии</label>
         <input type="text" id="setDisplayName" maxlength="40" placeholder="Дмитрий" autocomplete="name">
-        <label class="settings-label" for="setCity">Город</label>
-        <input type="text" id="setCity" maxlength="40" placeholder="Москва" autocomplete="address-level2">
         <label class="settings-label">Формат времени</label>
         <div class="settings-seg" id="setTimeFormat">
           <button type="button" data-tf="24" class="on">24 часа</button>
@@ -2296,6 +2295,24 @@ const DEFAULT_SETTINGS = {
   showWelcome: true,
   hiddenBlocks: []
 };
+function textReadable(color, theme) {
+  function ch(hex) {
+    var raw = String(hex || "").trim().replace("#", "");
+    var full = raw.length === 3 ? raw.split("").map(function (c) { return c + c; }).join("") : raw;
+    if (!/^[0-9a-f]{6}$/i.test(full)) return null;
+    return [parseInt(full.slice(0, 2), 16), parseInt(full.slice(2, 4), 16), parseInt(full.slice(4, 6), 16)];
+  }
+  function lum(rgb) {
+    function f(c) { var x = c / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }
+    return 0.2126 * f(rgb[0]) + 0.7152 * f(rgb[1]) + 0.0722 * f(rgb[2]);
+  }
+  var a = ch(color);
+  var b = ch(theme === "light" ? "#f3f2ee" : "#000000");
+  if (!a || !b) return false;
+  var hi = Math.max(lum(a), lum(b));
+  var lo = Math.min(lum(a), lum(b));
+  return (hi + 0.05) / (lo + 0.05) >= 4.2;
+}
 function loadSettings() {
   try {
     const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null");
@@ -2331,10 +2348,11 @@ function applySettings(s) {
   document.body.setAttribute("data-size", appSettings.fontSize);
   document.documentElement.style.setProperty("--font", fontStacks[appSettings.font]);
   document.body.style.setProperty("--font", fontStacks[appSettings.font]);
-  if (appSettings.textColor) {
+  if (appSettings.textColor && textReadable(appSettings.textColor, appSettings.theme)) {
     document.documentElement.style.setProperty("--text", appSettings.textColor);
     document.body.style.setProperty("--text", appSettings.textColor);
   } else {
+    appSettings.textColor = "";
     document.documentElement.style.removeProperty("--text");
     document.body.style.removeProperty("--text");
   }
@@ -2369,10 +2387,8 @@ function openSettings() {
   const s = loadSettings();
   appSettings = s;
   const name = document.getElementById("setDisplayName");
-  const city = document.getElementById("setCity");
   const custom = document.getElementById("setAccentCustom");
   if (name) name.value = s.displayName || "";
-  if (city) city.value = s.city || "";
   if (custom) custom.value = s.accent || "#c8c2b0";
   document.querySelectorAll("#setColorRow .swatch").forEach(function (btn) {
     btn.classList.toggle("on", (btn.getAttribute("data-color") || "").toLowerCase() === String(s.accent || "").toLowerCase());
@@ -2498,7 +2514,6 @@ function closeSettings() {
 }
 function commitSettingsFromForm() {
   const name = document.getElementById("setDisplayName");
-  const city = document.getElementById("setCity");
   const custom = document.getElementById("setAccentCustom");
   const densBtn = document.querySelector("#setDensity button.on");
   const themeBtn = document.querySelector("#setThemeMode button.on");
@@ -2513,7 +2528,7 @@ function commitSettingsFromForm() {
   else if (inkInput && inkInput.dataset.picked === "1") textColor = inkInput.value || "";
   const next = {
     displayName: (name && name.value.trim()) || DEFAULT_SETTINGS.displayName,
-    city: (city && city.value.trim()) || DEFAULT_SETTINGS.city,
+    city: (appSettings && appSettings.city) || DEFAULT_SETTINGS.city,
     accent: (custom && custom.value) || appSettings.accent || DEFAULT_SETTINGS.accent,
     density: densBtn ? densBtn.getAttribute("data-density") : "normal",
     theme: themeBtn ? themeBtn.getAttribute("data-theme") : "dark",
@@ -4514,6 +4529,47 @@ function renderEntries() {
     root.innerHTML = '<div class="empty">Записей пока нет</div>';
     return;
   }
+  if (currentSection === "NOTES" || currentSection === "REFLECTION") {
+    list.forEach(function (item, index) {
+      var row = document.createElement("article");
+      var actions = document.createElement("div");
+      actions.className = "entry-actions";
+      var edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "icon-btn";
+      edit.textContent = "✎";
+      edit.addEventListener("click", function () { openForm(item); });
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "icon-btn";
+      del.textContent = "×";
+      del.addEventListener("click", function () { deleteEntry(item.id); });
+      actions.append(edit, del);
+      if (currentSection === "NOTES") {
+        row.className = "note-card" + (item.date ? " planned" : "");
+        var meta = document.createElement("div");
+        meta.className = "note-meta";
+        meta.textContent = String(index + 1).padStart(2, "0") + "   " + (item.date ? "до " + formatDate(item.date) : "без срока");
+        var body = document.createElement("p");
+        body.className = "note-body";
+        body.textContent = item.title || "Без названия";
+        row.append(meta, body, actions);
+      } else {
+        row.className = "reflect";
+        var text = document.createElement("p");
+        text.className = "reflect-text";
+        text.textContent = item.title || "Без названия";
+        var foot = document.createElement("div");
+        foot.className = "reflect-foot";
+        var when = document.createElement("span");
+        when.textContent = item.createdAt ? formatDate(String(item.createdAt).slice(0, 10)) : "мысль";
+        foot.append(when, actions);
+        row.append(text, foot);
+      }
+      root.appendChild(row);
+    });
+    return;
+  }
   list.forEach(item => {
     const row = document.createElement("div");
     let cls = "entry" + (isDueSoon(item.date, 10, item) ? " due-soon" : "");
@@ -5329,7 +5385,7 @@ function updateWelcomePanel(){
     g.textContent = greet + ", " + nm + ".";
   }
   const cityEl = document.getElementById("homeCity");
-  if (cityEl) cityEl.textContent = (appSettings && appSettings.city) ? appSettings.city : "Москва";
+  if (cityEl && cityEl.parentNode) cityEl.parentNode.removeChild(cityEl);
   if (q && (!q.dataset.at || Date.now()-Number(q.dataset.at)>3600000)) {
     const pair = pickQuote();
     const text = pair[0] || "";
