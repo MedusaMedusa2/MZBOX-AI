@@ -66,10 +66,10 @@ header {
 }
 .logo {
   cursor: pointer;
-  font-size: 16px;
-  font-weight: 650;
-  letter-spacing: 0.22em;
-  color: var(--text);
+  font-size: 20px;
+  font-weight: 760;
+  letter-spacing: 0.18em;
+  color: var(--accent);
   user-select: none;
 }
 .header-actions {
@@ -558,6 +558,9 @@ header {
   background: var(--surface);
   padding: 14px;
   margin-bottom: 10px;
+}
+.fin-card, .info-panel, .briefing, .nav-card, .entry, .note-ios, .statement, .settings-sheet {
+  color: var(--card-text, var(--text));
 }
 .fin-card h3 {
   font-size: 10px;
@@ -2081,43 +2084,23 @@ body.hide-tips .tip { display: none !important; }
           <button type="button" data-size="md" class="on">Обычный</button>
           <button type="button" data-size="lg">Крупный</button>
         </div>
-        <label class="settings-label">Цвет всего текста</label>
-        <div class="settings-colors" id="setTextColorRow">
-          <button type="button" class="swatch" data-color="#f0efe9" style="background:#f0efe9" title="Бумага"></button>
-          <button type="button" class="swatch" data-color="#e6d7c3" style="background:#e6d7c3" title="Тёплый"></button>
-          <button type="button" class="swatch" data-color="#d5dde6" style="background:#d5dde6" title="Холодный"></button>
-          <button type="button" class="swatch" data-color="#f3dfe4" style="background:#f3dfe4" title="Роза"></button>
-          <button type="button" class="swatch" data-color="#161616" style="background:#161616" title="Чернила"></button>
-          <button type="button" class="swatch" data-color="#3a3834" style="background:#3a3834" title="Графит"></button>
-        </div>
+        <label class="settings-label">Фон</label>
         <div class="settings-color-custom">
-          <input type="color" id="setTextColor" value="#f0efe9" aria-label="Свой цвет текста">
+          <input type="color" id="setBgColor" value="#000000" aria-label="Фон">
           <span>Свой цвет</span>
-          <button type="button" class="ghost-btn" id="setTextColorReset" style="height:32px;padding:0 10px">Как в теме</button>
+          <button type="button" class="ghost-btn" id="setBgReset" style="height:32px;padding:0 10px">По умолчанию</button>
+        </div>
+        <label class="settings-label">Плашки</label>
+        <div class="settings-color-custom">
+          <input type="color" id="setCardColor" value="#161616" aria-label="Плашки">
+          <span>Свой цвет</span>
+          <button type="button" class="ghost-btn" id="setCardReset" style="height:32px;padding:0 10px">По умолчанию</button>
         </div>
         <label class="settings-label">Акцент</label>
-        <div class="settings-colors" id="setColorRow">
-          <button type="button" class="swatch" data-color="#c8c2b0" style="background:#c8c2b0" title="Кость"></button>
-          <button type="button" class="swatch" data-color="#8fbf9a" style="background:#8fbf9a" title="Зелёный"></button>
-          <button type="button" class="swatch" data-color="#7aa2c4" style="background:#7aa2c4" title="Сталь"></button>
-          <button type="button" class="swatch" data-color="#c47d76" style="background:#c47d76" title="Терракота"></button>
-          <button type="button" class="swatch" data-color="#e0b7bf" style="background:#e0b7bf" title="Роза"></button>
-          <button type="button" class="swatch" data-color="#d4c35a" style="background:#d4c35a" title="Лайм"></button>
-          <button type="button" class="swatch" data-color="#a78bfa" style="background:#a78bfa" title="Фиолет"></button>
-          <button type="button" class="swatch" data-color="#f0efe9" style="background:#f0efe9" title="Светлый"></button>
-        </div>
         <div class="settings-color-custom">
-          <input type="color" id="setAccentCustom" value="#c8c2b0" aria-label="Свой акцент">
-          <span>Свой акцент</span>
-        </div>
-        <label class="settings-label">Цвет плашек</label>
-        <div class="settings-colors" id="setCardColorRow">
-          <button type="button" class="swatch on" data-color="" title="Как в теме"></button>
-          <button type="button" class="swatch" data-color="#161616" style="background:#161616"></button>
-          <button type="button" class="swatch" data-color="#241c20" style="background:#241c20"></button>
-          <button type="button" class="swatch" data-color="#1b2420" style="background:#1b2420"></button>
-          <button type="button" class="swatch" data-color="#f6f3ec" style="background:#f6f3ec"></button>
-          <input type="color" id="setCardColor" value="#161616" aria-label="Свой цвет плашек">
+          <input type="color" id="setAccentCustom" value="#c8c2b0" aria-label="Акцент">
+          <span>Свой цвет</span>
+          <button type="button" class="ghost-btn" id="setAccentReset" style="height:32px;padding:0 10px">По умолчанию</button>
         </div>
         <label class="settings-label">Углы плашек</label>
         <div class="settings-seg" id="setCorners">
@@ -2132,14 +2115,10 @@ body.hide-tips .tip { display: none !important; }
           <button type="button" data-frame="2">2</button>
           <button type="button" data-frame="3">3</button>
         </div>
-        <div class="settings-colors frame-row" id="setFrameColorRow">
-          <button type="button" class="swatch on" data-color="" title="Как в теме"></button>
-          <button type="button" class="swatch" data-color="#3a3a3a" style="background:#3a3a3a" title="Графит"></button>
-          <button type="button" class="swatch" data-color="#c8c2b0" style="background:#c8c2b0" title="Кость"></button>
-          <button type="button" class="swatch" data-color="#f0efe9" style="background:#f0efe9" title="Светлый"></button>
-          <button type="button" class="swatch" data-color="#7aab90" style="background:#7aab90" title="Зелёный"></button>
-          <button type="button" class="swatch" data-color="#c47d76" style="background:#c47d76" title="Терракота"></button>
-          <input type="color" id="setFrameColor" value="#3a3a3a" aria-label="Цвет границы">
+        <div class="settings-color-custom">
+          <input type="color" id="setFrameColor" value="#3a3a3a" aria-label="Рамка">
+          <span>Цвет рамки</span>
+          <button type="button" class="ghost-btn" id="setFrameReset" style="height:32px;padding:0 10px">По умолчанию</button>
         </div>
         <label class="settings-label">Плотность</label>
         <div class="settings-seg" id="setDensity">
@@ -2251,6 +2230,7 @@ const DEFAULT_SETTINGS = {
   hideMoney: false,
   showSeconds: true,
   cardColor: "",
+  bgColor: "",
   showTension: true,
   showFinanceStrip: true,
   showQuote: true,
@@ -2291,6 +2271,74 @@ function saveSettings(s) {
   try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch (_) {}
 }
 let appSettings = loadSettings();
+
+function hexChannels(color) {
+  var raw = String(color || "").trim().replace("#", "");
+  var full = raw.length === 3 ? raw.split("").map(function (p) { return p + p; }).join("") : raw;
+  if (!/^[0-9a-f]{6}$/i.test(full)) return null;
+  return [parseInt(full.slice(0, 2), 16), parseInt(full.slice(2, 4), 16), parseInt(full.slice(4, 6), 16)];
+}
+function relContrast(a, b) {
+  function lum(rgb) {
+    function f(c) { var x = c / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }
+    return 0.2126 * f(rgb[0]) + 0.7152 * f(rgb[1]) + 0.0722 * f(rgb[2]);
+  }
+  var A = hexChannels(a), B = hexChannels(b);
+  if (!A || !B) return 1;
+  var hi = Math.max(lum(A), lum(B)), lo = Math.min(lum(A), lum(B));
+  return (hi + 0.05) / (lo + 0.05);
+}
+function hslHex(h, s, l) {
+  var S = s / 100, L = l / 100, c = (1 - Math.abs(2 * L - 1)) * S, hp = h / 60, x = c * (1 - Math.abs(hp % 2 - 1));
+  var r = 0, g = 0, b = 0;
+  if (hp < 1) { r = c; g = x; }
+  else if (hp < 2) { r = x; g = c; }
+  else if (hp < 3) { g = c; b = x; }
+  else if (hp < 4) { g = x; b = c; }
+  else if (hp < 5) { r = x; b = c; }
+  else { r = c; b = x; }
+  var m = L - c / 2;
+  function h2(v) { return Math.round(Math.min(255, Math.max(0, (v + m) * 255))).toString(16).padStart(2, "0"); }
+  return "#" + h2(r) + h2(g) + h2(b);
+}
+function hueOf(rgb) {
+  var r = rgb[0] / 255, g = rgb[1] / 255, b = rgb[2] / 255;
+  var max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min, h = 0;
+  if (d) {
+    if (max === r) h = ((g - b) / d) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h *= 60; if (h < 0) h += 360;
+  }
+  return { h: h, sat: max === 0 ? 0 : d / max };
+}
+function inkFor(surface) {
+  var rgb = hexChannels(surface);
+  if (!rgb) return "#f0efe9";
+  var hs = hueOf(rgb);
+  if (hs.sat < 0.08) return relContrast("#141414", surface) >= relContrast("#f6f4ef", surface) ? "#141414" : "#f6f4ef";
+  var saturation = Math.min(78, Math.max(55, hs.sat * 100));
+  var darkInk = "", darkLevel = -1, lightInk = "", lightLevel = 100, lightness, next;
+  for (lightness = 12; lightness <= 36; lightness += 2) {
+    next = hslHex(hs.h, saturation, lightness);
+    if (relContrast(next, surface) >= 4.2 && lightness > darkLevel) { darkInk = next; darkLevel = lightness; }
+  }
+  for (lightness = 76; lightness <= 94; lightness += 2) {
+    next = hslHex(hs.h, Math.max(42, saturation - 8), lightness);
+    if (relContrast(next, surface) >= 4.2 && lightness < lightLevel) { lightInk = next; lightLevel = lightness; }
+  }
+  if (darkInk && lightInk) return relContrast(darkInk, surface) >= relContrast(lightInk, surface) ? darkInk : lightInk;
+  if (darkInk) return darkInk;
+  if (lightInk) return lightInk;
+  return relContrast("#141414", surface) >= relContrast("#f6f4ef", surface) ? "#141414" : "#f6f4ef";
+}
+function tone(ink, surface, toward) {
+  var a = hexChannels(ink), b = hexChannels(surface);
+  if (!a || !b) return ink;
+  var mix = a.map(function (c, i) { return Math.round(c * (1 - toward) + b[i] * toward); });
+  var hex = "#" + mix.map(function (c) { return c.toString(16).padStart(2, "0"); }).join("");
+  return relContrast(hex, surface) >= 2.2 ? hex : ink;
+}
 function applySettings(s) {
   appSettings = Object.assign({}, DEFAULT_SETTINGS, s || appSettings);
   if (!Array.isArray(appSettings.hiddenBlocks)) appSettings.hiddenBlocks = [];
@@ -2321,14 +2369,22 @@ function applySettings(s) {
   document.body.setAttribute("data-size", appSettings.fontSize);
   document.documentElement.style.setProperty("--font", fontStacks[appSettings.font]);
   document.body.style.setProperty("--font", fontStacks[appSettings.font]);
-  if (appSettings.textColor && textReadable(appSettings.textColor, appSettings.theme)) {
-    document.documentElement.style.setProperty("--text", appSettings.textColor);
-    document.body.style.setProperty("--text", appSettings.textColor);
-  } else {
-    appSettings.textColor = "";
-    document.documentElement.style.removeProperty("--text");
-    document.body.style.removeProperty("--text");
-  }
+  var pageBg = appSettings.bgColor || (appSettings.theme === "light" ? "#f3f2ee" : "#000000");
+  var cardBg = appSettings.cardColor || (appSettings.theme === "light" ? "#ffffff" : appSettings.theme === "rose" ? "#140f12" : "#000000");
+  var pageInk = inkFor(pageBg);
+  var cardInk = inkFor(cardBg);
+  document.documentElement.style.background = pageBg;
+  document.body.style.background = pageBg;
+  document.documentElement.style.setProperty("--bg", pageBg);
+  document.body.style.setProperty("--bg", pageBg);
+  document.documentElement.style.setProperty("--text", pageInk);
+  document.body.style.setProperty("--text", pageInk);
+  document.documentElement.style.setProperty("--text-dim", tone(pageInk, pageBg, 0.34));
+  document.body.style.setProperty("--text-dim", tone(pageInk, pageBg, 0.34));
+  document.documentElement.style.setProperty("--text-faint", tone(pageInk, pageBg, 0.55));
+  document.body.style.setProperty("--text-faint", tone(pageInk, pageBg, 0.55));
+  document.documentElement.style.setProperty("--card-text", cardInk);
+  document.body.style.setProperty("--card-text", cardInk);
   const accent = appSettings.accent || DEFAULT_SETTINGS.accent;
   document.body.classList.remove("density-compact", "density-wide", "density-super");
   const dens = appSettings.density || "normal";
@@ -2367,6 +2423,21 @@ function openSettings() {
   const custom = document.getElementById("setAccentCustom");
   if (name) name.value = s.displayName || "";
   if (custom) custom.value = s.accent || "#c8c2b0";
+  var bgInput = document.getElementById("setBgColor");
+  if (bgInput) {
+    bgInput.value = s.bgColor || (s.theme === "light" ? "#f3f2ee" : "#000000");
+    bgInput.dataset.picked = s.bgColor ? "1" : "";
+  }
+  var cardInputOpen = document.getElementById("setCardColor");
+  if (cardInputOpen) {
+    cardInputOpen.value = s.cardColor || (s.theme === "light" ? "#ffffff" : "#161616");
+    cardInputOpen.dataset.picked = s.cardColor ? "1" : "";
+  }
+  var frameInputOpen = document.getElementById("setFrameColor");
+  if (frameInputOpen) {
+    frameInputOpen.value = s.frameColor || "#3a3a3a";
+    frameInputOpen.dataset.picked = s.frameColor ? "1" : "";
+  }
   document.querySelectorAll("#setColorRow .swatch").forEach(function (btn) {
     btn.classList.toggle("on", (btn.getAttribute("data-color") || "").toLowerCase() === String(s.accent || "").toLowerCase());
   });
@@ -2549,18 +2620,16 @@ function readSettingsFromForm() {
     cardCorner: (function () { var b = document.querySelector("#setCorners button.on"); return b ? b.getAttribute("data-corners") : "soft"; })(),
     frameWidth: (function () { var b = document.querySelector("#setFrame button.on"); return b ? Number(b.getAttribute("data-frame")) : 1; })(),
     frameColor: (function () {
-      var on = document.querySelector("#setFrameColorRow .swatch.on");
       var input = document.getElementById("setFrameColor");
-      if (on) return on.getAttribute("data-color") || "";
-      if (input && input.dataset.picked === "1") return input.value || "";
-      return "";
+      return input && input.dataset.picked === "1" ? input.value : "";
     })(),
     cardColor: (function () {
-      var on = document.querySelector("#setCardColorRow .swatch.on");
       var input = document.getElementById("setCardColor");
-      if (on) return on.getAttribute("data-color") || "";
-      if (input && input.dataset.picked === "1") return input.value || "";
-      return "";
+      return input && input.dataset.picked === "1" ? input.value : "";
+    })(),
+    bgColor: (function () {
+      var input = document.getElementById("setBgColor");
+      return input && input.dataset.picked === "1" ? input.value : "";
     })(),
     showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
@@ -6065,6 +6134,19 @@ function onNotifyClick() {
       document.querySelectorAll("#setCardColorRow .swatch").forEach(function (x) { x.classList.remove("on"); });
     });
   }
+  function bindColor(id, resetId) {
+    var input = document.getElementById(id);
+    var reset = document.getElementById(resetId);
+    if (input) input.addEventListener("input", function () { input.dataset.picked = "1"; });
+    if (reset) reset.addEventListener("click", function () {
+      if (input) input.dataset.picked = "";
+      if (id === "setAccentCustom" && input) input.value = "#c8c2b0";
+    });
+  }
+  bindColor("setBgColor", "setBgReset");
+  bindColor("setCardColor", "setCardReset");
+  bindColor("setAccentCustom", "setAccentReset");
+  bindColor("setFrameColor", "setFrameReset");
   var frameRow = document.getElementById("setFrameColorRow");
   if (frameRow) {
     frameRow.addEventListener("click", function (e) {
