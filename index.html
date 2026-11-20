@@ -3186,27 +3186,21 @@ function depositIsMonthly(item) {
   return (item.frequency || "Ежедневно") === "Ежемесячно";
 }
 
-function depositFactor(item, today) {
-  const r = depositRateOf(item);
-  if (!(r > 0)) return 1;
-  const start = depositStartDate(item);
-  const t = new Date(today || new Date());
-  t.setHours(0, 0, 0, 0);
-  if (t < start) return 1;
-  if (depositIsMonthly(item)) {
-    let months = (t.getFullYear() - start.getFullYear()) * 12 + (t.getMonth() - start.getMonth());
-    if (t.getDate() < start.getDate()) months -= 1;
-    months = Math.max(0, months);
-    const last = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
-    last.setHours(0, 0, 0, 0);
-    const next = new Date(start.getFullYear(), start.getMonth() + months + 1, start.getDate());
-    next.setHours(0, 0, 0, 0);
-    const span = Math.max(1, Math.round((next - last) / 86400000));
-    const into = Math.max(0, Math.round((t - last) / 86400000));
-    const frac = Math.min(1, into / span);
-    return Math.pow(1 + r / 12, months) * (1 + (r / 12) * frac);
+function depositAnchor(item) {
+  var raw = item.accrueFrom || item.createdAt;
+  if (raw) {
+    var d = new Date(raw);
+    if (!isNaN(d.getTime())) return d;
   }
-  const days = Math.max(0, Math.round((t - start) / 86400000));
+  return depositStartDate(item);
+}
+
+function depositFactor(item, today) {
+  var r = depositRateOf(item);
+  if (!(r > 0)) return 1;
+  var t = today ? new Date(today) : new Date();
+  var days = Math.floor((t.getTime() - depositAnchor(item).getTime()) / 86400000);
+  if (days <= 0) return 1;
   return Math.pow(1 + r / 365, days);
 }
 
@@ -4126,8 +4120,8 @@ function getSub(item) {
     }
     if (item.kind === "Вклад") {
       text += " · " + (item.rate || 0) + "%";
-      const step = depositIsMonthly(item) ? depositMonthlyInterest(item) : depositDaily(item);
-      if (step > 0) text += " · +" + formatMoney(step) + (depositIsMonthly(item) ? "/мес" : "/день");
+      const step = depositDaily(item);
+      if (step > 0) text += " · +" + formatMoney(step) + "/сутки";
     }
     return text;
   }
@@ -4773,6 +4767,99 @@ function listPaySources() {
   });
   return list;
 }
+function adjustDepositAmount(depositId, direction, sourceId, rawAmount) {
+  var move = Math.round((Number(String(rawAmount || "").replace(/\s/g, "").replace(",", ".")) || 0) * 100) / 100;
+  if (!(move > 0)) { showToast("Укажите сумму"); return; }
+  var dep = (data.FINANCES || []).find(function (x) { return x && x.id === depositId && x.kind === "Вклад"; });
+  if (!dep) { showToast("Вклад не найден"); return; }
+  if (sourceId === depositId) { showToast("Нельзя выбрать этот же вклад"); return; }
+  var balance = Math.round(depositBalance(dep) * 100) / 100;
+  if (direction === "out" && move > balance + 0.001) { showToast("На вкладе меньше этой суммы"); return; }
+  var sourceTitle = "";
+  if (sourceId === "month-salary") {
+    var month = currentMonthKey();
+    var have = getMonthSalary(month);
+    if (have == null) { showToast("Зарплата месяца не задана"); return; }
+    var nextSal = Math.round((have + (direction === "in" ? -move : move)) * 100) / 100;
+    if (nextSal < -0.001) { showToast("На зарплате месяца меньше этой суммы"); return; }
+    setMonthSalary(month, Math.max(0, nextSal));
+    sourceTitle = "Зарплата месяца";
+  } else {
+    var src = (data.FINANCES || []).find(function (x) { return x && x.id === sourceId; });
+    if (!src) { showToast("Источник не найден"); return; }
+    var haveSrc = src.kind === "Вклад" ? Math.round(depositBalance(src) * 100) / 100 : Math.round((Number(src.amount) || 0) * 100) / 100;
+    var nextSrc = Math.round((haveSrc + (direction === "in" ? -move : move)) * 100) / 100;
+    if (nextSrc < -0.001) { showToast("На источнике меньше этой суммы"); return; }
+    var nowSrc = new Date().toISOString();
+    src.amount = Math.max(0, nextSrc);
+    if (src.kind === "Вклад") {
+      src.accrueFrom = nowSrc;
+      src.startDate = nowSrc.slice(0, 10);
+    }
+    src.updatedAt = nowSrc;
+    sourceTitle = (src.kind ? src.kind + " · " : "") + (src.title || "Источник");
+  }
+  var now = new Date().toISOString();
+  dep.amount = Math.max(0, Math.round((direction === "in" ? balance + move : balance - move) * 100) / 100);
+  dep.accrueFrom = now;
+  dep.startDate = now.slice(0, 10);
+  dep.updatedAt = now;
+  saveData();
+  showToast((direction === "in" ? "Вклад увеличен на " : "Вклад уменьшен на ") + formatMoney(move));
+  renderFinancesView();
+}
+function bindDepositMoves(root) {
+  if (!root) return;
+  var sources = listPaySources();
+  root.querySelectorAll("[data-dep]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-dep");
+      var box = root.querySelector('[data-dep-box="' + id + '"]');
+      if (!box) return;
+      var was = box.classList.contains("open");
+      root.querySelectorAll(".credit-pay.open").forEach(function (el) { el.classList.remove("open"); });
+      if (!was) box.classList.add("open");
+    });
+  });
+  root.querySelectorAll("[data-dep-src]").forEach(function (sel) {
+    var selfId = sel.getAttribute("data-dep-src");
+    sources.forEach(function (s) {
+      if (s.id === selfId) return;
+      var available = s.available;
+      if (s.group === "Вклад") {
+        var dep = (data.FINANCES || []).find(function (x) { return x && x.id === s.id; });
+        if (dep) available = depositBalance(dep);
+      }
+      var opt = document.createElement("option");
+      opt.value = s.id;
+      opt.textContent = s.group + " · " + s.title + " · " + formatMoney(available);
+      sel.appendChild(opt);
+    });
+  });
+  root.querySelectorAll("[data-dep-box]").forEach(function (box) {
+    box.querySelectorAll("[data-dep-mode]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        box.querySelectorAll("[data-dep-mode]").forEach(function (x) { x.classList.remove("on"); });
+        btn.classList.add("on");
+        var where = box.querySelector("[data-dep-where]");
+        var go = box.querySelector("[data-dep-do]");
+        var mode = btn.getAttribute("data-dep-mode");
+        if (where) where.textContent = mode === "out" ? "Куда" : "Откуда";
+        if (go) go.textContent = mode === "out" ? "Уменьшить" : "Увеличить";
+      });
+    });
+  });
+  root.querySelectorAll("[data-dep-do]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-dep-do");
+      var box = root.querySelector('[data-dep-box="' + id + '"]');
+      var modeBtn = box && box.querySelector("[data-dep-mode].on");
+      var sel = box && box.querySelector("[data-dep-src]");
+      var amt = box && box.querySelector("[data-dep-amt]");
+      adjustDepositAmount(id, modeBtn ? modeBtn.getAttribute("data-dep-mode") : "in", sel && sel.value, amt && amt.value);
+    });
+  });
+}
 function payCreditAmount(creditId, sourceId, rawAmount) {
   var pay = Math.round((Number(String(rawAmount || "").replace(/\s/g, "").replace(",", ".")) || 0) * 100) / 100;
   if (!(pay > 0)) { showToast("Укажите сумму"); return; }
@@ -5105,11 +5192,30 @@ function renderFinancesView() {
   if (!deposits.length) {
     depList.innerHTML = '<div class="empty-inline">Нет вкладов</div>';
   } else {
-    deposits.forEach(x => {
-      const step = depositIsMonthly(x) ? depositMonthlyInterest(x) : depositDaily(x);
-      const effective = depositEffectiveAmount(x);
-      addLine(depList, (x.title || "") + " · " + (x.rate || 0) + "%", formatMoney(effective) + " · +" + formatMoney(step) + (depositIsMonthly(x) ? "/мес" : "/день"));
+    deposits.forEach(function (x) {
+      const total = depositBalance(x);
+      const accrued = depositAccrued(x);
+      const step = depositDaily(x);
+      const card = document.createElement("div");
+      card.className = "entry";
+      card.innerHTML =
+        '<button type="button" class="credit-hit" data-dep="' + x.id + '">' +
+          '<span>' + escapeHTML(x.title || "Вклад") + " · " + (x.rate || 0) + '%<br><em class="positive">+' + formatMoney(accrued) + '</em></span>' +
+          '<b>' + formatMoney(total) + '</b>' +
+        '</button>' +
+        '<div class="credit-pay" data-dep-box="' + x.id + '">' +
+          '<p class="hint">Процент уже на сумме. Следующие +' + formatMoney(step) + ' прибавятся через сутки.</p>' +
+          '<div class="settings-seg">' +
+            '<button type="button" data-dep-mode="in" class="on">Увеличить</button>' +
+            '<button type="button" data-dep-mode="out">Уменьшить</button>' +
+          '</div>' +
+          '<label class="field"><span data-dep-where>Откуда</span><select data-dep-src="' + x.id + '"></select></label>' +
+          '<label class="field"><span>Сумма, ₽</span><input data-dep-amt="' + x.id + '" inputmode="decimal" placeholder="0"></label>' +
+          '<button type="button" class="primary-btn" data-dep-do="' + x.id + '">Увеличить</button>' +
+        '</div>';
+      depList.appendChild(card);
     });
+    bindDepositMoves(depList);
   }
 
   const allRoot = root.querySelector("#finAllEntries");
