@@ -1853,6 +1853,26 @@ footer .build-meta,
   color: var(--text-faint) !important;
 }
 
+.her-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, #e0b7bf 40%, var(--line));
+}
+.her-line i { font-style: normal; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #e0b7bf; }
+.her-line span { color: var(--text-dim); font-size: 13px; text-align: right; }
+body.hide-tips .tip { display: none !important; }
+.fin-balance { margin: 8px 0 2px; font-size: 52px; font-weight: 500; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+.settings-modal { align-items: stretch; padding: 0; }
+.settings-sheet { width: 100%; max-height: 100vh; height: 100%; border-radius: 0; }
+.settings-top h3 { font-size: 34px; font-weight: 500; letter-spacing: -0.045em; }
+.fin-pills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.fin-pills div { padding: 10px 8px; border: var(--frame, 1px) solid var(--frame-color, var(--line)); border-radius: var(--radius); }
+.fin-pills span { display: block; margin-bottom: 4px; color: var(--text-faint); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+.fin-pills b { font-variant-numeric: tabular-nums; }
 .info-panel,
 .briefing,
 .nav-card,
@@ -1888,6 +1908,7 @@ footer .build-meta,
         <div class="info-time" id="homeTime">--:--</div>
         <div class="info-date" id="homeDate">—</div>
       </div>
+      <div class="her-line" id="herLine"><i id="herName">Ольга</i><span id="herText">Хорошего дня.</span></div>
       <div class="info-quote" id="homeQuote"></div>
     </div>
   </div>
@@ -1957,7 +1978,7 @@ footer .build-meta,
 </main>
 
 <footer>
-  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 19.11.2026 V9.6</div>
+  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 20.11.2026 V9.7</div>
   <div class="author" id="footerAuthor1">Кутузов Дмитрий Владимирович</div>
   <div class="author" id="footerAuthor2">Кутузова Ольга Денисовна</div>
 </footer>
@@ -1983,15 +2004,16 @@ footer .build-meta,
   <div class="settings-sheet" onclick="event.stopPropagation()">
     <div class="settings-top">
       <div>
-        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.6</div>
+        <div class="settings-kicker">ОБНОВЛЕНИЕ · V9.7</div>
         <h3>Что нового</h3>
       </div>
       <button type="button" class="icon-btn-sq" id="newsClose" aria-label="Закрыть">×</button>
     </div>
     <div class="settings-body">
       <ul class="news-list">
-        <li>Вид плашек убран.</li>
-        <li>Настройки применяются сразу. Вопрос о сохранении только если что-то менялось.</li>
+        <li>Показ, подсказки и скрытие сумм собраны в виде.</li>
+        <li>Секунды на часах и сводка месяца.</li>
+        <li>Записи при обновлении не сбрасываются.</li>
       </ul>
     </div>
   </div>
@@ -2010,6 +2032,34 @@ footer .build-meta,
         <div class="settings-block-title">Профиль</div>
         <label class="settings-label" for="setDisplayName">Имя в приветствии</label>
         <input type="text" id="setDisplayName" maxlength="40" placeholder="Дмитрий" autocomplete="name">
+        <label class="settings-label">Показ</label>
+        <div class="settings-blocks">
+          <label class="block-toggle on" id="labHer">
+            <input type="checkbox" id="setShowHer" checked>
+            <div class="block-toggle-left"><span class="block-toggle-num">·</span><span class="block-toggle-name">Строка на главной</span></div>
+            <span class="block-toggle-mark">вкл</span>
+          </label>
+          <label class="block-toggle on" id="labHints">
+            <input type="checkbox" id="setShowHints" checked>
+            <div class="block-toggle-left"><span class="block-toggle-num">·</span><span class="block-toggle-name">Подсказки</span></div>
+            <span class="block-toggle-mark">вкл</span>
+          </label>
+          <label class="block-toggle" id="labHideMoney">
+            <input type="checkbox" id="setHideMoney">
+            <div class="block-toggle-left"><span class="block-toggle-num">·</span><span class="block-toggle-name">Скрыть суммы</span></div>
+            <span class="block-toggle-mark">выкл</span>
+          </label>
+          <label class="block-toggle" id="labSeconds">
+            <input type="checkbox" id="setShowSeconds">
+            <div class="block-toggle-left"><span class="block-toggle-num">·</span><span class="block-toggle-name">Секунды</span></div>
+            <span class="block-toggle-mark">выкл</span>
+          </label>
+        </div>
+        <label class="settings-label" for="setHerName">Подпись строки</label>
+        <input type="text" id="setHerName" maxlength="40" placeholder="Ольга">
+        <label class="settings-label" for="setHerLine">Строка</label>
+        <input type="text" id="setHerLine" maxlength="80" placeholder="Хорошего дня.">
+        <button type="button" class="ghost-btn" id="setRoseAccent" style="width:100%;margin-top:10px;height:40px">Мягкий розовый акцент</button>
         <label class="settings-label">Формат времени</label>
         <div class="settings-seg" id="setTimeFormat">
           <button type="button" data-tf="24" class="on">24 часа</button>
@@ -2204,6 +2254,12 @@ const DEFAULT_SETTINGS = {
   cardCorner: "soft",
   frameWidth: 1,
   frameColor: "",
+  showHints: true,
+  showHer: true,
+  herName: "Ольга",
+  herLine: "Хорошего дня.",
+  hideMoney: false,
+  showSeconds: false,
   showTension: true,
   showFinanceStrip: true,
   showQuote: true,
@@ -2298,6 +2354,13 @@ function applySettings(s) {
   document.body.classList.toggle("hide-finance-strip", appSettings.showFinanceStrip === false);
   document.body.classList.toggle("hide-quote", appSettings.showQuote === false);
   document.body.classList.toggle("hide-welcome", appSettings.showWelcome === false);
+  document.body.classList.toggle("hide-tips", appSettings.showHints === false);
+  var her = document.getElementById("herLine");
+  if (her) her.classList.toggle("hidden", appSettings.showHer === false);
+  var herNameEl = document.getElementById("herName");
+  var herTextEl = document.getElementById("herText");
+  if (herNameEl) herNameEl.textContent = appSettings.herName || "Ольга";
+  if (herTextEl) herTextEl.textContent = appSettings.herLine || "Хорошего дня.";
   try { updateWelcomePanel(); } catch (_) {}
   try {
     if (typeof renderDashboard === "function") renderDashboard();
@@ -2375,7 +2438,23 @@ function openSettings() {
   syncHomeLab("labFinance", sf && sf.checked);
   syncHomeLab("labWelcome", swel && swel.checked);
   syncHomeLab("labQuote", sq && sq.checked);
-  ["labTension","labFinance","labWelcome","labQuote"].forEach(function (lid) {
+  var sher = document.getElementById("setShowHer");
+  if (sher) sher.checked = s.showHer !== false;
+  var shints = document.getElementById("setShowHints");
+  if (shints) shints.checked = s.showHints !== false;
+  var herNameInput = document.getElementById("setHerName");
+  if (herNameInput) herNameInput.value = s.herName || "Ольга";
+  var herLineInput = document.getElementById("setHerLine");
+  if (herLineInput) herLineInput.value = s.herLine || "Хорошего дня.";
+  syncHomeLab("labHer", sher && sher.checked);
+  syncHomeLab("labHints", shints && shints.checked);
+  var hideMoneyEl = document.getElementById("setHideMoney");
+  if (hideMoneyEl) hideMoneyEl.checked = s.hideMoney === true;
+  var secondsEl = document.getElementById("setShowSeconds");
+  if (secondsEl) secondsEl.checked = s.showSeconds === true;
+  syncHomeLab("labHideMoney", hideMoneyEl && hideMoneyEl.checked);
+  syncHomeLab("labSeconds", secondsEl && secondsEl.checked);
+  ["labTension","labFinance","labWelcome","labQuote","labHer","labHints","labHideMoney","labSeconds"].forEach(function (lid) {
     var lab = document.getElementById(lid);
     if (!lab || lab._bound) return;
     lab._bound = true;
@@ -2479,6 +2558,12 @@ function readSettingsFromForm() {
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
     showWelcome: !!(document.getElementById("setShowWelcome") && document.getElementById("setShowWelcome").checked),
     showQuote: !!(document.getElementById("setShowQuote") && document.getElementById("setShowQuote").checked),
+    showHints: !!(document.getElementById("setShowHints") && document.getElementById("setShowHints").checked),
+    showHer: !!(document.getElementById("setShowHer") && document.getElementById("setShowHer").checked),
+    herName: (document.getElementById("setHerName") && document.getElementById("setHerName").value.trim()) || "Ольга",
+    herLine: (document.getElementById("setHerLine") && document.getElementById("setHerLine").value) || "Хорошего дня.",
+    hideMoney: !!(document.getElementById("setHideMoney") && document.getElementById("setHideMoney").checked),
+    showSeconds: !!(document.getElementById("setShowSeconds") && document.getElementById("setShowSeconds").checked),
     hiddenBlocks: (function () {
       var out = [];
       document.querySelectorAll("#setBlocksRow input[data-block]").forEach(function (cb) {
@@ -2766,6 +2851,7 @@ function showToast(message) {
 }
 
 function formatMoney(value) {
+  if (typeof appSettings !== "undefined" && appSettings && appSettings.hideMoney) return "••••";
   return new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 }).format(Number(value) || 0) + " ₽";
 }
 
@@ -4984,16 +5070,19 @@ function renderFinancesView() {
   root.innerHTML = `
     <div class="fin-card month-salary-card">
       <div class="month-head">
-        <span class="month-kicker">МЕСЯЦ</span>
-        <span class="month-title">${monthLabel}</span>
+        <span class="month-kicker">${monthLabel}</span>
       </div>
-      <div class="month-stats">
-        <div class="month-stat"><span>Зарплата</span><strong>${monthSalary != null ? formatMoney(monthSalary) : "—"}</strong></div>
-        <div class="month-stat"><span>Доход</span><strong>${formatMoney(income)}</strong></div>
-        <div class="month-stat"><span>Расход</span><strong>${formatMoney(expenses)}</strong></div>
-        <div class="month-stat"><span>Остаток</span><strong class="${balance >= 0 ? "positive" : "negative"}">${formatMoney(balance)}</strong></div>
-        <div class="month-stat"><span>Отложить</span><strong>${formatMoney(saveRec)}</strong></div>
-        <div class="month-stat"><span>Вклады % (накоплено)</span><strong class="positive">+${formatMoney(depositMonth)}</strong></div>
+      <div class="fin-balance ${balance < 0 ? "negative" : ""}">${formatMoney(balance)}</div>
+      <div class="month-kicker">Остаток</div>
+      <div class="fin-pills">
+        <div><span>Доход</span><b>${formatMoney(income)}</b></div>
+        <div><span>Расход</span><b>${formatMoney(expenses)}</b></div>
+        <div><span>Вклад</span><b class="positive">+${formatMoney(depositMonth)}</b></div>
+      </div>
+      <div class="fin-pills">
+        <div><span>Зарплата</span><b>${monthSalary != null ? formatMoney(monthSalary) : "—"}</b></div>
+        <div><span>Отложить</span><b>${formatMoney(saveRec)}</b></div>
+        <div><span>Долг</span><b>${formatMoney(creditDebtTotal)}</b></div>
       </div>
       ${monthSalary == null
         ? `<div class="month-salary-form">
@@ -5004,7 +5093,7 @@ function renderFinancesView() {
              </div>
            </div>`
         : `<div class="month-salary-form">
-             <div class="month-hint">Рекомендация: отложить <b>${formatMoney(saveRec)}</b> (20% остатка)</div>
+             <div class="month-hint tip">Рекомендация: отложить <b>${formatMoney(saveRec)}</b> (20% остатка)</div>
              <div class="month-salary-row">
                <button type="button" class="ghost-btn" id="editMonthSalary">Изменить зарплату</button>
                <button type="button" class="primary-btn" id="createArchiveBtn">Архив ${monthKey.slice(5)}.${monthKey.slice(0,4)}</button>
@@ -5204,7 +5293,7 @@ function renderFinancesView() {
           '<b>' + formatMoney(total) + '</b>' +
         '</button>' +
         '<div class="credit-pay" data-dep-box="' + x.id + '">' +
-          '<p class="hint">Процент уже на сумме. Следующие +' + formatMoney(step) + ' прибавятся через сутки.</p>' +
+          '<p class="hint tip">Процент уже на сумме. Следующие +' + formatMoney(step) + ' прибавятся через сутки.</p>' +
           '<div class="settings-seg">' +
             '<button type="button" data-dep-mode="in" class="on">Увеличить</button>' +
             '<button type="button" data-dep-mode="out">Уменьшить</button>' +
@@ -5408,6 +5497,7 @@ function updateWelcomePanel(){
       t.textContent = new Intl.DateTimeFormat("ru-RU", {
         hour: "2-digit",
         minute: "2-digit",
+        second: appSettings && appSettings.showSeconds ? "2-digit" : undefined,
         hour12: hour12,
         timeZone: tz
       }).format(now);
@@ -6035,6 +6125,21 @@ var hideAll = document.getElementById("setHideAllBlocks");
       }).then(writeText).catch(function () { finish(false); });
     });
   }
+  var roseBtn = document.getElementById("setRoseAccent");
+  if (roseBtn) {
+    roseBtn.addEventListener("click", function () {
+      var custom = document.getElementById("setAccentCustom");
+      if (custom) custom.value = "#e0b7bf";
+      document.querySelectorAll("#setColorRow .swatch").forEach(function (x) {
+        x.classList.toggle("on", (x.getAttribute("data-color") || "").toLowerCase() === "#e0b7bf");
+      });
+      var lightOn = document.querySelector('#setThemeMode button[data-theme="light"].on');
+      if (!lightOn) {
+        var roseTheme = document.querySelector('#setThemeMode button[data-theme="rose"]');
+        if (roseTheme) roseTheme.click();
+      }
+    });
+  }
   var reloadAppBtn = document.getElementById("setReloadApp");
   if (reloadAppBtn) {
     reloadAppBtn.addEventListener("click", function () {
@@ -6073,7 +6178,7 @@ var hideAll = document.getElementById("setHideAllBlocks");
 try { updateClock(); } catch (e) { console.error(e); }
 setInterval(function () {
   try { updateClock(); } catch (_) {}
-}, 60000);
+}, 1000);
 setInterval(function () {
   try { refreshTensionLive(); } catch (_) {}
 }, 12000);
