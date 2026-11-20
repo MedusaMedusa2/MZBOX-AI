@@ -3168,20 +3168,6 @@ function estimateDepositInterest(item) {
   return amount * rate / 100 / 12;
 }
 
-function depositDaily(item) {
-  const amount = Number(item.amount) || 0;
-  const rate = Number(item.rate) || 0;
-  if (!(amount > 0) || !(rate > 0)) return 0;
-  return amount * rate / 100 / 365;
-}
-
-function depositMonthlyInterest(item) {
-  const amount = Number(item.amount) || 0;
-  const rate = Number(item.rate) || 0;
-  if (!(amount > 0) || !(rate > 0)) return 0;
-  return amount * rate / 100 / 12;
-}
-
 function depositStartDate(item) {
   const raw = item.startDate || (item.createdAt ? String(item.createdAt).slice(0, 10) : "");
   const d = parseDate(raw);
@@ -3191,33 +3177,73 @@ function depositStartDate(item) {
   return t;
 }
 
-function depositAccrued(item) {
-  const amount = Number(item.amount) || 0;
+function depositRateOf(item) {
   const rate = Number(item.rate) || 0;
-  if (!(amount > 0) || !(rate > 0)) return 0;
+  return rate > 0 ? rate / 100 : 0;
+}
+
+function depositIsMonthly(item) {
+  return (item.frequency || "Ежедневно") === "Ежемесячно";
+}
+
+function depositFactor(item, today) {
+  const r = depositRateOf(item);
+  if (!(r > 0)) return 1;
   const start = depositStartDate(item);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if ((item.frequency || "Ежедневно") === "Ежемесячно") {
-    const months = (today.getFullYear() - start.getFullYear()) * 12 + (today.getMonth() - start.getMonth());
-    const full = Math.max(0, months);
-    const dim = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-    const dayPart = Math.min(today.getDate(), dim) / dim;
-    return depositMonthlyInterest(item) * (full + dayPart);
+  const t = new Date(today || new Date());
+  t.setHours(0, 0, 0, 0);
+  if (t < start) return 1;
+  if (depositIsMonthly(item)) {
+    let months = (t.getFullYear() - start.getFullYear()) * 12 + (t.getMonth() - start.getMonth());
+    if (t.getDate() < start.getDate()) months -= 1;
+    months = Math.max(0, months);
+    const last = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
+    last.setHours(0, 0, 0, 0);
+    const next = new Date(start.getFullYear(), start.getMonth() + months + 1, start.getDate());
+    next.setHours(0, 0, 0, 0);
+    const span = Math.max(1, Math.round((next - last) / 86400000));
+    const into = Math.max(0, Math.round((t - last) / 86400000));
+    const frac = Math.min(1, into / span);
+    return Math.pow(1 + r / 12, months) * (1 + (r / 12) * frac);
   }
-  const days = Math.max(0, Math.round((today - start) / 86400000));
-  return depositDaily(item) * days;
+  const days = Math.max(0, Math.round((t - start) / 86400000));
+  return Math.pow(1 + r / 365, days);
+}
+
+function depositBalance(item, today) {
+  const amount = Number(item.amount) || 0;
+  if (!(amount > 0)) return 0;
+  return amount * depositFactor(item, today);
+}
+
+function depositDaily(item, today) {
+  const amount = Number(item.amount) || 0;
+  const r = depositRateOf(item);
+  if (!(amount > 0) || !(r > 0)) return 0;
+  return depositBalance(item, today) * r / 365;
+}
+
+function depositMonthlyInterest(item, today) {
+  const amount = Number(item.amount) || 0;
+  const r = depositRateOf(item);
+  if (!(amount > 0) || !(r > 0)) return 0;
+  return depositBalance(item, today) * r / 12;
+}
+
+function depositAccrued(item, today) {
+  const amount = Number(item.amount) || 0;
+  if (!(amount > 0) || !(depositRateOf(item) > 0)) return 0;
+  return Math.max(0, depositBalance(item, today) - amount);
 }
 
 function depositEffectiveAmount(item) {
-  return (Number(item.amount) || 0) + depositAccrued(item);
+  return depositBalance(item);
 }
 
 function depositInterestThisMonth(item, refDate) {
   refDate = refDate || new Date();
   const amount = Number(item.amount) || 0;
-  const rate = Number(item.rate) || 0;
-  if (!(amount > 0) || !(rate > 0)) return 0;
+  if (!(amount > 0) || !(depositRateOf(item) > 0)) return 0;
   const start = depositStartDate(item);
   const y = refDate.getFullYear();
   const m = refDate.getMonth();
@@ -3230,12 +3256,8 @@ function depositInterestThisMonth(item, refDate) {
   const from = start > monthStart ? start : monthStart;
   const to = today < monthEnd ? today : monthEnd;
   if (to < from) return 0;
-  const daysInMonth = monthEnd.getDate();
-  const elapsed = Math.max(0, Math.round((to - from) / 86400000) + 1);
-  if ((item.frequency || "Ежедневно") === "Ежемесячно") {
-    return depositMonthlyInterest(item) * (elapsed / daysInMonth);
-  }
-  return depositDaily(item) * elapsed;
+  const before = new Date(from.getTime() - 86400000);
+  return Math.max(0, depositBalance(item, to) - depositBalance(item, before));
 }
 
 function sumDepositInterestThisMonth(refDate) {
@@ -4104,8 +4126,8 @@ function getSub(item) {
     }
     if (item.kind === "Вклад") {
       text += " · " + (item.rate || 0) + "%";
-      const daily = depositDaily(item);
-      if (daily > 0) text += " · +" + formatMoney(daily) + "/день";
+      const step = depositIsMonthly(item) ? depositMonthlyInterest(item) : depositDaily(item);
+      if (step > 0) text += " · +" + formatMoney(step) + (depositIsMonthly(item) ? "/мес" : "/день");
     }
     return text;
   }
@@ -5084,9 +5106,9 @@ function renderFinancesView() {
     depList.innerHTML = '<div class="empty-inline">Нет вкладов</div>';
   } else {
     deposits.forEach(x => {
-      const daily = depositDaily(x);
+      const step = depositIsMonthly(x) ? depositMonthlyInterest(x) : depositDaily(x);
       const effective = depositEffectiveAmount(x);
-      addLine(depList, (x.title || "") + " · " + (x.rate || 0) + "%", formatMoney(effective) + " · +" + formatMoney(daily) + "/день");
+      addLine(depList, (x.title || "") + " · " + (x.rate || 0) + "%", formatMoney(effective) + " · +" + formatMoney(step) + (depositIsMonthly(x) ? "/мес" : "/день"));
     });
   }
 
