@@ -1853,6 +1853,16 @@ footer .build-meta,
   color: var(--text-faint) !important;
 }
 
+.note-ios { display:flex; align-items:flex-start; gap:8px; padding:14px 12px 14px 16px; margin-bottom:10px; border-radius:18px; background:linear-gradient(180deg, color-mix(in srgb, #fff 8%, var(--surface)), var(--surface)); border:var(--frame,1px) solid var(--frame-color, var(--line)); box-shadow:0 10px 28px rgba(0,0,0,.18); }
+.note-ios-main { flex:1; min-width:0; text-align:left; background:none; border:0; color:inherit; }
+.note-ios h3 { margin:0; font-size:17px; font-weight:650; letter-spacing:-.03em; }
+.note-ios time { display:block; margin-top:4px; color:var(--text-faint); font-size:12px; }
+.note-ios-x { width:28px; height:28px; background:none; border:0; color:var(--text-faint); font-size:18px; }
+.statement { margin-bottom:14px; padding:18px 16px 8px; border-radius:22px; background:var(--surface); border:var(--frame,1px) solid var(--frame-color, var(--line)); }
+.statement-top { display:flex; justify-content:space-between; color:var(--text-faint); font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+.statement-balance { margin:8px 0 4px; font-size:46px; font-weight:560; letter-spacing:-.05em; line-height:1; }
+.statement-rows { margin:12px 0 8px; padding:0; list-style:none; }
+.statement-rows li { display:flex; justify-content:space-between; gap:12px; padding:11px 0; border-top:1px solid var(--line); }
 .her-line {
   display: flex;
   align-items: baseline;
@@ -1908,7 +1918,6 @@ body.hide-tips .tip { display: none !important; }
         <div class="info-time" id="homeTime">--:--</div>
         <div class="info-date" id="homeDate">—</div>
       </div>
-      <div class="her-line" id="herLine"><i id="herName">Ольга</i><span id="herText">Хорошего дня.</span></div>
       <div class="info-quote" id="homeQuote"></div>
     </div>
   </div>
@@ -2011,8 +2020,8 @@ body.hide-tips .tip { display: none !important; }
     </div>
     <div class="settings-body">
       <ul class="news-list">
-        <li>Показ, подсказки и скрытие сумм собраны в виде.</li>
-        <li>Секунды на часах и сводка месяца.</li>
+        <li>Секунды на часах включены.</li>
+        <li>Цвет плашек, новый счёт и заметки.</li>
         <li>Записи при обновлении не сбрасываются.</li>
       </ul>
     </div>
@@ -2032,34 +2041,6 @@ body.hide-tips .tip { display: none !important; }
         <div class="settings-block-title">Профиль</div>
         <label class="settings-label" for="setDisplayName">Имя в приветствии</label>
         <input type="text" id="setDisplayName" maxlength="40" placeholder="Дмитрий" autocomplete="name">
-        <label class="settings-label">Показ</label>
-        <div class="settings-blocks">
-          <label class="block-toggle on" id="labHer">
-            <input type="checkbox" id="setShowHer" checked>
-            <div class="block-toggle-left"><span class="block-toggle-num">·</span><span class="block-toggle-name">Строка на главной</span></div>
-            <span class="block-toggle-mark">вкл</span>
-          </label>
-          <label class="block-toggle on" id="labHints">
-            <input type="checkbox" id="setShowHints" checked>
-            <div class="block-toggle-left"><span class="block-toggle-num">·</span><span class="block-toggle-name">Подсказки</span></div>
-            <span class="block-toggle-mark">вкл</span>
-          </label>
-          <label class="block-toggle" id="labHideMoney">
-            <input type="checkbox" id="setHideMoney">
-            <div class="block-toggle-left"><span class="block-toggle-num">·</span><span class="block-toggle-name">Скрыть суммы</span></div>
-            <span class="block-toggle-mark">выкл</span>
-          </label>
-          <label class="block-toggle" id="labSeconds">
-            <input type="checkbox" id="setShowSeconds">
-            <div class="block-toggle-left"><span class="block-toggle-num">·</span><span class="block-toggle-name">Секунды</span></div>
-            <span class="block-toggle-mark">выкл</span>
-          </label>
-        </div>
-        <label class="settings-label" for="setHerName">Подпись строки</label>
-        <input type="text" id="setHerName" maxlength="40" placeholder="Ольга">
-        <label class="settings-label" for="setHerLine">Строка</label>
-        <input type="text" id="setHerLine" maxlength="80" placeholder="Хорошего дня.">
-        <button type="button" class="ghost-btn" id="setRoseAccent" style="width:100%;margin-top:10px;height:40px">Мягкий розовый акцент</button>
         <label class="settings-label">Формат времени</label>
         <div class="settings-seg" id="setTimeFormat">
           <button type="button" data-tf="24" class="on">24 часа</button>
@@ -2128,6 +2109,15 @@ body.hide-tips .tip { display: none !important; }
         <div class="settings-color-custom">
           <input type="color" id="setAccentCustom" value="#c8c2b0" aria-label="Свой акцент">
           <span>Свой акцент</span>
+        </div>
+        <label class="settings-label">Цвет плашек</label>
+        <div class="settings-colors" id="setCardColorRow">
+          <button type="button" class="swatch on" data-color="" title="Как в теме"></button>
+          <button type="button" class="swatch" data-color="#161616" style="background:#161616"></button>
+          <button type="button" class="swatch" data-color="#241c20" style="background:#241c20"></button>
+          <button type="button" class="swatch" data-color="#1b2420" style="background:#1b2420"></button>
+          <button type="button" class="swatch" data-color="#f6f3ec" style="background:#f6f3ec"></button>
+          <input type="color" id="setCardColor" value="#161616" aria-label="Свой цвет плашек">
         </div>
         <label class="settings-label">Углы плашек</label>
         <div class="settings-seg" id="setCorners">
@@ -2259,7 +2249,8 @@ const DEFAULT_SETTINGS = {
   herName: "Ольга",
   herLine: "Хорошего дня.",
   hideMoney: false,
-  showSeconds: false,
+  showSeconds: true,
+  cardColor: "",
   showTension: true,
   showFinanceStrip: true,
   showQuote: true,
@@ -2354,13 +2345,14 @@ function applySettings(s) {
   document.body.classList.toggle("hide-finance-strip", appSettings.showFinanceStrip === false);
   document.body.classList.toggle("hide-quote", appSettings.showQuote === false);
   document.body.classList.toggle("hide-welcome", appSettings.showWelcome === false);
+  if (appSettings.cardColor) {
+    document.documentElement.style.setProperty("--surface", appSettings.cardColor);
+    document.body.style.setProperty("--surface", appSettings.cardColor);
+  } else {
+    document.documentElement.style.removeProperty("--surface");
+    document.body.style.removeProperty("--surface");
+  }
   document.body.classList.toggle("hide-tips", appSettings.showHints === false);
-  var her = document.getElementById("herLine");
-  if (her) her.classList.toggle("hidden", appSettings.showHer === false);
-  var herNameEl = document.getElementById("herName");
-  var herTextEl = document.getElementById("herText");
-  if (herNameEl) herNameEl.textContent = appSettings.herName || "Ольга";
-  if (herTextEl) herTextEl.textContent = appSettings.herLine || "Хорошего дня.";
   try { updateWelcomePanel(); } catch (_) {}
   try {
     if (typeof renderDashboard === "function") renderDashboard();
@@ -2401,6 +2393,15 @@ function openSettings() {
   if (frameInput) {
     frameInput.value = frameInk || "#3a3a3a";
     frameInput.dataset.picked = frameInk && !document.querySelector("#setFrameColorRow .swatch.on") ? "1" : "";
+  }
+  var cardInk = s.cardColor || "";
+  document.querySelectorAll("#setCardColorRow .swatch").forEach(function (btn) {
+    btn.classList.toggle("on", (btn.getAttribute("data-color") || "") === cardInk);
+  });
+  var cardInput = document.getElementById("setCardColor");
+  if (cardInput) {
+    cardInput.value = cardInk || "#161616";
+    cardInput.dataset.picked = cardInk && !document.querySelector("#setCardColorRow .swatch.on") ? "1" : "";
   }
   var ink = s.textColor || "";
   document.querySelectorAll("#setTextColorRow .swatch").forEach(function (btn) {
@@ -2554,16 +2555,17 @@ function readSettingsFromForm() {
       if (input && input.dataset.picked === "1") return input.value || "";
       return "";
     })(),
+    cardColor: (function () {
+      var on = document.querySelector("#setCardColorRow .swatch.on");
+      var input = document.getElementById("setCardColor");
+      if (on) return on.getAttribute("data-color") || "";
+      if (input && input.dataset.picked === "1") return input.value || "";
+      return "";
+    })(),
     showTension: !!(document.getElementById("setShowTension") && document.getElementById("setShowTension").checked),
     showFinanceStrip: !!(document.getElementById("setShowFinance") && document.getElementById("setShowFinance").checked),
     showWelcome: !!(document.getElementById("setShowWelcome") && document.getElementById("setShowWelcome").checked),
     showQuote: !!(document.getElementById("setShowQuote") && document.getElementById("setShowQuote").checked),
-    showHints: !!(document.getElementById("setShowHints") && document.getElementById("setShowHints").checked),
-    showHer: !!(document.getElementById("setShowHer") && document.getElementById("setShowHer").checked),
-    herName: (document.getElementById("setHerName") && document.getElementById("setHerName").value.trim()) || "Ольга",
-    herLine: (document.getElementById("setHerLine") && document.getElementById("setHerLine").value) || "Хорошего дня.",
-    hideMoney: !!(document.getElementById("setHideMoney") && document.getElementById("setHideMoney").checked),
-    showSeconds: !!(document.getElementById("setShowSeconds") && document.getElementById("setShowSeconds").checked),
     hiddenBlocks: (function () {
       var out = [];
       document.querySelectorAll("#setBlocksRow input[data-block]").forEach(function (cb) {
@@ -2851,7 +2853,6 @@ function showToast(message) {
 }
 
 function formatMoney(value) {
-  if (typeof appSettings !== "undefined" && appSettings && appSettings.hideMoney) return "••••";
   return new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 }).format(Number(value) || 0) + " ₽";
 }
 
@@ -4586,19 +4587,28 @@ function renderEntries() {
       del.textContent = "×";
       del.addEventListener("click", function () { deleteEntry(item.id); });
       actions.append(edit, del);
-      row.className = "line-card";
-      var indexEl = document.createElement("span");
-      indexEl.className = "line-index";
-      indexEl.textContent = String(index + 1).padStart(2, "0");
-      var body = document.createElement("p");
-      body.className = "line-text";
-      body.textContent = item.title || "Без названия";
-      var meta = document.createElement("span");
-      meta.className = "line-meta";
-      meta.textContent = currentSection === "NOTES"
+      row.className = "note-ios";
+      var main = document.createElement("button");
+      main.type = "button";
+      main.className = "note-ios-main";
+      main.addEventListener("click", function () { openForm(item); });
+      var title = document.createElement("h3");
+      title.textContent = item.title || "Без названия";
+      var when = currentSection === "NOTES"
         ? (item.date ? formatDate(item.date) : "")
         : (item.createdAt ? formatDate(String(item.createdAt).slice(0, 10)) : "");
-      row.append(indexEl, body, meta, actions);
+      main.appendChild(title);
+      if (when) {
+        var time = document.createElement("time");
+        time.textContent = when;
+        main.appendChild(time);
+      }
+      var x = document.createElement("button");
+      x.type = "button";
+      x.className = "note-ios-x";
+      x.textContent = "×";
+      x.addEventListener("click", function () { deleteEntry(item.id); });
+      row.append(main, x);
       root.appendChild(row);
     });
     return;
@@ -5068,22 +5078,16 @@ function renderFinancesView() {
   } catch (e) { console.error(e); }
 
   root.innerHTML = `
-    <div class="fin-card month-salary-card">
-      <div class="month-head">
-        <span class="month-kicker">${monthLabel}</span>
-      </div>
-      <div class="fin-balance ${balance < 0 ? "negative" : ""}">${formatMoney(balance)}</div>
-      <div class="month-kicker">Остаток</div>
-      <div class="fin-pills">
-        <div><span>Доход</span><b>${formatMoney(income)}</b></div>
-        <div><span>Расход</span><b>${formatMoney(expenses)}</b></div>
-        <div><span>Вклад</span><b class="positive">+${formatMoney(depositMonth)}</b></div>
-      </div>
-      <div class="fin-pills">
-        <div><span>Зарплата</span><b>${monthSalary != null ? formatMoney(monthSalary) : "—"}</b></div>
-        <div><span>Отложить</span><b>${formatMoney(saveRec)}</b></div>
-        <div><span>Долг</span><b>${formatMoney(creditDebtTotal)}</b></div>
-      </div>
+    <div class="statement">
+      <div class="statement-top"><span>${monthLabel}</span></div>
+      <div class="statement-balance ${balance < 0 ? "negative" : ""}">${formatMoney(balance)}</div>
+      <ul class="statement-rows">
+        <li><span>Доход</span><b>${formatMoney(income)}</b></li>
+        <li><span>Расход</span><b>${formatMoney(expenses)}</b></li>
+        <li><span>Вклад</span><b class="positive">+${formatMoney(depositMonth)}</b></li>
+        <li><span>Зарплата</span><b>${monthSalary != null ? formatMoney(monthSalary) : "—"}</b></li>
+        <li><span>Долг</span><b>${formatMoney(creditDebtTotal)}</b></li>
+      </ul>
       ${monthSalary == null
         ? `<div class="month-salary-form">
              <label class="month-salary-label" for="monthSalaryInput">Зарплата за месяц</label>
@@ -5093,7 +5097,6 @@ function renderFinancesView() {
              </div>
            </div>`
         : `<div class="month-salary-form">
-             <div class="month-hint tip">Рекомендация: отложить <b>${formatMoney(saveRec)}</b> (20% остатка)</div>
              <div class="month-salary-row">
                <button type="button" class="ghost-btn" id="editMonthSalary">Изменить зарплату</button>
                <button type="button" class="primary-btn" id="createArchiveBtn">Архив ${monthKey.slice(5)}.${monthKey.slice(0,4)}</button>
@@ -5497,7 +5500,7 @@ function updateWelcomePanel(){
       t.textContent = new Intl.DateTimeFormat("ru-RU", {
         hour: "2-digit",
         minute: "2-digit",
-        second: appSettings && appSettings.showSeconds ? "2-digit" : undefined,
+        second: "2-digit",
         hour12: hour12,
         timeZone: tz
       }).format(now);
@@ -6038,6 +6041,28 @@ function onNotifyClick() {
     inkReset.addEventListener("click", function () {
       document.querySelectorAll("#setTextColorRow .swatch").forEach(function (x) { x.classList.remove("on"); });
       if (inkPicker) inkPicker.dataset.picked = "";
+    });
+  }
+  var cardRow = document.getElementById("setCardColorRow");
+  if (cardRow) {
+    cardRow.addEventListener("click", function (e) {
+      var btn = e.target.closest(".swatch");
+      if (!btn) return;
+      cardRow.querySelectorAll(".swatch").forEach(function (x) { x.classList.remove("on"); });
+      btn.classList.add("on");
+      var picker = document.getElementById("setCardColor");
+      if (picker) {
+        var color = btn.getAttribute("data-color") || "";
+        if (color) picker.value = color;
+        picker.dataset.picked = "";
+      }
+    });
+  }
+  var cardPicker = document.getElementById("setCardColor");
+  if (cardPicker) {
+    cardPicker.addEventListener("input", function () {
+      cardPicker.dataset.picked = "1";
+      document.querySelectorAll("#setCardColorRow .swatch").forEach(function (x) { x.classList.remove("on"); });
     });
   }
   var frameRow = document.getElementById("setFrameColorRow");
