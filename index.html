@@ -1911,6 +1911,21 @@ body{--mark:#e08a3a}
 }
 header{border-bottom:1px dashed color-mix(in srgb,var(--mark) 70%,var(--line))}
 .settings-block-title,.settings-label{color:var(--mark)}
+
+.words-cloud{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.word-chip{aspect-ratio:1;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:12px;min-width:0;border-radius:2px;width:auto}
+.word-chip span{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
+#entries.sq-on{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+#entries.sq-on .note-ios{aspect-ratio:1;margin:0;min-height:0;border-radius:2px;overflow:hidden}
+#entries.sq-on .note-ios h3{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;white-space:normal}
+.book-balance{font-size:42px;font-weight:560;letter-spacing:-.05em;line-height:1;margin:6px 0 14px}
+.book-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.book-metrics div{display:flex;flex-direction:column;gap:4px}
+.book-metrics span,.book-month{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint,#8a8680)}
+.book-tabs{display:flex;margin:12px 0 4px;border-bottom:1px solid var(--line,#333)}
+.book-tabs button{flex:1;height:40px;background:none;border:0;border-bottom:2px solid transparent;color:var(--text-faint,#8a8680)}
+.book-tabs button.on{color:var(--text,#f0efe9);border-bottom-color:var(--mark,#e08a3a)}
+.book-pane{padding-top:6px}
 </style>
 
 </head>
@@ -2086,7 +2101,6 @@ header{border-bottom:1px dashed color-mix(in srgb,var(--mark) 70%,var(--line))}
           <button type="button" data-theme="light">Светлая</button>
           <button type="button" data-theme="rose">Роза</button>
         </div>
-        <button type="button" class="ghost-btn" id="setBlueprint" style="width:100%;height:40px;margin-top:10px">Чертёж</button>
         <label class="settings-label">Шрифт всего текста</label>
         <div class="settings-seg" id="setFont">
           <button type="button" data-font="sans" class="on font-sans">Системный</button>
@@ -4624,6 +4638,7 @@ function renderWordSection() {
 function renderEntries() {
   const root = document.getElementById("entries");
   root.innerHTML = "";
+  root.classList.remove("sq-on");
 
   if (currentSection === "ASSETS") {
     renderWordSection();
@@ -4657,6 +4672,7 @@ function renderEntries() {
     return;
   }
   if (currentSection === "NOTES" || currentSection === "REFLECTION") {
+    if (currentSection === "REFLECTION") root.classList.add("sq-on");
     list.forEach(function (item, index) {
       var row = document.createElement("article");
       var actions = document.createElement("div");
@@ -5155,24 +5171,21 @@ function renderFinancesView() {
     if (!rows) {
       rows = '<div class="credit-debt-row"><span>Записей пока нет</span><b>—</b></div>';
     }
-    creditHtml = '<div class="fin-card credit-card">'
-      + '<h3>КРЕДИТ · ДОЛГ</h3>'
-      + '<div class="credit-debt-line"><span>К погашению</span><strong>' + formatMoney(creditDebtTotal) + '</strong></div>'
-      + '<div class="credit-debt-list">' + rows + '</div>'
-      + '</div>';
+    creditHtml = '<div class="book-row"><span>К погашению</span><strong>' + formatMoney(creditDebtTotal) + '</strong></div>'
+      + '<div class="credit-debt-list">' + rows + '</div>';
   } catch (e) { console.error(e); }
 
   root.innerHTML = `
-    <div class="statement">
-      <div class="statement-top"><span>${monthLabel}</span></div>
-      <div class="statement-balance ${balance < 0 ? "negative" : ""}">${formatMoney(balance)}</div>
-      <ul class="statement-rows">
-        <li><span>Доход</span><b>${formatMoney(income)}</b></li>
-        <li><span>Расход</span><b>${formatMoney(expenses)}</b></li>
-        <li><span>Вклад</span><b class="positive">+${formatMoney(depositMonth)}</b></li>
-        <li><span>Зарплата</span><b>${monthSalary != null ? formatMoney(monthSalary) : "—"}</b></li>
-        <li><span>Долг</span><b>${formatMoney(creditDebtTotal)}</b></li>
-      </ul>
+    <div class="book">
+      <div class="book-head">
+        <span class="book-month">${monthLabel}</span>
+        <div class="book-balance ${balance < 0 ? "negative" : ""}">${formatMoney(balance)}</div>
+        <div class="book-metrics">
+          <div><span>Доход</span><b>${formatMoney(income)}</b></div>
+          <div><span>Расход</span><b>${formatMoney(expenses)}</b></div>
+          <div><span>Долг</span><b>${formatMoney(creditDebtTotal)}</b></div>
+        </div>
+      </div>
       ${monthSalary == null
         ? `<div class="month-salary-form">
              <label class="month-salary-label" for="monthSalaryInput">Зарплата за месяц</label>
@@ -5184,7 +5197,7 @@ function renderFinancesView() {
         : `<div class="month-salary-form">
              <div class="month-salary-row">
                <button type="button" class="ghost-btn" id="editMonthSalary">Изменить зарплату</button>
-               <button type="button" class="primary-btn" id="createArchiveBtn">Архив ${monthKey.slice(5)}.${monthKey.slice(0,4)}</button>
+               <button type="button" class="primary-btn" id="createArchiveBtn">В архив</button>
              </div>
              <div id="salaryEditBox" class="hidden month-edit-box">
                <div class="month-salary-row">
@@ -5194,42 +5207,27 @@ function renderFinancesView() {
              </div>
            </div>`
       }
-    </div>
-
-    ${creditHtml}
-
-    <div class="fin-card">
-      <h3>РАЗДЕЛЫ РАСХОДОВ</h3>
-      <div class="cat-chip-row" id="expenseCatList"></div>
-      <div class="cat-add-row">
-        <input id="newExpenseCat" type="text" placeholder="Новый раздел" maxlength="24" />
-        <button type="button" class="primary-btn" id="addExpenseCatBtn">+</button>
+      <div class="book-tabs">
+        <button type="button" data-fin-tab="list" class="on">Записи</button>
+        <button type="button" data-fin-tab="dep">Вклады</button>
+        <button type="button" data-fin-tab="debt">Долги</button>
+        <button type="button" data-fin-tab="arch">Архив</button>
       </div>
-    </div>
-
-    <div class="fin-card">
-      <h3>ДИАГРАММА</h3>
-      <div class="fin-chart-wrap">
-        <canvas id="finChart" height="200"></canvas>
-        <div class="fin-chart-legend" id="finChartLegend"></div>
+      <div class="book-pane" data-fin-pane="list">
+        <div class="cat-chip-row" id="expenseCatList"></div>
+        <div class="cat-add-row">
+          <input id="newExpenseCat" type="text" placeholder="Новый раздел" maxlength="24" />
+          <button type="button" class="primary-btn" id="addExpenseCatBtn">+</button>
+        </div>
+        <div class="fin-chart-wrap">
+          <canvas id="finChart" height="120"></canvas>
+          <div class="fin-chart-legend" id="finChartLegend"></div>
+        </div>
+        <div class="entries" id="finAllEntries"></div>
       </div>
-    </div>
-
-
-    <div class="fin-card">
-      <h3>ВКЛАДЫ</h3>
-      <div class="deposit-list" id="finDepositList"></div>
-    </div>
-
-
-    <div class="fin-card">
-      <h3>АРХИВ МЕСЯЦЕВ</h3>
-      <div class="archive-list" id="archiveList"></div>
-    </div>
-
-    <div class="fin-card">
-      <h3>ЗАПИСИ</h3>
-      <div class="entries" id="finAllEntries"></div>
+      <div class="book-pane hidden" data-fin-pane="dep"><div class="deposit-list" id="finDepositList"></div></div>
+      <div class="book-pane hidden" data-fin-pane="debt">${creditHtml}</div>
+      <div class="book-pane hidden" data-fin-pane="arch"><div class="archive-list" id="archiveList"></div></div>
     </div>
   `;
 
@@ -5251,6 +5249,15 @@ function renderFinancesView() {
   };
   bindSaveSalary();
   bindCreditPays(root);
+  root.querySelectorAll("[data-fin-tab]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-fin-tab");
+      root.querySelectorAll("[data-fin-tab]").forEach(function (b) { b.classList.toggle("on", b === btn); });
+      root.querySelectorAll("[data-fin-pane]").forEach(function (pane) {
+        pane.classList.toggle("hidden", pane.getAttribute("data-fin-pane") !== id);
+      });
+    });
+  });
 
   const editSal = root.querySelector("#editMonthSalary");
   if (editSal) {
@@ -5315,7 +5322,7 @@ function renderFinancesView() {
   requestAnimationFrame(() => {
     const canvas = root.querySelector("#finChart");
     if (canvas) {
-      canvas.style.height = "220px";
+      canvas.style.height = "120px";
       drawFinanceChart(canvas, chartParts);
     }
     const legend = root.querySelector("#finChartLegend");
@@ -6313,17 +6320,6 @@ document.addEventListener("visibilitychange", function () {
       try { renderFinancesView(); } catch (_) {}
     }
   }
-});
-</script>
-<script>
-document.getElementById("setBlueprint")&&document.getElementById("setBlueprint").addEventListener("click",function(){
-  document.querySelectorAll("#setThemeMode button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-theme")==="dark");});
-  var accent=document.getElementById("setAccentCustom"); if(accent) accent.value="#e08a3a";
-  document.querySelectorAll("#setCorners button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-corners")==="sharp");});
-  document.querySelectorAll("#setFrame button").forEach(function(b){b.classList.toggle("on",String(b.getAttribute("data-frame"))==="1");});
-  var frame=document.getElementById("setFrameColor"); if(frame){frame.value="#e08a3a";frame.dataset.picked="1";}
-  ["setBgColor","setCardColor"].forEach(function(id){var el=document.getElementById(id); if(el) el.dataset.picked="";});
-  if(typeof previewSettings==="function") previewSettings();
 });
 </script>
 </body>
