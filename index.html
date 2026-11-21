@@ -6317,5 +6317,52 @@ document.addEventListener("visibilitychange", function () {
   }
 });
 </script>
+
+<style id="tb-skin">
+body.tb{background:#0e0e0e!important;color:#fff}
+body.tb .info-panel,body.tb .nav-card,body.tb .entry,body.tb .fin-card,body.tb .note-ios,body.tb .word-chip,body.tb .book,body.tb .statement,body.tb .settings-block{background:#1c1c1e!important;color:#fff!important;border:0!important;border-radius:22px!important}
+body.tb header{background:#0e0e0e;border:0}
+body.tb .logo{color:#fff;letter-spacing:0;font-size:17px}
+body.tb .primary-btn,body.tb .book-tabs button.on{background:#ffdd2d!important;color:#111!important;border:0;border-radius:14px}
+body.tb .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:#161618;border-top:1px solid #2a2a2c;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+body.tb .bottom-nav button{flex:1;min-height:52px;border:0;background:none;color:#8e8e93;font-size:10px}
+body.tb .bottom-nav button.on{color:#ffdd2d}
+body.tb .tb-more{position:fixed;left:12px;right:12px;bottom:84px;z-index:39;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;border-radius:22px;background:#1c1c1e}
+body.tb .tb-more button{height:56px;border:0;border-radius:16px;background:#2c2c2e;color:#fff}
+body.tb main,body.tb .page,body.tb .app{padding-bottom:88px}
+</style>
+<nav class="bottom-nav" id="tbNav">
+  <button type="button" data-go="home">Главная</button>
+  <button type="button" data-go="FINANCES">Счёт</button>
+  <button type="button" data-go="NOTES">Заметки</button>
+  <button type="button" data-go="EVENTS">События</button>
+  <button type="button" data-go="more">Ещё</button>
+</nav>
+<div class="tb-more hidden" id="tbMore">
+  <button type="button" data-go="ASSETS">Assets</button>
+  <button type="button" data-go="REFLECTION">Reflection</button>
+  <button type="button" data-go="COCOS">Cocos</button>
+  <button type="button" data-go="DEBTWISE">Debtwise</button>
+</div>
+<script>
+document.body.classList.add("tb");
+document.getElementById("tbNav").addEventListener("click", function (e) {
+  var btn = e.target.closest("button");
+  if (!btn) return;
+  var key = btn.getAttribute("data-go");
+  document.querySelectorAll("#tbNav button").forEach(function (b) { b.classList.remove("on"); });
+  btn.classList.add("on");
+  if (key === "more") { document.getElementById("tbMore").classList.toggle("hidden"); return; }
+  document.getElementById("tbMore").classList.add("hidden");
+  if (key === "home" && window.__injBack) window.__injBack();
+  else if (window.__injOpen) window.__injOpen(key);
+});
+document.getElementById("tbMore").addEventListener("click", function (e) {
+  var btn = e.target.closest("button");
+  if (!btn || !window.__injOpen) return;
+  document.getElementById("tbMore").classList.add("hidden");
+  window.__injOpen(btn.getAttribute("data-go"));
+});
+</script>
 </body>
 </html>
