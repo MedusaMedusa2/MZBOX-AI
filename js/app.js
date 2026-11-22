@@ -139,8 +139,8 @@ function applySettings(s) {
   appSettings = Object.assign({}, DEFAULT_SETTINGS, s || appSettings);
   if (!Array.isArray(appSettings.hiddenBlocks)) appSettings.hiddenBlocks = [];
   if (appSettings.timeZone !== "Europe/Moscow" && appSettings.timeZone !== "Asia/Yekaterinburg") appSettings.timeZone = "Europe/Moscow";
-  if (appSettings.font !== "serif" && appSettings.font !== "mono" && appSettings.font !== "narrow") appSettings.font = "sans";
-  if (appSettings.fontSize !== "sm" && appSettings.fontSize !== "lg") appSettings.fontSize = "md";
+  if (appSettings.font !== "serif" && appSettings.font !== "mono") appSettings.font = "sans";
+  appSettings.fontSize = "md";
   var fontStacks = {
     sans: '"Liberation Sans", "DejaVu Sans", "Segoe UI", sans-serif',
     serif: '"Liberation Serif", "Bitstream Charter", "DejaVu Serif", Georgia, serif',
@@ -149,7 +149,8 @@ function applySettings(s) {
   };
   if (appSettings.cardCorner !== "sharp" && appSettings.cardCorner !== "round") appSettings.cardCorner = "soft";
   var frame = Number(appSettings.frameWidth);
-  if (frame !== 0 && frame !== 2 && frame !== 3) frame = 1;
+  if (frame === 3) frame = 2;
+  if (frame !== 0 && frame !== 2) frame = 1;
   appSettings.frameWidth = frame;
   document.documentElement.style.setProperty("--frame", frame + "px");
   document.body.style.setProperty("--frame", frame + "px");
@@ -410,7 +411,7 @@ function readSettingsFromForm() {
     timeFormat: tfBtn ? tfBtn.getAttribute("data-tf") : "24",
     timeZone: tzEl && tzEl.value ? tzEl.value : "Europe/Moscow",
     font: fontBtn ? fontBtn.getAttribute("data-font") : "sans",
-    fontSize: sizeBtn ? sizeBtn.getAttribute("data-size") : "md",
+    fontSize: "md",
     textColor: textColor,
     notify: !!(appSettings && appSettings.notify),
     cardCorner: (function () { var b = document.querySelector("#setCorners button.on"); return b ? b.getAttribute("data-corners") : "soft"; })(),
@@ -3488,6 +3489,14 @@ function openMzboxModule() {
     }
     var src = MZBOX_HTML;
     src = src.replace(/user-scalable=no/g, "user-scalable=yes").replace(/maximum-scale=1/g, "maximum-scale=5");
+    src = src.replace(
+      "function drawChart(canvas,cs,model,currentPrice){",
+      "function drawChart(canvas,cs,model,currentPrice){if(window.__mzDraw)return window.__mzDraw(canvas,cs,model,currentPrice);"
+    );
+    src = src.replace(
+      "function setTheme(dark){",
+      "function setTheme(dark){if(window.__mzPaint){window.__mzPaint();return;}"
+    );
     if (window.MZBOX_POLISH_CSS) {
       var polishTag = "<style id=\"mz-polish\">" + window.MZBOX_POLISH_CSS + "</style>";
       if (src.indexOf("</head>") >= 0) src = src.replace("</head>", polishTag + "</head>");
@@ -3496,6 +3505,11 @@ function openMzboxModule() {
     if (boot) {
       if (src.indexOf("<head>") >= 0) src = src.replace("<head>", "<head>" + boot);
       else src = boot + src;
+    }
+    if (window.MZBOX_EXTRA_SCRIPT) {
+      var extra = "<script>" + window.MZBOX_EXTRA_SCRIPT.replace(/<\/script/gi, "<\\/script") + "<\/script>";
+      if (src.indexOf("</body>") >= 0) src = src.replace("</body>", extra + "</body>");
+      else src += extra;
     }
     frame.srcdoc = src;
   } catch (e) {
@@ -3797,7 +3811,7 @@ function refreshNotifyBtn() {
   btn.disabled = false;
   if (perm === "granted" && appSettings && appSettings.notify) {
     btn.textContent = "Выключить";
-    if (state) state.textContent = "Уведомления включены.";
+    if (state) state.textContent = "";
   } else {
     btn.textContent = "Разрешить";
     if (state) state.textContent = "";
@@ -4075,13 +4089,16 @@ var hideAll = document.getElementById("setHideAllBlocks");
         loadText(pageUrl("index.html")),
         loadText(pageUrl("css/app.css")),
         loadText(pageUrl("js/app.js")),
-        loadText(pageUrl("js/enhance.js"))
+        loadText(pageUrl("js/enhance.js")),
+        loadText(pageUrl("js/mzbox-chart.js"))
       ]).then(function (parts) {
         var html = parts[0];
         var css = parts[1].replace(/<\/style/gi, "<\\/style");
         var app = parts[2].replace(/<\/script/gi, "<\\/script");
         var enh = parts[3].replace(/<\/script/gi, "<\\/script");
+        var chart = parts[4].replace(/<\/script/gi, "<\\/script");
         html = html.replace('<link rel="stylesheet" href="css/app.css">', "<style>" + css + "</style>");
+        html = html.replace('<script src="js/mzbox-chart.js"></script>\n', "<script>\n" + chart + "\n</script>\n");
         html = html.replace(
           '<script src="js/app.js" defer></script>\n<script src="js/enhance.js" defer></script>',
           "<script>\n" + app + "\n</script>\n<script>\n" + enh + "\n</script>"

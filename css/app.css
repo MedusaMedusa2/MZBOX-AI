@@ -18,7 +18,9 @@
   --font: "Segoe UI", "Liberation Sans", "DejaVu Sans", sans-serif;
   --shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
   --pad: 18px;
-  --strip: 96px;
+  --strip: 108px;
+  --gap: 16px;
+  --card-pad: 18px;
   color-scheme: dark;
 }
 
@@ -96,17 +98,18 @@ svg.sticker { max-width: none; overflow: visible; }
 }
 
 .topbar {
-  position: sticky;
-  top: 0;
-  z-index: 6;
+  position: static;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin: 0 0 18px;
-  padding: 14px 2px 12px;
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: blur(16px);
+  gap: var(--gap);
+  margin: 0 0 var(--gap);
+  padding: 2px 0 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .brand { min-width: 0; }
@@ -409,7 +412,7 @@ svg.sticker { max-width: none; overflow: visible; }
 .dashboard {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--gap);
 }
 .nav-card {
   display: flex;
@@ -1165,6 +1168,53 @@ body.hide-tips .tip { display: none !important; }
   overflow: hidden;
   clip: rect(0 0 0 0);
 }
+
+body.density-compact {
+  --gap: 10px;
+  --card-pad: 12px;
+}
+body.density-super {
+  --gap: 6px;
+  --card-pad: 8px;
+}
+body.density-compact .sticker,
+body.density-compact .sticker-slot { width: 40px; height: 40px; flex-basis: 40px; }
+body.density-super .sticker,
+body.density-super .sticker-slot { width: 32px; height: 32px; flex-basis: 32px; }
+body.density-compact .nav-card { min-height: 124px; padding: var(--card-pad); }
+body.density-super .nav-card { min-height: 104px; padding: var(--card-pad); }
+body.density-super .nav-card .count,
+body.density-super .book-balance,
+body.density-super .info-time { font-size: 22px; }
+.home-split,
+.dashboard,
+.entries,
+.book,
+.settings-body,
+.settings-blocks { gap: var(--gap); }
+.info-panel,
+.briefing,
+.finance-panel,
+.nav-card,
+.book,
+.settings-block { padding: var(--card-pad); }
+.info-panel,
+.briefing,
+.finance-panel { margin-bottom: var(--gap); }
+.settings-blocks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.block-toggle {
+  min-height: 72px;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+}
+.block-toggle-left { align-items: flex-start; }
+.block-toggle-mark { font-size: 12px; }
 #sectionMzboxBtn { width: auto; min-width: 44px; padding: 0 10px; font-size: 13px; font-weight: 750; letter-spacing: 0.04em; }
 .sticker-link { width: 84px; }
 @media (max-width: 720px) {

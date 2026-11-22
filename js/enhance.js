@@ -14,7 +14,8 @@
     FINANCES: "#8ED4C6",
     COCOS: "#E6D2A4",
     DEBTWISE: "#F0C39A",
-    MZBOX: "#D9D3C5"
+    MZBOX: "#D9D3C5",
+    home: "#F3E6C8"
   };
 
   var ICONS = {
@@ -30,7 +31,8 @@
     FINANCES: '<path d="M-10 10V2M-3 10V-4M4 10V-1M11 10V-8"/><path d="M-12 10h24"/>',
     COCOS: '<circle cx="0" cy="2" r="9"/><circle cx="-3" cy="1" r="1" fill="#241c14" stroke="none"/><circle cx="3" cy="1" r="1" fill="#241c14" stroke="none"/><circle cx="0" cy="5" r="1" fill="#241c14" stroke="none"/><path d="M0-12c1.4 2.2 1.4 4 0 6"/>',
     DEBTWISE: '<path d="M0-11v16M-8 8h16M-10-8h20"/><path d="M-10-8-14 1h8zM10-8l-4 9h8z"/>',
-    MZBOX: '<path d="M0-11 11-5v10L0 11-11 5V-5z"/><path d="M-11-5 0 1 11-5M0 1v10"/>'
+    MZBOX: '<path d="M0-11 11-5v10L0 11-11 5V-5z"/><path d="M-11-5 0 1 11-5M0 1v10"/>',
+    home: '<path d="M-11 2 0-9l11 11v8h-7V6H-4v6h-7z"/>'
   };
 
   var HINTS = {
@@ -63,6 +65,13 @@
     "body.dark .brand{color:#f4f1ea!important;-webkit-text-fill-color:#f4f1ea!important}",
     "body:not(.dark) .brand{color:#171717!important;-webkit-text-fill-color:#171717!important}",
     "button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #c6a15a;outline-offset:2px}",
+    ".footer-legal,.build-version{display:none!important}",
+    "#themeToggle{display:none!important}",
+    ".chart,.chart-wrap{width:100%!important;max-width:none!important}",
+    ".chart{display:block!important;height:min(440px,70vw)!important;min-height:280px!important}",
+    "body[data-density=compact] main{padding:12px!important}",
+    "body[data-density=super] main{padding:8px!important}",
+    "body[data-density=super] .card{padding:10px!important}",
     ".card,.stat,.level,.forecast-stat{border-radius:16px}",
     ".btn,.refresh-main{border-radius:12px}",
     "body{text-rendering:optimizeLegibility}"
@@ -140,6 +149,11 @@
         scrollToId(target);
         return;
       }
+      if (go === "home") {
+        if (window.__injHome) window.__injHome(event);
+        setCurrent("home");
+        return;
+      }
       if (go === "MZBOX") {
         if (window.__injMzbox) window.__injMzbox(event);
         setCurrent("MZBOX");
@@ -187,7 +201,7 @@
       document.body.classList.remove("mzbox-open");
       if (frame) { try { frame.removeAttribute("srcdoc"); frame.removeAttribute("src"); } catch (err) {} }
       var result = orig(event);
-      setCurrent("");
+      setCurrent("home");
       syncScreens();
       return result;
     };
