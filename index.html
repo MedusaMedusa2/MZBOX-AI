@@ -20,7 +20,6 @@
 <div class="app">
 <header class="topbar">
   <div class="brand">
-    <span class="brand-kicker">MZBOX AI</span>
     <button type="button" class="logo" id="logo" onclick="window.__injHome && window.__injHome(event)" title="На главную">INJECTUM</button>
   </div>
   <div class="header-actions">
@@ -153,15 +152,11 @@
 </section>
 </main>
 
-<footer class="site-footer">
-  <div class="footer-brand" id="footerBrand">© INJECTUM · СБОРКА 21.11.2026 V9.9</div>
-  <div class="author" id="footerAuthor1">Кутузов Дмитрий Владимирович</div>
-  <div class="author" id="footerAuthor2">Кутузова Ольга Денисовна</div>
-</footer>
 </div>
 
 <nav class="sticker-strip" id="stickerStrip" aria-label="Разделы">
   <div class="sticker-strip-scroll">
+    <button type="button" class="sticker-link" data-go="home" title="Главная"><span class="sticker-slot" data-sticker="home"></span><span class="sticker-cap">Главная</span></button>
     <button type="button" class="sticker-link" data-go="NOTES" title="NOTES"><span class="sticker-slot" data-sticker="NOTES"></span><span class="sticker-cap">Заметки</span></button>
     <button type="button" class="sticker-link" data-go="ASSETS" title="ASSETS"><span class="sticker-slot" data-sticker="ASSETS"></span><span class="sticker-cap">Имущество</span></button>
     <button type="button" class="sticker-link" data-go="EVENTS" title="EVENTS"><span class="sticker-slot" data-sticker="EVENTS"></span><span class="sticker-cap">События</span></button>
@@ -210,11 +205,9 @@
       </div>
       <button type="button" class="icon-btn-sq" onclick="window.__injSettingsClose&&window.__injSettingsClose()" aria-label="Закрыть">×</button>
     </div>
-    <p class="settings-lead">Сначала имя и время, потом что видно на главной, затем цвета и копия данных.</p>
     <div class="settings-body">
       <section class="settings-block">
         <div class="settings-block-title">Профиль</div>
-        <p class="settings-hint">Как приложение здоровается и в каком часовом поясе идут часы.</p>
         <div class="set-field">
           <label class="settings-label" for="setDisplayName">Имя в приветствии</label>
           <input type="text" id="setDisplayName" maxlength="40" placeholder="Дмитрий" autocomplete="name">
@@ -237,7 +230,6 @@
 
       <section class="settings-block">
         <div class="settings-block-title">Главный экран</div>
-        <p class="settings-hint">Верхние блоки. Разделы ниже включаются отдельно.</p>
         <div class="settings-blocks" id="setHomeRow">
           <label class="block-toggle on" id="labWelcome">
             <input type="checkbox" id="setShowWelcome" checked>
@@ -276,20 +268,17 @@
 
       <section class="settings-block">
         <div class="settings-block-title">Разделы</div>
-        <p class="settings-hint">Карточки на главной. Скрытый раздел по-прежнему открывается из нижней ленты.</p>
         <div class="settings-blocks" id="setBlocksRow"></div>
       </section>
 
       <section class="settings-block">
         <div class="settings-block-title">Уведомления</div>
-        <p class="settings-hint">За 7 дней, за день и в день. Каждая запись — один раз на каждый срок.</p>
         <button type="button" class="primary-btn" id="setNotifyBtn">Разрешить</button>
         <p class="settings-hint" id="setNotifyState"></p>
       </section>
 
       <section class="settings-block">
         <div class="settings-block-title">Тема и текст</div>
-        <p class="settings-hint">Общий вид. Цвета ниже можно задать отдельно.</p>
         <div class="set-field">
           <span class="settings-label">Тема</span>
           <div class="settings-seg" id="setThemeMode" role="group" aria-label="Тема">
@@ -304,15 +293,6 @@
             <button type="button" data-font="sans" class="on font-sans">Системный</button>
             <button type="button" data-font="serif" class="font-serif">Антиква</button>
             <button type="button" data-font="mono" class="font-mono">Моно</button>
-            <button type="button" data-font="narrow" class="font-narrow">Узкий</button>
-          </div>
-        </div>
-        <div class="set-field">
-          <span class="settings-label">Размер</span>
-          <div class="settings-seg" id="setFontSize" role="group" aria-label="Размер">
-            <button type="button" data-size="sm">Мелкий</button>
-            <button type="button" data-size="md" class="on">Обычный</button>
-            <button type="button" data-size="lg">Крупный</button>
           </div>
         </div>
         <div class="set-field">
@@ -327,7 +307,6 @@
 
       <section class="settings-block">
         <div class="settings-block-title">Цвет и форма</div>
-        <p class="settings-hint">Свой фон, плашки и акцент. «По умолчанию» возвращает цвет темы.</p>
         <div class="set-field">
           <span class="settings-label">Фон</span>
           <div class="settings-color-custom">
@@ -366,7 +345,6 @@
             <button type="button" data-frame="0">Нет</button>
             <button type="button" data-frame="1" class="on">1</button>
             <button type="button" data-frame="2">2</button>
-            <button type="button" data-frame="3">3</button>
           </div>
           <div class="settings-color-custom">
             <input type="color" id="setFrameColor" value="#3a3a3a" aria-label="Рамка">
@@ -378,7 +356,6 @@
 
       <section class="settings-block">
         <div class="settings-block-title">Данные</div>
-        <p class="settings-hint">Копия остаётся на этом устройстве, пока вы сами её не замените или не удалите.</p>
         <div class="settings-seg" id="setDataRow">
           <button type="button" id="exportBtn" onclick="window.__injExport && window.__injExport(event)">Экспорт</button>
           <button type="button" id="importBtn" onclick="window.__injImport && window.__injImport(event)">Импорт</button>
@@ -397,8 +374,8 @@
         </div>
       </div>
       <div class="settings-actions">
-        <button type="button" class="primary-btn" id="setSaveBtn">Сохранить</button>
-        <button type="button" class="ghost-btn" id="setResetBtn">Сбросить</button>
+        <button type="button" class="primary-btn" id="setSaveBtn">Сохранить настройки</button>
+        <button type="button" class="ghost-btn" id="setResetBtn">Сбросить настройки</button>
       </div>
       <button type="button" class="ghost-btn danger-btn" id="setWipeBtn">Удалить все данные</button>
       <div class="settings-egg">Одобрено кокосом</div>
@@ -407,6 +384,7 @@
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <noscript><p class="noscript">INJECTUM работает с JavaScript: включите его, чтобы открыть записи, финансы и MZBOX AI.</p></noscript>
+<script src="js/mzbox-chart.js"></script>
 <script src="js/app.js" defer></script>
 <script src="js/enhance.js" defer></script>
 </body>
