@@ -52,46 +52,49 @@
         <div class="info-time" id="homeTime">--:--</div>
       </div>
       <div class="quote-block">
-        <span class="sticker-slot" data-sticker="quote"></span>
         <div class="info-quote" id="homeQuote"></div>
       </div>
     </div>
   </div>
 
-  <div class="briefing" id="blockBriefing">
-    <div class="brief-top">
-      <span class="sticker-slot" data-sticker="dates"></span>
-      <h2>BRIEFING</h2>
+  <div class="home-split">
+    <div class="briefing" id="blockBriefing">
+      <div class="panel-head">
+        <span class="sticker-slot" data-sticker="dates"></span>
+        <div>
+          <h2>BRIEFING</h2>
+          <p class="panel-note">Ближайшие даты и дедлайны</p>
+        </div>
+      </div>
+      <div id="briefDates"></div>
     </div>
-    <div id="briefDates"></div>
-    <div class="finance-overview-wrap">
-      <div class="block-label-row">
+
+    <div class="finance-panel" id="financePanel">
+      <div class="panel-head">
         <span class="sticker-slot" data-sticker="money"></span>
-        <span class="block-label">Финансы месяца</span>
+        <div>
+          <h2>Финансы</h2>
+          <p class="panel-note">Доход, расход и напряжённость месяца</p>
+        </div>
       </div>
-      <div class="brief-fin-line" id="financeOverview">
-        <div class="brief-fin-item"><span>доход</span><strong id="totalIncome">0 ₽</strong></div>
-        <div class="brief-fin-sep" aria-hidden="true"></div>
-        <div class="brief-fin-item"><span>расход</span><strong id="totalExpenses">0 ₽</strong></div>
-        <div class="brief-fin-sep" aria-hidden="true"></div>
-        <div class="brief-fin-item"><span>остаток</span><strong id="balance">0 ₽</strong></div>
+      <div class="finance-overview-wrap">
+        <div class="metric-grid" id="financeOverview">
+          <div class="metric"><span>Доход</span><strong id="totalIncome">0 ₽</strong></div>
+          <div class="metric"><span>Расход</span><strong id="totalExpenses">0 ₽</strong></div>
+          <div class="metric"><span>Остаток</span><strong id="balance">0 ₽</strong></div>
+        </div>
       </div>
-    </div>
-    <button type="button" class="brief-credit hidden" id="briefCreditLine"></button>
-    <div class="finance-block" id="briefTensionBlock">
-      <div class="tension-layout">
-        <span class="sticker-slot" data-sticker="tension"></span>
-        <div class="tension-copy">
-          <div class="finance-block-title">
-            <span class="tension-title"><i class="live-dot" id="briefTensionLive"></i>НАПРЯЖЁННОСТЬ</span>
-            <span id="briefTensionLabel">—</span>
+      <button type="button" class="brief-credit hidden" id="briefCreditLine"></button>
+      <div class="tension-block" id="briefTensionBlock">
+        <div class="finance-block-title">
+          <span class="tension-title"><i class="live-dot" id="briefTensionLive"></i>Напряжённость</span>
+          <span id="briefTensionLabel">—</span>
+        </div>
+        <div class="tension-wrap">
+          <div class="tension-bar">
+            <div class="tension-fill" id="briefTensionFill" style="width:0%"></div>
           </div>
-          <div class="tension-wrap">
-            <div class="tension-bar">
-              <div class="tension-fill" id="briefTensionFill" style="width:0%"></div>
-            </div>
-            <div class="tension-scale"><span>0</span><span>50</span><span>100</span></div>
-          </div>
+          <div class="tension-scale"><span>0</span><span>50</span><span>100</span></div>
         </div>
       </div>
     </div>
@@ -119,9 +122,7 @@
       <button class="icon-btn-sq primary" id="addBtn" type="button" aria-label="Добавить" onclick="window.__injAdd && window.__injAdd(event)">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg>
       </button>
-      <button class="icon-btn-sq hidden" id="sectionMzboxBtn" type="button" aria-label="MZBOX AI" title="MZBOX AI" onclick="window.__injMzbox && window.__injMzbox(event)">
-        <span class="sticker-slot" data-sticker="MZBOX"></span>
-      </button>
+      <button class="icon-btn-sq hidden" id="sectionMzboxBtn" type="button" aria-label="MZBOX AI" title="MZBOX AI" onclick="window.__injMzbox && window.__injMzbox(event)">AI</button>
     </div>
   </div>
 
@@ -143,6 +144,12 @@
   <div class="entries" id="entries"></div>
   <div id="debtwiseView" class="debtwise-view hidden"></div>
   <div id="financesView" class="finances-panel hidden"></div>
+  <div id="mzboxView" class="mzbox-panel hidden">
+    <div id="mzboxOverlay" class="mzbox-stage hidden" aria-hidden="true">
+      <iframe id="mzboxFrame" class="mzbox-frame" title="MZBOX AI"></iframe>
+      <button type="button" id="mzboxCloseBtn" class="mzbox-fallback-close" onclick="window.__injMzboxClose && window.__injMzboxClose(event)">Закрыть MZBOX AI</button>
+    </div>
+  </div>
 </section>
 </main>
 
@@ -153,13 +160,8 @@
 </footer>
 </div>
 
-<nav class="sticker-strip" id="stickerStrip" aria-label="Краткое содержание разделов">
+<nav class="sticker-strip" id="stickerStrip" aria-label="Разделы">
   <div class="sticker-strip-scroll">
-    <button type="button" class="sticker-link" data-target="welcomeStrip" title="Приветствие"><span class="sticker-slot" data-sticker="welcome"></span><span class="sticker-cap">Привет</span></button>
-    <button type="button" class="sticker-link" data-target="homeQuote" title="Цитата"><span class="sticker-slot" data-sticker="quote"></span><span class="sticker-cap">Цитата</span></button>
-    <button type="button" class="sticker-link" data-target="blockBriefing" title="BRIEFING"><span class="sticker-slot" data-sticker="dates"></span><span class="sticker-cap">Сроки</span></button>
-    <button type="button" class="sticker-link" data-target="financeOverview" title="Финансы месяца"><span class="sticker-slot" data-sticker="money"></span><span class="sticker-cap">Счёт</span></button>
-    <button type="button" class="sticker-link" data-target="briefTensionBlock" title="Напряжённость"><span class="sticker-slot" data-sticker="tension"></span><span class="sticker-cap">Пульс</span></button>
     <button type="button" class="sticker-link" data-go="NOTES" title="NOTES"><span class="sticker-slot" data-sticker="NOTES"></span><span class="sticker-cap">Заметки</span></button>
     <button type="button" class="sticker-link" data-go="ASSETS" title="ASSETS"><span class="sticker-slot" data-sticker="ASSETS"></span><span class="sticker-cap">Имущество</span></button>
     <button type="button" class="sticker-link" data-go="EVENTS" title="EVENTS"><span class="sticker-slot" data-sticker="EVENTS"></span><span class="sticker-cap">События</span></button>
@@ -170,14 +172,6 @@
     <button type="button" class="sticker-link" data-go="MZBOX" title="MZBOX AI"><span class="sticker-slot" data-sticker="MZBOX"></span><span class="sticker-cap">MZBOX</span></button>
   </div>
 </nav>
-
-<div id="mzboxOverlay" class="mzbox-overlay hidden" aria-hidden="true">
-  <div class="mzbox-overlay-bar">
-    <div class="mzbox-overlay-title">MZBOX AI</div>
-    <button type="button" class="mzbox-overlay-close" id="mzboxCloseBtn" onclick="window.__injMzboxClose && window.__injMzboxClose(event)" aria-label="Закрыть">✕</button>
-  </div>
-  <iframe id="mzboxFrame" class="mzbox-frame" title="MZBOX AI"></iframe>
-</div>
 
 <div id="archiveModal" class="archive-modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="archiveModalTitle" onclick="if(event.target===this)closeArchiveView()">
   <div class="archive-sheet" onclick="event.stopPropagation()">
@@ -216,97 +210,34 @@
       </div>
       <button type="button" class="icon-btn-sq" onclick="window.__injSettingsClose&&window.__injSettingsClose()" aria-label="Закрыть">×</button>
     </div>
+    <p class="settings-lead">Сначала имя и время, потом что видно на главной, затем цвета и копия данных.</p>
     <div class="settings-body">
       <section class="settings-block">
         <div class="settings-block-title">Профиль</div>
-        <label class="settings-label" for="setDisplayName">Имя в приветствии</label>
-        <input type="text" id="setDisplayName" maxlength="40" placeholder="Дмитрий" autocomplete="name">
-        <label class="settings-label">Формат времени</label>
-        <div class="settings-seg" id="setTimeFormat" role="group" aria-label="Формат времени">
-          <button type="button" data-tf="24" class="on">24 часа</button>
-          <button type="button" data-tf="12">12 часов</button>
+        <p class="settings-hint">Как приложение здоровается и в каком часовом поясе идут часы.</p>
+        <div class="set-field">
+          <label class="settings-label" for="setDisplayName">Имя в приветствии</label>
+          <input type="text" id="setDisplayName" maxlength="40" placeholder="Дмитрий" autocomplete="name">
         </div>
-        <label class="settings-label" for="setTimeZone">Часовой пояс</label>
-        <select id="setTimeZone" class="settings-select">
-          <option value="Europe/Moscow">Москва</option>
-          <option value="Asia/Yekaterinburg">Екатеринбург</option>
-        </select>
-      </section>
-
-      <section class="settings-block">
-        <div class="settings-block-title">Уведомления</div>
-        <p class="settings-hint">За 7 дней, за день и в день. Каждая запись — один раз на каждый срок.</p>
-        <button type="button" class="primary-btn" id="setNotifyBtn">Разрешить</button>
-        <p class="settings-hint" id="setNotifyState"></p>
-      </section>
-
-      <section class="settings-block">
-        <div class="settings-block-title">Оформление</div>
-        <label class="settings-label">Тема</label>
-        <div class="settings-seg" id="setThemeMode" role="group" aria-label="Тема">
-          <button type="button" data-theme="dark" class="on">Тёмная</button>
-          <button type="button" data-theme="light">Светлая</button>
-          <button type="button" data-theme="rose">Роза</button>
+        <div class="set-field">
+          <span class="settings-label">Формат времени</span>
+          <div class="settings-seg" id="setTimeFormat" role="group" aria-label="Формат времени">
+            <button type="button" data-tf="24" class="on">24 часа</button>
+            <button type="button" data-tf="12">12 часов</button>
+          </div>
         </div>
-        <label class="settings-label">Шрифт всего текста</label>
-        <div class="settings-seg" id="setFont" role="group" aria-label="Шрифт">
-          <button type="button" data-font="sans" class="on font-sans">Системный</button>
-          <button type="button" data-font="serif" class="font-serif">Антиква</button>
-          <button type="button" data-font="mono" class="font-mono">Моно</button>
-          <button type="button" data-font="narrow" class="font-narrow">Узкий</button>
-        </div>
-        <label class="settings-label">Размер</label>
-        <div class="settings-seg" id="setFontSize" role="group" aria-label="Размер">
-          <button type="button" data-size="sm">Мелкий</button>
-          <button type="button" data-size="md" class="on">Обычный</button>
-          <button type="button" data-size="lg">Крупный</button>
-        </div>
-        <label class="settings-label">Фон</label>
-        <div class="settings-color-custom">
-          <input type="color" id="setBgColor" value="#000000" aria-label="Фон">
-          <span>Свой цвет</span>
-          <button type="button" class="ghost-btn" id="setBgReset">По умолчанию</button>
-        </div>
-        <label class="settings-label">Плашки</label>
-        <div class="settings-color-custom">
-          <input type="color" id="setCardColor" value="#161616" aria-label="Плашки">
-          <span>Свой цвет</span>
-          <button type="button" class="ghost-btn" id="setCardReset">По умолчанию</button>
-        </div>
-        <label class="settings-label">Акцент</label>
-        <div class="settings-color-custom">
-          <input type="color" id="setAccentCustom" value="#c8c2b0" aria-label="Акцент">
-          <span>Свой цвет</span>
-          <button type="button" class="ghost-btn" id="setAccentReset">По умолчанию</button>
-        </div>
-        <label class="settings-label">Углы плашек</label>
-        <div class="settings-seg" id="setCorners" role="group" aria-label="Углы плашек">
-          <button type="button" data-corners="sharp">Прямые</button>
-          <button type="button" data-corners="soft" class="on">Мягкие</button>
-          <button type="button" data-corners="round">Круглые</button>
-        </div>
-        <label class="settings-label">Границы плашек</label>
-        <div class="settings-seg" id="setFrame" role="group" aria-label="Границы плашек">
-          <button type="button" data-frame="0">Нет</button>
-          <button type="button" data-frame="1" class="on">1</button>
-          <button type="button" data-frame="2">2</button>
-          <button type="button" data-frame="3">3</button>
-        </div>
-        <div class="settings-color-custom">
-          <input type="color" id="setFrameColor" value="#3a3a3a" aria-label="Рамка">
-          <span>Цвет рамки</span>
-          <button type="button" class="ghost-btn" id="setFrameReset">По умолчанию</button>
-        </div>
-        <label class="settings-label">Плотность</label>
-        <div class="settings-seg" id="setDensity" role="group" aria-label="Плотность">
-          <button type="button" data-density="compact">Компакт</button>
-          <button type="button" data-density="normal" class="on">Обычный</button>
-          <button type="button" data-density="super">Сверхкомпакт</button>
+        <div class="set-field">
+          <label class="settings-label" for="setTimeZone">Часовой пояс</label>
+          <select id="setTimeZone" class="settings-select">
+            <option value="Europe/Moscow">Москва</option>
+            <option value="Asia/Yekaterinburg">Екатеринбург</option>
+          </select>
         </div>
       </section>
 
       <section class="settings-block">
-        <div class="settings-block-title">Главная</div>
+        <div class="settings-block-title">Главный экран</div>
+        <p class="settings-hint">Верхние блоки. Разделы ниже включаются отдельно.</p>
         <div class="settings-blocks" id="setHomeRow">
           <label class="block-toggle on" id="labWelcome">
             <input type="checkbox" id="setShowWelcome" checked>
@@ -344,12 +275,110 @@
       </section>
 
       <section class="settings-block">
-        <div class="settings-block-title">Блоки на главной</div>
+        <div class="settings-block-title">Разделы</div>
+        <p class="settings-hint">Карточки на главной. Скрытый раздел по-прежнему открывается из нижней ленты.</p>
         <div class="settings-blocks" id="setBlocksRow"></div>
       </section>
 
       <section class="settings-block">
+        <div class="settings-block-title">Уведомления</div>
+        <p class="settings-hint">За 7 дней, за день и в день. Каждая запись — один раз на каждый срок.</p>
+        <button type="button" class="primary-btn" id="setNotifyBtn">Разрешить</button>
+        <p class="settings-hint" id="setNotifyState"></p>
+      </section>
+
+      <section class="settings-block">
+        <div class="settings-block-title">Тема и текст</div>
+        <p class="settings-hint">Общий вид. Цвета ниже можно задать отдельно.</p>
+        <div class="set-field">
+          <span class="settings-label">Тема</span>
+          <div class="settings-seg" id="setThemeMode" role="group" aria-label="Тема">
+            <button type="button" data-theme="dark" class="on">Тёмная</button>
+            <button type="button" data-theme="light">Светлая</button>
+            <button type="button" data-theme="rose">Роза</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="settings-label">Шрифт всего текста</span>
+          <div class="settings-seg" id="setFont" role="group" aria-label="Шрифт">
+            <button type="button" data-font="sans" class="on font-sans">Системный</button>
+            <button type="button" data-font="serif" class="font-serif">Антиква</button>
+            <button type="button" data-font="mono" class="font-mono">Моно</button>
+            <button type="button" data-font="narrow" class="font-narrow">Узкий</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="settings-label">Размер</span>
+          <div class="settings-seg" id="setFontSize" role="group" aria-label="Размер">
+            <button type="button" data-size="sm">Мелкий</button>
+            <button type="button" data-size="md" class="on">Обычный</button>
+            <button type="button" data-size="lg">Крупный</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="settings-label">Плотность</span>
+          <div class="settings-seg" id="setDensity" role="group" aria-label="Плотность">
+            <button type="button" data-density="compact">Компакт</button>
+            <button type="button" data-density="normal" class="on">Обычный</button>
+            <button type="button" data-density="super">Сверхкомпакт</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-block">
+        <div class="settings-block-title">Цвет и форма</div>
+        <p class="settings-hint">Свой фон, плашки и акцент. «По умолчанию» возвращает цвет темы.</p>
+        <div class="set-field">
+          <span class="settings-label">Фон</span>
+          <div class="settings-color-custom">
+            <input type="color" id="setBgColor" value="#000000" aria-label="Фон">
+            <span>Свой цвет</span>
+            <button type="button" class="ghost-btn" id="setBgReset">По умолчанию</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="settings-label">Плашки</span>
+          <div class="settings-color-custom">
+            <input type="color" id="setCardColor" value="#161616" aria-label="Плашки">
+            <span>Свой цвет</span>
+            <button type="button" class="ghost-btn" id="setCardReset">По умолчанию</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="settings-label">Акцент</span>
+          <div class="settings-color-custom">
+            <input type="color" id="setAccentCustom" value="#c8c2b0" aria-label="Акцент">
+            <span>Свой цвет</span>
+            <button type="button" class="ghost-btn" id="setAccentReset">По умолчанию</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="settings-label">Углы плашек</span>
+          <div class="settings-seg" id="setCorners" role="group" aria-label="Углы плашек">
+            <button type="button" data-corners="sharp">Прямые</button>
+            <button type="button" data-corners="soft" class="on">Мягкие</button>
+            <button type="button" data-corners="round">Круглые</button>
+          </div>
+        </div>
+        <div class="set-field">
+          <span class="settings-label">Границы плашек</span>
+          <div class="settings-seg" id="setFrame" role="group" aria-label="Границы плашек">
+            <button type="button" data-frame="0">Нет</button>
+            <button type="button" data-frame="1" class="on">1</button>
+            <button type="button" data-frame="2">2</button>
+            <button type="button" data-frame="3">3</button>
+          </div>
+          <div class="settings-color-custom">
+            <input type="color" id="setFrameColor" value="#3a3a3a" aria-label="Рамка">
+            <span>Цвет рамки</span>
+            <button type="button" class="ghost-btn" id="setFrameReset">По умолчанию</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-block">
         <div class="settings-block-title">Данные</div>
+        <p class="settings-hint">Копия остаётся на этом устройстве, пока вы сами её не замените или не удалите.</p>
         <div class="settings-seg" id="setDataRow">
           <button type="button" id="exportBtn" onclick="window.__injExport && window.__injExport(event)">Экспорт</button>
           <button type="button" id="importBtn" onclick="window.__injImport && window.__injImport(event)">Импорт</button>

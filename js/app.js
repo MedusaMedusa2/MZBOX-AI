@@ -541,12 +541,14 @@ const menu = [
   ["REFLECTION", "04"],
   ["FINANCES", "05"],
   ["COCOS", "06"],
-  ["DEBTWISE", "07"]
+  ["DEBTWISE", "07"],
+  ["MZBOX", "08"]
 ];
 
 function sectionLabel(key) {
   if (key === "COCOS") return "COCOS";
   if (key === "DEBTWISE") return "DEBTWISE";
+  if (key === "MZBOX") return "MZBOX AI";
   if (key === "WIP") return "В РАЗРАБОТКЕ…";
   return key;
 }
@@ -968,7 +970,7 @@ function openSection(key) {
   try {
     if (!key) return;
     if (!data || typeof data !== "object") data = emptyData();
-    if (!Array.isArray(data[key])) data[key] = [];
+    if (key !== "MZBOX" && !Array.isArray(data[key])) data[key] = [];
     currentSection = key;
     editingId = null;
 
@@ -990,6 +992,21 @@ function openSection(key) {
     var mzBtn = document.getElementById("sectionMzboxBtn");
 
     var debtView = document.getElementById("debtwiseView");
+    var mzView = document.getElementById("mzboxView");
+    if (key !== "MZBOX") {
+      if (mzView) mzView.classList.add("hidden");
+      var stage = document.getElementById("mzboxOverlay");
+      if (stage) {
+        stage.classList.add("hidden");
+        stage.style.display = "none";
+        stage.setAttribute("aria-hidden", "true");
+      }
+      document.body.classList.remove("mzbox-open");
+      var frame = document.getElementById("mzboxFrame");
+      if (frame) {
+        try { frame.removeAttribute("srcdoc"); frame.removeAttribute("src"); } catch (_) {}
+      }
+    }
     if (key === "FINANCES") {
       if (entriesEl) entriesEl.classList.add("hidden");
       if (toolbar) toolbar.classList.add("hidden");
@@ -1008,6 +1025,7 @@ function openSection(key) {
       if (searchToggle) searchToggle.classList.add("hidden");
       if (mzBtn) mzBtn.classList.add("hidden");
       if (financesView) financesView.classList.add("hidden");
+      if (mzView) mzView.classList.add("hidden");
       if (debtView) {
         debtView.classList.remove("hidden");
         debtView.style.display = "block";
@@ -1029,6 +1047,17 @@ function openSection(key) {
       if (addBtn) addBtn.classList.add("hidden");
       if (searchToggle) searchToggle.classList.add("hidden");
       if (mzBtn) mzBtn.classList.add("hidden");
+    } else if (key === "MZBOX") {
+      if (entriesEl) entriesEl.classList.add("hidden");
+      if (toolbar) toolbar.classList.add("hidden");
+      if (searchToolbar) searchToolbar.classList.add("hidden");
+      if (addBtn) addBtn.classList.add("hidden");
+      if (searchToggle) searchToggle.classList.add("hidden");
+      if (mzBtn) mzBtn.classList.add("hidden");
+      if (financesView) financesView.classList.add("hidden");
+      if (debtView) { debtView.classList.add("hidden"); debtView.innerHTML = ""; }
+      if (mzView) mzView.classList.remove("hidden");
+      try { openMzboxModule(); } catch (e) { console.error(e); }
     } else {
       if (entriesEl) entriesEl.classList.remove("hidden");
       if (toolbar) toolbar.classList.add("hidden");
@@ -1055,13 +1084,13 @@ function renderDashboard() {
   menu.forEach(function (pair) {
     var key = pair[0], num = pair[1];
     if (hiddenBlocks.indexOf(key) !== -1) return;
-    if (!Array.isArray(data[key])) data[key] = [];
+    if (key !== "MZBOX" && !Array.isArray(data[key])) data[key] = [];
     var button = document.createElement("button");
     button.type = "button";
     button.className = "nav-card";
     button.setAttribute("data-section", key);
     button.setAttribute("onclick", "window.__injOpen && window.__injOpen('" + key + "')");
-    var count = data[key].length;
+    var count = key === "MZBOX" ? "AI" : data[key].length;
     button.innerHTML =
       '<span class="num">' + num + '</span>' +
       '<span class="name">' + sectionLabel(key) + '</span>' +
@@ -2566,7 +2595,7 @@ function drawFinanceChart(canvas, parts) {
   if (!canvas) return;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const w = Math.max(canvas.clientWidth || 320, 280);
-  const h = 220;
+  const h = 180;
   canvas.width = Math.round(w * dpr);
   canvas.height = Math.round(h * dpr);
   const ctx = canvas.getContext("2d");
@@ -2584,21 +2613,23 @@ function drawFinanceChart(canvas, parts) {
   ctx.roundRect?.(0, 0, w, h, 12) || ctx.rect(0, 0, w, h);
   ctx.fill();
 
-  const cx = w * 0.32;
+  const cx = total <= 0 ? w * 0.5 : w * 0.32;
   const cy = h * 0.52;
   const r = Math.min(w, h) * 0.30;
   const r0 = r * 0.62;
 
   if (total <= 0) {
-    ctx.beginPath();
-    ctx.arc(cx, cy, (r + r0) / 2, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(140,140,130,.2)";
-    ctx.lineWidth = r - r0;
-    ctx.stroke();
+    const eh = 72;
+    canvas.height = Math.round(eh * dpr);
+    canvas.style.height = eh + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, eh);
     ctx.fillStyle = muted;
-    ctx.font = "12px -apple-system,sans-serif";
+    ctx.font = "14px -apple-system, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Нет данных", cx, cy + 4);
+    ctx.textBaseline = "middle";
+    ctx.fillText("Пока нет доходов и расходов", w / 2, eh / 2);
+    return;
   } else {
     // track ring
     ctx.beginPath();
@@ -2919,7 +2950,7 @@ function renderFinancesView() {
   const balance = income - expenses;
   const saveRec = balance > 0 ? Math.round(balance * 0.2) : 0;
   const fillColor = tensionColor(tensionValue);
-  const monthLabel = new Intl.DateTimeFormat("ru-RU", { month: "long", year: "numeric" }).format(new Date());
+  const monthLabel = new Intl.DateTimeFormat("ru-RU", { month: "long", year: "numeric" }).format(new Date()).replace(/\s*г\.?\s*$/i, "");
   const archives = getMonthArchives();
 
     var creditDebtTotal = 0;
@@ -2944,15 +2975,21 @@ function renderFinancesView() {
 
   root.innerHTML = `
     <div class="book">
-      <div class="book-head">
-        <span class="book-month">${monthLabel}</span>
-        <div class="book-balance ${balance < 0 ? "negative" : ""}">${formatMoney(balance)}</div>
+      <header class="book-head">
+        <div class="book-intro">
+          <p class="book-kicker">Текущий месяц</p>
+          <h2 class="book-month">${monthLabel}</h2>
+        </div>
+        <div class="book-hero">
+          <span>Остаток</span>
+          <div class="book-balance ${balance < 0 ? "negative" : ""}">${formatMoney(balance)}</div>
+        </div>
         <div class="book-metrics">
           <div><span>Доход</span><b>${formatMoney(income)}</b></div>
           <div><span>Расход</span><b>${formatMoney(expenses)}</b></div>
           <div><span>Долг</span><b>${formatMoney(creditDebtTotal)}</b></div>
         </div>
-      </div>
+      </header>
       ${monthSalary == null
         ? `<div class="month-salary-form">
              <label class="month-salary-label" for="monthSalaryInput">Зарплата за месяц</label>
@@ -3089,7 +3126,7 @@ function renderFinancesView() {
   requestAnimationFrame(() => {
     const canvas = root.querySelector("#finChart");
     if (canvas) {
-      canvas.style.height = "120px";
+      canvas.style.height = "180px";
       drawFinanceChart(canvas, chartParts);
     }
     const legend = root.querySelector("#finChartLegend");
@@ -3483,6 +3520,10 @@ function closeMzboxModule() {
     }
   } catch (_) {}
   try {
+    if (currentSection === "MZBOX") {
+      currentSection = null;
+      showScreen("home");
+    }
     renderHome();
     if (currentSection === "FINANCES") renderFinancesView();
   } catch (_) {}

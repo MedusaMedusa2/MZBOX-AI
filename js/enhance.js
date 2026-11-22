@@ -18,47 +18,19 @@
   };
 
   var ICONS = {
-    welcome:
-      '<circle cx="36" cy="34" r="7" fill="#241c14"/>' +
-      '<path d="M36 18v5M36 45v5M20 34h5M47 34h5M24 22l3.4 3.4M44.6 42.6 48 46M48 22l-3.4 3.4M27.4 42.6 24 46" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linecap="round"/>',
-    quote:
-      '<path fill="#241c14" d="M22 42c0-9 4.2-15 11-17.2V30c-3.2 1.2-5 4-5 7.2H33V48H22zm18 0c0-9 4.2-15 11-17.2V30c-3.2 1.2-5 4-5 7.2H51V48H40z"/>',
-    dates:
-      '<rect x="22" y="24" width="28" height="24" rx="4" fill="none" stroke="#241c14" stroke-width="2.2"/>' +
-      '<path d="M22 32h28M29 20v7M43 20v7" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linecap="round"/>' +
-      '<circle cx="31" cy="40" r="1.7" fill="#241c14"/><circle cx="41" cy="40" r="1.7" fill="#241c14"/>',
-    money:
-      '<ellipse cx="36" cy="40" rx="13" ry="6" fill="none" stroke="#241c14" stroke-width="2.2"/>' +
-      '<path d="M23 40v7c0 3.3 5.8 6 13 6s13-2.7 13-6v-7" fill="none" stroke="#241c14" stroke-width="2.2"/>' +
-      '<ellipse cx="36" cy="32" rx="13" ry="6" fill="#fff6" stroke="#241c14" stroke-width="2.2"/>',
-    tension:
-      '<path d="M16 36h8l4-11 7 22 5-11h16" fill="none" stroke="#241c14" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
-    NOTES:
-      '<path d="M26 20h14l10 10v22a3 3 0 0 1-3 3H26a3 3 0 0 1-3-3V23a3 3 0 0 1 3-3z" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linejoin="round"/>' +
-      '<path d="M40 20v10h10M28 38h16M28 44h10" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
-    ASSETS:
-      '<path d="M18 34 36 20l18 14v18H18z" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linejoin="round"/>' +
-      '<path d="M31 52V40h10v12" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linejoin="round"/>',
-    EVENTS:
-      '<path d="M36 52s12-11 12-20a12 12 0 1 0-24 0c0 9 12 20 12 20z" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linejoin="round"/>' +
-      '<circle cx="36" cy="32" r="3.4" fill="#241c14"/>',
-    REFLECTION:
-      '<circle cx="30" cy="32" r="9" fill="none" stroke="#241c14" stroke-width="2.2"/>' +
-      '<circle cx="44" cy="42" r="5.5" fill="none" stroke="#241c14" stroke-width="2.2"/>' +
-      '<circle cx="51" cy="50" r="2.2" fill="#241c14"/>',
-    FINANCES:
-      '<path d="M22 48V34M32 48V26M42 48V32M52 48V22" fill="none" stroke="#241c14" stroke-width="3.2" stroke-linecap="round"/>' +
-      '<path d="M18 50h38" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linecap="round"/>',
-    COCOS:
-      '<circle cx="36" cy="38" r="14" fill="none" stroke="#241c14" stroke-width="2.2"/>' +
-      '<circle cx="31" cy="36" r="1.6" fill="#241c14"/><circle cx="40" cy="36" r="1.6" fill="#241c14"/><circle cx="35.5" cy="43" r="1.6" fill="#241c14"/>' +
-      '<path d="M36 16c2 4 2.2 7 0 10" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linecap="round"/>',
-    DEBTWISE:
-      '<path d="M36 22v28M22 50h28M20 26h32" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linecap="round"/>' +
-      '<path d="M20 26 14 38h12zM52 26l-6 12h12z" fill="none" stroke="#241c14" stroke-width="2" stroke-linejoin="round"/>',
-    MZBOX:
-      '<path d="M36 20 52 28v16L36 52 20 44V28z" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linejoin="round"/>' +
-      '<path d="M20 28l16 8 16-8M36 36v16" fill="none" stroke="#241c14" stroke-width="2.2" stroke-linejoin="round"/>'
+    welcome: '<circle cx="0" cy="-1" r="5" fill="#241c14"/><path d="M0-12v3M0 8v3M-11-1h3M8-1h3M-8-8l2 2M6 6l2 2M8-8l-2 2M-6 6l-2 2"/>',
+    quote: '<path fill="#241c14" stroke="none" d="M-12 6c0-6 2.6-10 7-11.2V-1c-2 .8-3.2 2.4-3.2 4.4H-4V8h-8zm10 0c0-6 2.6-10 7-11.2V-1c-2 .8-3.2 2.4-3.2 4.4H6V8h-8z"/>',
+    dates: '<rect x="-9" y="-7" width="18" height="15" rx="2"/><path d="M-9-2h18M-5-11v4M5-11v4"/><circle cx="-4" cy="3" r="1.1" fill="#241c14" stroke="none"/><circle cx="4" cy="3" r="1.1" fill="#241c14" stroke="none"/>',
+    money: '<ellipse cx="0" cy="2" rx="9" ry="3.4"/><path d="M-9 2v4.2c0 1.9 4 3.4 9 3.4s9-1.5 9-3.4V2"/><ellipse cx="0" cy="-2.2" rx="9" ry="3.4"/>',
+    tension: '<path d="M-12 1h5l3-8 5 14 3-6h8"/>',
+    NOTES: '<path d="M-8-11h8l6 6v14a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2v-18a2 2 0 0 1 2-2z"/><path d="M0-11v6h6M-6 1h10M-6 5h6"/>',
+    ASSETS: '<path d="M-11 1 0-9l11 10v9h-22z"/><path d="M-3 11V5h6v6"/>',
+    EVENTS: '<path d="M0 12s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13z"/><circle cx="0" cy="-1" r="2.4" fill="#241c14" stroke="none"/>',
+    REFLECTION: '<circle cx="-4" cy="-2" r="6"/><circle cx="6" cy="4" r="3.6"/><circle cx="10" cy="9" r="1.4" fill="#241c14" stroke="none"/>',
+    FINANCES: '<path d="M-10 10V2M-3 10V-4M4 10V-1M11 10V-8"/><path d="M-12 10h24"/>',
+    COCOS: '<circle cx="0" cy="2" r="9"/><circle cx="-3" cy="1" r="1" fill="#241c14" stroke="none"/><circle cx="3" cy="1" r="1" fill="#241c14" stroke="none"/><circle cx="0" cy="5" r="1" fill="#241c14" stroke="none"/><path d="M0-12c1.4 2.2 1.4 4 0 6"/>',
+    DEBTWISE: '<path d="M0-11v16M-8 8h16M-10-8h20"/><path d="M-10-8-14 1h8zM10-8l-4 9h8z"/>',
+    MZBOX: '<path d="M0-11 11-5v10L0 11-11 5V-5z"/><path d="M-11-5 0 1 11-5M0 1v10"/>'
   };
 
   var HINTS = {
@@ -69,6 +41,7 @@
     FINANCES: "Доходы, расходы, вклады и кредиты",
     COCOS: "Планы на день и месяц",
     DEBTWISE: "Срок, платёж и запас по бюджету",
+    MZBOX: "Портфель и разбор позиций",
     WIP: "Раздел ещё собирается"
   };
 
@@ -76,10 +49,11 @@
     var fill = FILLS[key] || "#E7E1D6";
     var icon = ICONS[key] || ICONS.MZBOX;
     return (
-      '<svg class="sticker" viewBox="0 0 72 72" aria-hidden="true" focusable="false">' +
-        '<rect x="4" y="6" width="60" height="60" rx="18" fill="' + fill + '"/>' +
-        '<path d="M48 6h16v14L50 8a8 8 0 0 1-2-2z" fill="#fff" opacity=".62"/>' +
-        icon +
+      '<svg class="sticker" viewBox="-32 -32 64 64" overflow="visible" aria-hidden="true" focusable="false">' +
+        '<rect x="-30" y="-30" width="60" height="60" rx="16" fill="' + fill + '"/>' +
+        '<g fill="none" stroke="#241c14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+          icon +
+        "</g>" +
       "</svg>"
     );
   }
@@ -140,18 +114,6 @@
     var hint = document.getElementById("sectionHint");
     if (hint) hint.textContent = HINTS[key] || "";
     setCurrent(key);
-    if (key === "DEBTWISE") {
-      var brand = document.querySelector("#debtwiseView .dw-brand");
-      if (brand && !brand.querySelector(".sticker")) {
-        brand.insertAdjacentHTML("afterbegin", stickerHTML("DEBTWISE"));
-      }
-    }
-    if (key === "FINANCES") {
-      var head = document.querySelector("#financesView .book-head");
-      if (head && !head.querySelector(".book-sticker")) {
-        head.insertAdjacentHTML("afterbegin", '<span class="book-sticker">' + stickerHTML("FINANCES") + "</span>");
-      }
-    }
   }
 
   function scrollToId(id) {
@@ -217,12 +179,24 @@
     var orig = window[name];
     if (typeof orig !== "function") return;
     window[name] = function (event) {
+      var frame = document.getElementById("mzboxFrame");
+      var stage = document.getElementById("mzboxOverlay");
+      var view = document.getElementById("mzboxView");
+      if (stage) { stage.classList.add("hidden"); stage.style.display = "none"; stage.setAttribute("aria-hidden", "true"); }
+      if (view) view.classList.add("hidden");
+      document.body.classList.remove("mzbox-open");
+      if (frame) { try { frame.removeAttribute("srcdoc"); frame.removeAttribute("src"); } catch (err) {} }
       var result = orig(event);
       setCurrent("");
       syncScreens();
       return result;
     };
   });
+
+  window.__injMzbox = function (event) {
+    if (event) { event.preventDefault(); event.stopPropagation(); }
+    if (window.__injOpen) window.__injOpen("MZBOX");
+  };
 
   document.addEventListener("keydown", function (event) {
     if (event.key !== "Escape") return;
