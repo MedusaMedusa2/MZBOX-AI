@@ -162,8 +162,19 @@ window.MZBOX_EXTRA_SCRIPT = "(function(){\n" +
 "  var liveY=yPrice(live);ctx.strokeStyle=theme.ink;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(axisL,liveY);ctx.lineTo(axisL+plotW,liveY);ctx.stroke();ctx.setLineDash([]);\n" +
 "  ctx.save();ctx.fillStyle=theme.card;ctx.fillRect(axisL-56,liveY-8,50,16);ctx.fillStyle=theme.ink;ctx.font='11px sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(priceText(live),axisL-6,liveY);ctx.restore();\n" +
 "  ctx.fillStyle=theme.muted;ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='10px sans-serif';\n" +
-"  var minGap=W<520?86:108,lastLabel=-999;\n" +
-"  slots.forEach(function(c,i){var xx=xAt(i);if(xx-lastLabel<minGap&&i!==n-1)return;lastLabel=xx;var dt=new Date(c.t);var label=String(dt.getDate()).padStart(2,'0')+'.'+String(dt.getMonth()+1).padStart(2,'0')+' '+String(dt.getHours()).padStart(2,'0')+':00';ctx.fillText(label,Math.max(axisL+36,Math.min(axisL+plotW-36,xx)),H-4);});\n" +
+"  var placed=[],edge=6;\n" +
+"  slots.forEach(function(c){\n" +
+"    var dt=new Date(c.t);\n" +
+"    var label=String(dt.getDate()).padStart(2,'0')+'.'+String(dt.getMonth()+1).padStart(2,'0');\n" +
+"    if(W>=560)label+=' '+String(dt.getHours()).padStart(2,'0')+':00';\n" +
+"    var tw=ctx.measureText(label).width,xx=xAt(slots.indexOf(c));\n" +
+"    var left=xx-tw/2,right=xx+tw/2;\n" +
+"    if(left<axisL+edge||right>axisL+plotW-edge)return;\n" +
+"    if(placed.length&&left<placed[placed.length-1].right+8)return;\n" +
+"    if(placed.length&&placed[placed.length-1].text===label)return;\n" +
+"    placed.push({text:label,x:xx,right:right});\n" +
+"  });\n" +
+"  placed.forEach(function(item){ctx.fillText(item.text,item.x,H-4);});\n" +
 "  ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText('покупка / продажа',axisL+6,axisT+priceH+gap+4);\n" +
 "  if(future.length){ctx.fillStyle=theme.accent;ctx.fillText('прогноз',axisL+split*slotW+4,axisT+14);}\n" +
 "  canvas._mzSlots=slots;canvas._mzGeom={W:W,H:H,axisL:axisL,plotW:plotW,slotW:slotW,yPrice:yPrice,xAt:xAt,theme:theme,priceText:priceText};\n" +
